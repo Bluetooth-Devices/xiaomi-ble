@@ -8,10 +8,15 @@ from __future__ import annotations
 import logging
 import struct
 import sys
+import logging
+import math
+import struct
+import datetime
 
 from bluetooth_sensor_state_data import BluetoothData
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import SensorLibrary
+from Cryptodome.Cipher import AES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,15 +24,6 @@ PACKED_hHB = struct.Struct(">hHB")
 PACKED_hh = struct.Struct(">hh")
 PACKED_hhbhh = struct.Struct(">hhbhh")
 PACKED_hhhhh = struct.Struct(">hhhhh")
-
-
-import logging
-import math
-import struct
-
-# from Cryptodome.Cipher import AES
-
-# from homeassistant.util import datetime
 
 
 def to_mac(addr: str) -> str:
@@ -39,8 +35,6 @@ def to_unformatted_mac(addr: int):
     """Return unformatted MAC address"""
     return "".join(f"{i:02X}" for i in addr[:])
 
-
-_LOGGER = logging.getLogger(__name__)
 
 # Device type dictionary
 # {device type code: device name}
@@ -281,7 +275,7 @@ def obj000b(xobj, device_type):
         key_id = int.from_bytes(xobj[1:5], "little")
         timestamp = int.from_bytes(xobj[5:], "little")
 
-        timestamp = datetime.fromtimestamp(timestamp).isoformat()
+        timestamp = datetime.datetime.fromtimestamp(timestamp).isoformat()
 
         # all keys except Bluetooth have only 65536 values
         error = BLE_LOCK_ERROR.get(key_id)
@@ -519,9 +513,8 @@ def obj1004(xobj, device: XiaomiBluetoothDeviceData):
     """Temperature"""
     if len(xobj) == 2:
         (temp,) = T_STRUCT.unpack(xobj)
-        device.update_predefined_sensor(SensorLibrary.TEMPERATURE, temp)
-    else:
-        return {}
+        device.update_predefined_sensor(SensorLibrary.TEMPERATURE, temp / 10)
+    return {}
 
 
 def obj1005(xobj, device: XiaomiBluetoothDeviceData):
@@ -534,9 +527,8 @@ def obj1006(xobj, device: XiaomiBluetoothDeviceData):
     """Humidity"""
     if len(xobj) == 2:
         (humi,) = H_STRUCT.unpack(xobj)
-        return {"humidity": humi / 10}
-    else:
-        return {}
+        device.update_predefined_sensor(SensorLibrary.HUMIDITY, humi / 10)
+    return {}
 
 
 def obj1007(xobj, device: XiaomiBluetoothDeviceData):
@@ -632,7 +624,8 @@ def obj100a(xobj, device: XiaomiBluetoothDeviceData):
     """Battery"""
     batt = xobj[0]
     volt = 2.2 + (3.1 - 2.2) * (batt / 100)
-    return {"battery": batt, "voltage": volt}
+    device.update_predefined_sensor(SensorLibrary.BATTERY, batt)
+    return {"voltage": volt}
 
 
 def obj100d(xobj, device: XiaomiBluetoothDeviceData):
@@ -668,17 +661,17 @@ def obj2000(xobj, device: XiaomiBluetoothDeviceData):
             + 36.413
         )
         device.update_predefined_sensor(SensorLibrary.TEMPERATURE, body_temp)
-        return {"temperature": body_temp, "battery": bat}
-    else:
-        return {}
+        device.update_predefined_sensor(SensorLibrary.BATTERY, bat)
+
+    return {}
 
 
 # The following data objects are device specific. For now only added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL
 # https://miot-spec.org/miot-spec-v2/instances?status=all
 def obj4803(xobj, device: XiaomiBluetoothDeviceData):
     """Battery"""
-    batt = xobj[0]
-    return {"battery": batt}
+    device.update_predefined_sensor(SensorLibrary.BATTERY, xobj[0])
+    return {}
 
 
 def obj4a01(xobj, device: XiaomiBluetoothDeviceData):
@@ -691,9 +684,8 @@ def obj4c02(xobj, device: XiaomiBluetoothDeviceData):
     """Humidity"""
     if len(xobj) == 1:
         humi = xobj[0]
-        return {"humidity": humi}
-    else:
-        return {}
+        device.update_predefined_sensor(SensorLibrary.HUMIDITY, humi)
+    return {}
 
 
 def obj4c01(xobj, device: XiaomiBluetoothDeviceData):
@@ -701,18 +693,15 @@ def obj4c01(xobj, device: XiaomiBluetoothDeviceData):
     if len(xobj) == 4:
         temp = FLOAT_STRUCT.unpack(xobj)[0]
         device.update_predefined_sensor(SensorLibrary.TEMPERATURE, temp)
-        return {"temperature": temp}
-    else:
-        return {}
+    return {}
 
 
 def obj4c08(xobj, device: XiaomiBluetoothDeviceData):
     """Humidity"""
     if len(xobj) == 4:
         humi = FLOAT_STRUCT.unpack(xobj)[0]
-        return {"humidity": humi}
-    else:
-        return {}
+        device.update_predefined_sensor(SensorLibrary.HUMIDITY, humi)
+    return {}
 
 
 def obj4c14(xobj, device: XiaomiBluetoothDeviceData):
@@ -846,15 +835,21 @@ def decode_temps_probes(packet_value: int) -> float:
 class XiaomiBluetoothDeviceData(BluetoothData):
     """Data for Xiaomi BLE sensors."""
 
+    def __init__(self, aeskey=None):
+        super().__init__()
+        self.aeskey = aeskey
+        self.unhandled = {}
+
     def _start_update(self, service_info: BluetoothServiceInfo) -> None:
         """Update from BLE advertisement data."""
         _LOGGER.debug("Parsing Xiaomi BLE advertisement data: %s", service_info)
         self.set_device_manufacturer("Xiaomi")
         self.set_device_name(service_info.name)
 
+        mac = bytes.fromhex(service_info.address.replace(":", ""))
+
         for id, data in service_info.service_data.items():
-            print(id, data)
-            print(self._parse_xiaomi(service_info.name, data, service_info.address))
+            self._parse_xiaomi(service_info.name, data, mac)
 
     def _parse_xiaomi(self, name, data, source_mac):
         """Parser for Xiaomi sensors"""
@@ -879,14 +874,20 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         frctrl_request_timing = frctrl & 1  # old version
 
         # Check that device is not of mesh type
-        # if frctrl_mesh != 0:
-        #    _LOGGER.debug("Xiaomi device data is a mesh type device, which is not supported. Data: %s", data.hex())
-        #    return None
+        if frctrl_mesh != 0:
+            _LOGGER.debug(
+                "Xiaomi device data is a mesh type device, which is not supported. Data: %s",
+                data.hex(),
+            )
+            return None
 
         # Check that version is 2 or higher
-        # if frctrl_version < 2:
-        #    _LOGGER.debug("Xiaomi device data is using old data format, which is not supported. Data: %s", data.hex())
-        #    return None
+        if frctrl_version < 2:
+            _LOGGER.debug(
+                "Xiaomi device data is using old data format, which is not supported. Data: %s",
+                data.hex(),
+            )
+            return None
 
         # Check that MAC in data is the same as the source MAC
         if frctrl_mac_include != 0:
@@ -1009,9 +1010,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 sinfo += ", Encryption"
                 firmware = "Xiaomi (MiBeacon V" + str(frctrl_version) + " encrypted)"
                 if frctrl_version <= 3:
-                    payload = decrypt_mibeacon_legacy(self, data, i, xiaomi_mac)
+                    payload = self._decrypt_mibeacon_legacy(data, i, xiaomi_mac)
                 else:
-                    payload = decrypt_mibeacon_v4_v5(self, data, i, xiaomi_mac)
+                    payload = self._decrypt_mibeacon_v4_v5(data, i, xiaomi_mac)
             else:  # No encryption
                 # check minimum advertisement length with data
                 firmware = "Xiaomi (MiBeacon V" + str(frctrl_version) + ")"
@@ -1031,10 +1032,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.set_device_type(device_type)
         self.set_device_sw_version(firmware)
 
-        result = {}
-
         if payload is not None:
-            result.update({"data": True})
             sinfo += ", Object data: " + payload.hex()
             # loop through parse_xiaomi payload
             payload_start = 0
@@ -1062,10 +1060,10 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                             "0xf",
                             "0xb",
                         ]:
-                            result.update(resfunc(dobject, device_type))
+                            self.unhandled.update(resfunc(dobject, device_type))
                         else:
                             print(obj_typecode, dobject, resfunc)
-                            result.update(resfunc(dobject, self))
+                            self.unhandled.update(resfunc(dobject, self))
                     else:
                         _LOGGER.info(
                             "%s, UNKNOWN dataobject in payload! Adv: %s",
@@ -1074,31 +1072,21 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                         )
                 payload_start = next_start
 
-        return result
-
-    def decrypt_mibeacon_v4_v5(self, data, i, xiaomi_mac):
+    def _decrypt_mibeacon_v4_v5(self, data, i, xiaomi_mac):
         """decrypt MiBeacon v4/v5 encrypted advertisements"""
         # check for minimum length of encrypted advertisement
         if len(data) < i + 9:
             _LOGGER.debug("Invalid data length (for decryption), adv: %s", data.hex())
         # try to find encryption key for current device
-        try:
-            key = self.aeskeys[xiaomi_mac]
-            if len(key) != 16:
-                _LOGGER.error("Encryption key should be 16 bytes (32 characters) long")
-                return None
-        except KeyError:
-            # no encryption key found
-            _LOGGER.error(
-                "No encryption key found for device with MAC %s", to_mac(xiaomi_mac)
-            )
+        if not self.aeskey or len(self.aeskey) != 16:
+            _LOGGER.error("Encryption key should be 16 bytes (32 characters) long")
             return None
 
         nonce = b"".join([xiaomi_mac[::-1], data[6:9], data[-7:-4]])
         aad = b"\x11"
         token = data[-4:]
         cipherpayload = data[i:-7]
-        cipher = AES.new(key, AES.MODE_CCM, nonce=nonce, mac_len=4)
+        cipher = AES.new(self.aeskey, AES.MODE_CCM, nonce=nonce, mac_len=4)
         cipher.update(aad)
 
         try:
@@ -1117,24 +1105,15 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             return None
         return decrypted_payload
 
-    def decrypt_mibeacon_legacy(self, data, i, xiaomi_mac):
+    def _decrypt_mibeacon_legacy(self, data, i, xiaomi_mac):
         """decrypt MiBeacon v2/v3 encrypted advertisements"""
         # check for minimum length of encrypted advertisement
         if len(data) < i + 7:
             _LOGGER.debug("Invalid data length (for decryption), adv: %s", data.hex())
-        # try to find encryption key for current device
-        try:
-            aeskey = self.aeskeys[xiaomi_mac]
-            if len(aeskey) != 12:
-                _LOGGER.error("Encryption key should be 12 bytes (24 characters) long")
-                return None
-            key = b"".join([aeskey[0:6], bytes.fromhex("8d3d3c97"), aeskey[6:]])
-        except KeyError:
-            # no encryption key found
-            _LOGGER.error(
-                "No encryption key found for device with MAC %s", to_mac(xiaomi_mac)
-            )
+        if not self.aeskey or len(self.aeskey) != 12:
+            _LOGGER.error("Encryption key should be 12 bytes (24 characters) long")
             return None
+        key = b"".join([self.aeskey[0:6], bytes.fromhex("8d3d3c97"), self.aeskey[6:]])
 
         nonce = b"".join([data[4:9], data[-4:-1], xiaomi_mac[::-1][:-1]])
         aad = b"\x11"
