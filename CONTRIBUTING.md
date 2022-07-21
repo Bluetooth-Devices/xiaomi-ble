@@ -24,7 +24,7 @@ Look through the GitHub issues for features. Anything tagged with "enhancement" 
 
 ### Write Documentation
 
-INKBIRD BLE could always use more documentation, whether as part of the official INKBIRD BLE docs, in docstrings, or even on the web in blog posts, articles, and such.
+XIAOMI BLE could always use more documentation, whether as part of the official XIAOMI BLE docs, in docstrings, or even on the web in blog posts, articles, and such.
 
 ### Submit Feedback
 
@@ -43,7 +43,7 @@ Ready to contribute? Here's how to set yourself up for local development.
 2. Clone your fork locally:
 
    ```shell
-   $ git clone git@github.com:your_name_here/inkbird-ble.git
+   $ git clone git@github.com:your_name_here/xiaomi-ble.git
    ```
 
 3. Install the project dependencies with [Poetry](https://python-poetry.org):

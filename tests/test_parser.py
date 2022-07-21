@@ -87,7 +87,7 @@ def test_ibbq_4():
     assert result == SensorUpdate(
         title=None,
         devices={
-            None: {"manufacturer": "INKBIRD", "model": "iBBQ-4", "name": "iBBQ EEFF"}
+            None: {"manufacturer": "XIAOMI", "model": "iBBQ-4", "name": "iBBQ EEFF"}
         },
         entity_descriptions={
             DeviceKey(key="signal_strength", device_id=None): SensorDescription(
