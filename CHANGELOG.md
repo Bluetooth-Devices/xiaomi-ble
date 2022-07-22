@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.5 (2022-07-22)
+### Feat
+* Add support for Petoneer Smart Odor Eliminator Pro (SU001-T) ([`2281d03`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/2281d033323f8e78e5c2a192c8a900efe859308b))
+
 ## v0.0.4 (2022-07-22)
 ### Fix
 * Workaround not knowing MAC on macOS ([`adcb639`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/adcb63967dbdfcd502c5fd15c27c33ceca5c7638))
