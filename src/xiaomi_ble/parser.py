@@ -10,6 +10,7 @@ import logging
 import math
 import struct
 import sys
+from typing import Any
 
 from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
@@ -24,12 +25,12 @@ PACKED_hhbhh = struct.Struct(">hhbhh")
 PACKED_hhhhh = struct.Struct(">hhhhh")
 
 
-def to_mac(addr: str) -> str:
+def to_mac(addr: bytes) -> str:
     """Return formatted MAC address"""
     return ":".join(f"{i:02X}" for i in addr)
 
 
-def to_unformatted_mac(addr: int):
+def to_unformatted_mac(addr: str) -> str:
     """Return unformatted MAC address"""
     return "".join(f"{i:02X}" for i in addr[:])
 
@@ -158,22 +159,22 @@ BLE_LOCK_METHOD = {
 
 # Advertisement conversion of measurement data
 # https://iot.mi.com/new/doc/embedded-development/ble/object-definition
-def obj0003(xobj, device: XiaomiBluetoothDeviceData):
+def obj0003(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Motion"""
     return {"motion": xobj[0], "motion timer": xobj[0]}
 
 
-def obj0006(xobj, device: XiaomiBluetoothDeviceData):
+def obj0006(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Fingerprint"""
     if len(xobj) == 5:
-        key_id = xobj[0:4]
+        key_id_bytes = xobj[0:4]
         match_byte = xobj[4]
-        if key_id == b"\x00\x00\x00\x00":
+        if key_id_bytes == b"\x00\x00\x00\x00":
             key_id = "administrator"
-        elif key_id == b"\xff\xff\xff\xff":
+        elif key_id_bytes == b"\xff\xff\xff\xff":
             key_id = "unknown operator"
         else:
-            key_id = int.from_bytes(key_id, "little")
+            key_id = str(int.from_bytes(key_id_bytes, "little"))
         if match_byte == 0x00:
             result = "match successful"
         elif match_byte == 0x01:
@@ -202,7 +203,7 @@ def obj0006(xobj, device: XiaomiBluetoothDeviceData):
         return {}
 
 
-def obj0007(xobj, device: XiaomiBluetoothDeviceData):
+def obj0007(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Door"""
     door_byte = xobj[0]
     if door_byte == 0x00:
@@ -228,14 +229,15 @@ def obj0007(xobj, device: XiaomiBluetoothDeviceData):
     return {"door": door, "door action": action}
 
 
-def obj0008(xobj, device_type):
+def obj0008(xobj: bytes, device_type: str) -> dict[str, Any]:
     """armed away"""
     returnData = {}
     value = xobj[0] ^ 1
     returnData.update({"armed away": value})
     if len(xobj) == 5:
-        timestamp = int.from_bytes(xobj[1:], "little")
-        timestamp = datetime.utcfromtimestamp(timestamp).isoformat()
+        timestamp = datetime.datetime.utcfromtimestamp(
+            int.from_bytes(xobj[1:], "little")
+        ).isoformat()
         returnData.update({"timestamp": timestamp})
     # Lift up door handle outside the door sends this event from DSL-C08.
     if device_type == "DSL-C08":
@@ -251,7 +253,7 @@ def obj0008(xobj, device_type):
     return returnData
 
 
-def obj0010(xobj, device: XiaomiBluetoothDeviceData):
+def obj0010(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Toothbrush"""
     if xobj[0] == 0:
         if len(xobj) == 1:
@@ -265,15 +267,16 @@ def obj0010(xobj, device: XiaomiBluetoothDeviceData):
             return {"toothbrush": 0, "score": xobj[1]}
 
 
-def obj000b(xobj, device_type):
+def obj000b(xobj: bytes, device_type: str) -> dict[str, Any]:
     """Lock"""
     if len(xobj) == 9:
         action = xobj[0] & 0x0F
         method = xobj[0] >> 4
         key_id = int.from_bytes(xobj[1:5], "little")
-        timestamp = int.from_bytes(xobj[5:], "little")
 
-        timestamp = datetime.datetime.utcfromtimestamp(timestamp).isoformat()
+        timestamp = datetime.datetime.utcfromtimestamp(
+            int.from_bytes(xobj[5:], "little")
+        ).isoformat()
 
         # all keys except Bluetooth have only 65536 values
         error = BLE_LOCK_ERROR.get(key_id)
@@ -312,7 +315,7 @@ def obj000b(xobj, device_type):
         return {}
 
 
-def obj000f(xobj, device_type):
+def obj000f(xobj: bytes, device_type: str) -> dict[str, Any]:
     """Moving with light"""
     if len(xobj) == 3:
         (value,) = LIGHT_STRUCT.unpack(xobj + b"\x00")
@@ -335,7 +338,7 @@ def obj000f(xobj, device_type):
         return {}
 
 
-def obj1001(xobj, device_type):
+def obj1001(xobj: bytes, device_type: str) -> dict[str, Any]:
     """button"""
     if len(xobj) == 3:
         (button_type, value, press) = BUTTON_STRUCT.unpack(xobj)
@@ -507,7 +510,7 @@ def obj1001(xobj, device_type):
         return None
 
 
-def obj1004(xobj, device: XiaomiBluetoothDeviceData):
+def obj1004(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Temperature"""
     if len(xobj) == 2:
         (temp,) = T_STRUCT.unpack(xobj)
@@ -515,13 +518,13 @@ def obj1004(xobj, device: XiaomiBluetoothDeviceData):
     return {}
 
 
-def obj1005(xobj, device: XiaomiBluetoothDeviceData):
+def obj1005(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Switch and Temperature"""
     device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, xobj[1])
     return {"switch": xobj[0]}
 
 
-def obj1006(xobj, device: XiaomiBluetoothDeviceData):
+def obj1006(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Humidity"""
     if len(xobj) == 2:
         (humi,) = H_STRUCT.unpack(xobj)
@@ -529,7 +532,7 @@ def obj1006(xobj, device: XiaomiBluetoothDeviceData):
     return {}
 
 
-def obj1007(xobj, device: XiaomiBluetoothDeviceData):
+def obj1007(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Illuminance"""
     if len(xobj) == 3:
         (illum,) = ILL_STRUCT.unpack(xobj + b"\x00")
@@ -538,12 +541,12 @@ def obj1007(xobj, device: XiaomiBluetoothDeviceData):
         return {}
 
 
-def obj1008(xobj, device: XiaomiBluetoothDeviceData):
+def obj1008(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Moisture"""
     return {"moisture": xobj[0]}
 
 
-def obj1009(xobj, device: XiaomiBluetoothDeviceData):
+def obj1009(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Conductivity"""
     if len(xobj) == 2:
         (cond,) = CND_STRUCT.unpack(xobj)
@@ -552,7 +555,7 @@ def obj1009(xobj, device: XiaomiBluetoothDeviceData):
         return {}
 
 
-def obj1010(xobj, device: XiaomiBluetoothDeviceData):
+def obj1010(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Formaldehyde"""
     if len(xobj) == 2:
         (fmdh,) = FMDH_STRUCT.unpack(xobj)
@@ -561,27 +564,27 @@ def obj1010(xobj, device: XiaomiBluetoothDeviceData):
         return {}
 
 
-def obj1012(xobj, device: XiaomiBluetoothDeviceData):
+def obj1012(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Switch"""
     return {"switch": xobj[0]}
 
 
-def obj1013(xobj, device: XiaomiBluetoothDeviceData):
+def obj1013(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Consumable (in percent)"""
     return {"consumable": xobj[0]}
 
 
-def obj1014(xobj, device: XiaomiBluetoothDeviceData):
+def obj1014(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Moisture"""
     return {"moisture": xobj[0]}
 
 
-def obj1015(xobj, device: XiaomiBluetoothDeviceData):
+def obj1015(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Smoke"""
     return {"smoke detector": xobj[0]}
 
 
-def obj1017(xobj, device: XiaomiBluetoothDeviceData):
+def obj1017(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Motion"""
     if len(xobj) == 4:
         (motion,) = M_STRUCT.unpack(xobj)
@@ -593,12 +596,12 @@ def obj1017(xobj, device: XiaomiBluetoothDeviceData):
         return {}
 
 
-def obj1018(xobj, device: XiaomiBluetoothDeviceData):
+def obj1018(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Light intensity"""
     return {"light": xobj[0]}
 
 
-def obj1019(xobj, device: XiaomiBluetoothDeviceData):
+def obj1019(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Door/Window sensor"""
     open_obj = xobj[0]
     if open_obj == 0:
@@ -619,7 +622,7 @@ def obj1019(xobj, device: XiaomiBluetoothDeviceData):
     return {"opening": opening, "status": status}
 
 
-def obj100a(xobj, device: XiaomiBluetoothDeviceData):
+def obj100a(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Battery"""
     batt = xobj[0]
     volt = 2.2 + (3.1 - 2.2) * (batt / 100)
@@ -627,7 +630,7 @@ def obj100a(xobj, device: XiaomiBluetoothDeviceData):
     return {"voltage": volt}
 
 
-def obj100d(xobj, device: XiaomiBluetoothDeviceData):
+def obj100d(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Temperature and humidity"""
     if len(xobj) == 4:
         (temp, humi) = TH_STRUCT.unpack(xobj)
@@ -636,7 +639,7 @@ def obj100d(xobj, device: XiaomiBluetoothDeviceData):
     return {}
 
 
-def obj100e(xobj, device_type):
+def obj100e(xobj: bytes, device_type: str) -> dict[str, Any]:
     """Lock common attribute"""
     # https://iot.mi.com/new/doc/accesses/direct-access/embedded-development/ble/object-definition#%E9%94%81%E5%B1%9E%E6%80%A7
     if len(xobj) == 1:
@@ -648,7 +651,7 @@ def obj100e(xobj, device_type):
             return {"childlock": childlock, "lock": lock}
 
 
-def obj2000(xobj, device: XiaomiBluetoothDeviceData):
+def obj2000(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Body temperature"""
     if len(xobj) == 5:
         (temp1, temp2, bat) = TTB_STRUCT.unpack(xobj)
@@ -669,19 +672,19 @@ def obj2000(xobj, device: XiaomiBluetoothDeviceData):
 # The following data objects are device specific. For now onl
 #  added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL
 # https://miot-spec.org/miot-spec-v2/instances?status=all
-def obj4803(xobj, device: XiaomiBluetoothDeviceData):
+def obj4803(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Battery"""
     device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, xobj[0])
     return {}
 
 
-def obj4a01(xobj, device: XiaomiBluetoothDeviceData):
+def obj4a01(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Low Battery"""
     low_batt = xobj[0]
     return {"low battery": low_batt}
 
 
-def obj4c02(xobj, device: XiaomiBluetoothDeviceData):
+def obj4c02(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Humidity"""
     if len(xobj) == 1:
         humi = xobj[0]
@@ -689,7 +692,7 @@ def obj4c02(xobj, device: XiaomiBluetoothDeviceData):
     return {}
 
 
-def obj4c01(xobj, device: XiaomiBluetoothDeviceData):
+def obj4c01(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Temperature"""
     if len(xobj) == 4:
         temp = FLOAT_STRUCT.unpack(xobj)[0]
@@ -697,7 +700,7 @@ def obj4c01(xobj, device: XiaomiBluetoothDeviceData):
     return {}
 
 
-def obj4c08(xobj, device: XiaomiBluetoothDeviceData):
+def obj4c08(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Humidity"""
     if len(xobj) == 4:
         humi = FLOAT_STRUCT.unpack(xobj)[0]
@@ -705,13 +708,13 @@ def obj4c08(xobj, device: XiaomiBluetoothDeviceData):
     return {}
 
 
-def obj4c14(xobj, device: XiaomiBluetoothDeviceData):
+def obj4c14(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Mode"""
     mode = xobj[0]
     return {"mode": mode}
 
 
-def obj4e0c(xobj, device: XiaomiBluetoothDeviceData):
+def obj4e0c(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Click"""
     click = xobj[0]
     btn_switch_press_type = "single press"
@@ -733,7 +736,7 @@ def obj4e0c(xobj, device: XiaomiBluetoothDeviceData):
     }
 
 
-def obj4e0d(xobj, device: XiaomiBluetoothDeviceData):
+def obj4e0d(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Double Click"""
     click = xobj[0]
     btn_switch_press_type = "double press"
@@ -755,7 +758,7 @@ def obj4e0d(xobj, device: XiaomiBluetoothDeviceData):
     }
 
 
-def obj4e0e(xobj, device: XiaomiBluetoothDeviceData):
+def obj4e0e(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Long Press"""
     click = xobj[0]
     btn_switch_press_type = "long press"
@@ -1033,7 +1036,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                         )
                 payload_start = next_start
 
-    def _decrypt_mibeacon_v4_v5(self, data, i, xiaomi_mac):
+    def _decrypt_mibeacon_v4_v5(
+        self, data: bytes, i: int, xiaomi_mac: bytes
+    ) -> bytes | None:
         """decrypt MiBeacon v4/v5 encrypted advertisements"""
         # check for minimum length of encrypted advertisement
         if len(data) < i + 9:
@@ -1066,7 +1071,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             return None
         return decrypted_payload
 
-    def _decrypt_mibeacon_legacy(self, data, i, xiaomi_mac):
+    def _decrypt_mibeacon_legacy(
+        self, data: bytes, i: int, xiaomi_mac: bytes
+    ) -> bytes | None:
         """decrypt MiBeacon v2/v3 encrypted advertisements"""
         # check for minimum length of encrypted advertisement
         if len(data) < i + 7:
