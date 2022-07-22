@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.3 (2022-07-22)
+### Fix
+* Trim service uuid from start of service data ([`8c35dc1`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/8c35dc16cf3a782f045d567bdce26e5a3296bbf9))
+
 ## v0.0.2 (2022-07-22)
 ### Fix
 * Re-export sensor state classes like other bluetooth helpers ([`b7b97ba`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/b7b97ba50963218d45d9d883179302aca08987ca))
