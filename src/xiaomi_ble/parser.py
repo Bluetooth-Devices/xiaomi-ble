@@ -10,7 +10,7 @@ import logging
 import math
 import struct
 import sys
-from typing import Any
+from typing import Any, Tuple
 
 from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
@@ -127,17 +127,17 @@ BLE_LOCK_ERROR = {
     0xC0DE1005: "the lock sensor is faulty",
 }
 
-BLE_LOCK_ACTION = {
-    0b0000: [1, "lock", "unlock outside the door"],
-    0b0001: [0, "lock", "lock"],
-    0b0010: [0, "antilock", "turn on anti-lock"],
-    0b0011: [1, "antilock", "turn off anti-lock"],
-    0b0100: [1, "lock", "unlock inside the door"],
-    0b0101: [0, "lock", "lock inside the door"],
-    0b0110: [0, "childlock", "turn on child lock"],
-    0b0111: [1, "childlock", "turn off child lock"],
-    0b1000: [0, "lock", "lock outside the door"],
-    0b1111: [1, "lock", "abnormal"],
+BLE_LOCK_ACTION: dict[int, Tuple[int, str, str]] = {
+    0b0000: (1, "lock", "unlock outside the door"),
+    0b0001: (0, "lock", "lock"),
+    0b0010: (0, "antilock", "turn on anti-lock"),
+    0b0011: (1, "antilock", "turn off anti-lock"),
+    0b0100: (1, "lock", "unlock inside the door"),
+    0b0101: (0, "lock", "lock inside the door"),
+    0b0110: (0, "childlock", "turn on child lock"),
+    0b0111: (1, "childlock", "turn off child lock"),
+    0b1000: (0, "lock", "lock outside the door"),
+    0b1111: (1, "lock", "abnormal"),
 }
 
 BLE_LOCK_METHOD = {
@@ -231,7 +231,7 @@ def obj0007(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
 
 def obj0008(xobj: bytes, device_type: str) -> dict[str, Any]:
     """armed away"""
-    returnData = {}
+    returnData: dict[str, Any] = {}
     value = xobj[0] ^ 1
     returnData.update({"armed away": value})
     if len(xobj) == 5:
@@ -270,8 +270,8 @@ def obj0010(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
 def obj000b(xobj: bytes, device_type: str) -> dict[str, Any]:
     """Lock"""
     if len(xobj) == 9:
-        action = xobj[0] & 0x0F
-        method = xobj[0] >> 4
+        action_int = xobj[0] & 0x0F
+        method_int = xobj[0] >> 4
         key_id = int.from_bytes(xobj[1:5], "little")
 
         timestamp = datetime.datetime.utcfromtimestamp(
@@ -280,21 +280,20 @@ def obj000b(xobj: bytes, device_type: str) -> dict[str, Any]:
 
         # all keys except Bluetooth have only 65536 values
         error = BLE_LOCK_ERROR.get(key_id)
-        if error is None and method > 0:
+        if error is None and method_int > 0:
             key_id &= 0xFFFF
-        elif error:
-            key_id = hex(key_id)
 
-        if action not in BLE_LOCK_ACTION or method not in BLE_LOCK_METHOD:
+        if action_int not in BLE_LOCK_ACTION or method_int not in BLE_LOCK_METHOD:
             return {}
 
-        lock = BLE_LOCK_ACTION[action][0]
+        lock = BLE_LOCK_ACTION[action_int][0]
         # Decouple lock by type on some devices
         lock_type = "lock"
         if device_type == "ZNMS17LM":
-            lock_type = BLE_LOCK_ACTION[action][1]
-        action = BLE_LOCK_ACTION[action][2]
-        method = BLE_LOCK_METHOD[method]
+            lock_type = BLE_LOCK_ACTION[action_int][1]
+
+        action = BLE_LOCK_ACTION[action_int][2]
+        method = BLE_LOCK_METHOD[method_int]
 
         # Biometric unlock then disarm
         if device_type == "DSL-C08":
@@ -308,7 +307,7 @@ def obj000b(xobj: bytes, device_type: str) -> dict[str, Any]:
             "action": action,
             "method": method,
             "error": error,
-            "key id": key_id,
+            "key id": hex(key_id),
             "timestamp": timestamp,
         }
     else:
@@ -460,7 +459,7 @@ def obj1001(xobj: bytes, device_type: str) -> dict[str, Any]:
             button_press_type = "long press"
 
         # return device specific output
-        result = {}
+        result: dict[str, Any] = {}
         if device_type in ["RTCGQ02LM", "YLAI003", "JTYJGD03MI", "SJWS01LM"]:
             result["button"] = button_press_type
         elif device_type == "XMMF01JQD":
@@ -502,12 +501,11 @@ def obj1001(xobj: bytes, device_type: str) -> dict[str, Any]:
                 result["three btn switch middle"] = three_btn_switch_middle
             if three_btn_switch_right:
                 result["three btn switch right"] = three_btn_switch_right
-        else:
-            return None
+
         return result
 
     else:
-        return None
+        return {}
 
 
 def obj1004(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
@@ -649,6 +647,7 @@ def obj100e(xobj: bytes, device_type: str) -> dict[str, Any]:
             lock = lock_attribute & 0x01 ^ 1
             childlock = lock_attribute >> 3 ^ 1
             return {"childlock": childlock, "lock": lock}
+    return {}
 
 
 def obj2000(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
@@ -716,30 +715,25 @@ def obj4c14(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
 
 def obj4e0c(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Click"""
+    result: dict[str, Any] = {}
+
     click = xobj[0]
-    btn_switch_press_type = "single press"
-    two_btn_switch_left = None
-    two_btn_switch_right = None
+
     if click == 1:
-        two_btn_switch_left = "toggle"
+        result["two_btn_switch_left"] = "toggle"
     elif click == 2:
-        two_btn_switch_right = "toggle"
+        result["two_btn_switch_right"] = "toggle"
     elif click == 3:
-        two_btn_switch_left = "toggle"
-        two_btn_switch_right = "toggle"
-    else:
-        btn_switch_press_type = None
-    return {
-        "two btn switch left": two_btn_switch_left,
-        "two btn switch right": two_btn_switch_right,
-        "button switch": btn_switch_press_type,
-    }
+        result["two_btn_switch_left"] = "toggle"
+        result["two_btn_switch_right"] = "toggle"
+
+    return result
 
 
 def obj4e0d(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Double Click"""
     click = xobj[0]
-    btn_switch_press_type = "double press"
+    btn_switch_press_type: str | None = "double press"
     two_btn_switch_left = None
     two_btn_switch_right = None
     if click == 1:
@@ -761,7 +755,7 @@ def obj4e0d(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
 def obj4e0e(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     """Long Press"""
     click = xobj[0]
-    btn_switch_press_type = "long press"
+    btn_switch_press_type: str | None = "long press"
     two_btn_switch_left = None
     two_btn_switch_right = None
     if click == 1:
@@ -839,10 +833,10 @@ def decode_temps_probes(packet_value: int) -> float:
 class XiaomiBluetoothDeviceData(BluetoothData):
     """Data for Xiaomi BLE sensors."""
 
-    def __init__(self, aeskey=None):
+    def __init__(self, aeskey: bytes | None = None) -> None:
         super().__init__()
         self.aeskey = aeskey
-        self.unhandled = {}
+        self.unhandled: dict[str, Any] = {}
 
     def _start_update(self, service_info: BluetoothServiceInfo) -> None:
         """Update from BLE advertisement data."""
@@ -855,7 +849,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         for id, data in service_info.service_data.items():
             self._parse_xiaomi(service_info.name, data, mac)
 
-    def _parse_xiaomi(self, name, data, source_mac):
+    def _parse_xiaomi(
+        self, name: str, data: bytes, source_mac: bytes
+    ) -> dict[str, Any] | None:
         """Parser for Xiaomi sensors"""
         # check for adstruc length
         i = 9  # till Frame Counter
@@ -1024,9 +1020,10 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                             "0xf",
                             "0xb",
                         ]:
+                            # type: ignore
                             self.unhandled.update(resfunc(dobject, device_type))
                         else:
-                            print(obj_typecode, dobject, resfunc)
+                            # type: ignore
                             self.unhandled.update(resfunc(dobject, self))
                     else:
                         _LOGGER.info(
@@ -1035,6 +1032,8 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                             data.hex(),
                         )
                 payload_start = next_start
+
+        return self.unhandled
 
     def _decrypt_mibeacon_v4_v5(
         self, data: bytes, i: int, xiaomi_mac: bytes
