@@ -585,7 +585,8 @@ def obj1017(xobj, device: XiaomiBluetoothDeviceData):
     """Motion"""
     if len(xobj) == 4:
         (motion,) = M_STRUCT.unpack(xobj)
-        # seconds since last motion detected message (not used, we use motion timer in obj000f)
+        # seconds since last motion detected message (not used, we use motion
+        # timer in obj000f)
         # 0 = motion detected
         return {"motion": 1 if motion == 0 else 0}
     else:
@@ -652,7 +653,8 @@ def obj2000(xobj, device: XiaomiBluetoothDeviceData):
     if len(xobj) == 5:
         (temp1, temp2, bat) = TTB_STRUCT.unpack(xobj)
         # Body temperature is calculated from the two measured temperatures.
-        # Formula is based on approximation based on values in the app in the range 36.5 - 37.8.
+        # Formula is based on approximation based on values in the app in
+        # the range 36.5 - 37.8.
         body_temp = (
             3.71934 * pow(10, -11) * math.exp(0.69314 * temp1 / 100)
             - (1.02801 * pow(10, -8) * math.exp(0.53871 * temp2 / 100))
@@ -664,7 +666,8 @@ def obj2000(xobj, device: XiaomiBluetoothDeviceData):
     return {}
 
 
-# The following data objects are device specific. For now only added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL
+# The following data objects are device specific. For now onl
+#  added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL
 # https://miot-spec.org/miot-spec-v2/instances?status=all
 def obj4803(xobj, device: XiaomiBluetoothDeviceData):
     """Battery"""
@@ -874,7 +877,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # Check that device is not of mesh type
         if frctrl_mesh != 0:
             _LOGGER.debug(
-                "Xiaomi device data is a mesh type device, which is not supported. Data: %s",
+                "Device is a mesh type device, which is not supported. Data: %s",
                 data.hex(),
             )
             return None
@@ -882,7 +885,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # Check that version is 2 or higher
         if frctrl_version < 2:
             _LOGGER.debug(
-                "Xiaomi device data is using old data format, which is not supported. Data: %s",
+                "Device is using old data format, which is not supported. Data: %s",
                 data.hex(),
             )
             return None
@@ -938,47 +941,6 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             sinfo += ", Safety certification"
         elif frctrl_auth_mode == 2:
             sinfo += ", Standard certification"
-
-        """
-        # check for unique packet_id and advertisement priority
-        try:
-            prev_packet = self.lpacket_ids[xiaomi_mac]
-        except KeyError:
-            # start with empty first packet
-            prev_packet = None
-
-        if device_type in ["LYWSD03MMC", "CGG1", "MHO-C401", "CGDK2"]:
-            # Check for adv priority and packet_id for devices that can also send in ATC format
-            adv_priority = 19
-            try:
-                prev_adv_priority = self.adv_priority[xiaomi_mac]
-            except KeyError:
-                # start with initial adv priority
-                prev_adv_priority = 0
-            if adv_priority > prev_adv_priority:
-                # always process advertisements with a higher priority
-                self.adv_priority[xiaomi_mac] = adv_priority
-            elif adv_priority == prev_adv_priority:
-                # only process messages with same priority that have a unique packet id
-                if prev_packet == packet_id:
-                    if self.filter_duplicates is True:
-                        return None
-                    else:
-                        pass
-                else:
-                    pass
-            else:
-                # do not process advertisements with lower priority (ATC advertisements will be used instead)
-                prev_adv_priority -= 1
-                self.adv_priority[xiaomi_mac] = prev_adv_priority
-                return None
-        else:
-            if prev_packet == packet_id:
-                if self.filter_duplicates is True:
-                    # only process messages with highest priority and messages with unique packet id
-                    return None
-        self.lpacket_ids[xiaomi_mac] = packet_id
-        """
 
         # check for capability byte present
         if frctrl_capability_include != 0:
