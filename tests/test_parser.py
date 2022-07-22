@@ -279,7 +279,10 @@ def test_Xiaomi_LYWSD02MMC():
 
 def test_Xiaomi_LYWSD03MMC_encrypted():
     """Test Xiaomi parser for LYWSD03MMC with encryption."""
-    data_string = b"\x1a\x16\x95\xfeXX[\x05P\xf4\x83\x028\xc1\xa4\x95\xefXv<&\x00\x00\x97\xe2\xab\xb5"
+    data_string = (
+        b"\x1a\x16\x95\xfeXX[\x05P\xf4\x83\x028"
+        b"\xc1\xa4\x95\xefXv<&\x00\x00\x97\xe2\xab\xb5"
+    )
     aeskey = "e9ea895fac7cca6d30532432a516f3a8"
     advertisement = bytes_to_service_info(data_string, address="A4:C1:38:02:83:F4")
 
