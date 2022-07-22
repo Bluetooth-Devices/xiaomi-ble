@@ -7,9 +7,9 @@ from sensor_state_data import (
     DeviceClass,
     DeviceKey,
     SensorDescription,
+    SensorDeviceInfo,
     SensorUpdate,
     SensorValue,
-    SensorDeviceInfo,
 )
 
 from xiaomi_ble.parser import XiaomiBluetoothDeviceData
