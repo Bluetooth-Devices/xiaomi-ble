@@ -652,7 +652,7 @@ def obj2000(xobj, device: XiaomiBluetoothDeviceData):
     if len(xobj) == 5:
         (temp1, temp2, bat) = TTB_STRUCT.unpack(xobj)
         # Body temperature is calculated from the two measured temperatures.
-        # Formula is based on approximation based on values inthe app in the range 36.5 - 37.8.
+        # Formula is based on approximation based on values in the app in the range 36.5 - 37.8.
         body_temp = (
             3.71934 * pow(10, -11) * math.exp(0.69314 * temp1 / 100)
             - (1.02801 * pow(10, -8) * math.exp(0.53871 * temp2 / 100))
