@@ -7,8 +7,28 @@ MIT License applies.
 """
 from __future__ import annotations
 
+from sensor_state_data import (
+    DeviceClass,
+    DeviceKey,
+    SensorDescription,
+    SensorDeviceInfo,
+    SensorUpdate,
+    SensorValue,
+    Units,
+)
+
 from .parser import XiaomiBluetoothDeviceData
 
 __version__ = "0.0.1"
 
-__all__ = ["XiaomiBluetoothDeviceData"]
+__all__ = [
+    "XiaomiBluetoothDeviceData",
+    "SensorDescription",
+    "SensorDeviceInfo",
+    "DeviceClass",
+    "DeviceKey",
+    "SensorUpdate",
+    "SensorDeviceInfo",
+    "SensorValue",
+    "Units",
+]
