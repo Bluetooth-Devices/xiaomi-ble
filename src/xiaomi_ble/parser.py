@@ -1047,7 +1047,8 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                         "Invalid payload data length, payload: %s", payload.hex()
                     )
                     break
-                dobject = payload[payload_start + 3 : next_start]
+                this_start = payload_start + 3
+                dobject = payload[this_start:next_start]
                 if obj_length != 0:
                     resfunc = xiaomi_dataobject_dict.get(obj_typecode, None)
                     if resfunc:
