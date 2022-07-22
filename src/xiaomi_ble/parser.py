@@ -235,7 +235,7 @@ def obj0008(xobj, device_type):
     returnData.update({"armed away": value})
     if len(xobj) == 5:
         timestamp = int.from_bytes(xobj[1:], "little")
-        timestamp = datetime.fromutctimestamp(timestamp).isoformat()
+        timestamp = datetime.utcfromtimestamp(timestamp).isoformat()
         returnData.update({"timestamp": timestamp})
     # Lift up door handle outside the door sends this event from DSL-C08.
     if device_type == "DSL-C08":
@@ -273,7 +273,7 @@ def obj000b(xobj, device_type):
         key_id = int.from_bytes(xobj[1:5], "little")
         timestamp = int.from_bytes(xobj[5:], "little")
 
-        timestamp = datetime.datetime.fromtimestamp(timestamp).isoformat()
+        timestamp = datetime.datetime.utcfromtimestamp(timestamp).isoformat()
 
         # all keys except Bluetooth have only 65536 values
         error = BLE_LOCK_ERROR.get(key_id)

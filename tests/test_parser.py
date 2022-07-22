@@ -864,7 +864,7 @@ def test_Xiaomi_ZNMS16LM_lock():
         "method": "biometrics",
         "error": None,
         "key id": 2,
-        "timestamp": "2021-09-01T10:14:36",
+        "timestamp": "2021-09-01T09:14:36",
         "locktype": "lock",
     }
 
