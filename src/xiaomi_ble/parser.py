@@ -10,7 +10,7 @@ import logging
 import math
 import struct
 import sys
-from typing import Any, Tuple
+from typing import Any
 
 from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
@@ -127,7 +127,7 @@ BLE_LOCK_ERROR = {
     0xC0DE1005: "the lock sensor is faulty",
 }
 
-BLE_LOCK_ACTION: dict[int, Tuple[int, str, str]] = {
+BLE_LOCK_ACTION: dict[int, tuple[int, str, str]] = {
     0b0000: (1, "lock", "unlock outside the door"),
     0b0001: (0, "lock", "lock"),
     0b0010: (0, "antilock", "turn on anti-lock"),
