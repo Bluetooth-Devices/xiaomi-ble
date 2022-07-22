@@ -15,7 +15,7 @@ from typing import Any
 from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
 from home_assistant_bluetooth import BluetoothServiceInfo
-from sensor_state_data import SensorLibrary
+from sensor_state_data import SensorLibrary, Units
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -554,16 +554,22 @@ def obj1007(
     """Illuminance"""
     if len(xobj) == 3:
         (illum,) = ILL_STRUCT.unpack(xobj + b"\x00")
-        return {"illuminance": illum, "light": 1 if illum == 100 else 0}
-    else:
-        return {}
+        device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
+    return {}
 
 
 def obj1008(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Moisture"""
-    return {"moisture": xobj[0]}
+    print("!!!!!!!!")
+    device.update_sensor(
+        key="moisture",
+        name="Moisture",
+        native_unit_of_measurement=Units.PERCENTAGE,
+        native_value=xobj[0],
+    )
+    return {}
 
 
 def obj1009(
@@ -572,9 +578,13 @@ def obj1009(
     """Conductivity"""
     if len(xobj) == 2:
         (cond,) = CND_STRUCT.unpack(xobj)
-        return {"conductivity": cond}
-    else:
-        return {}
+        device.update_sensor(
+            key="conductivity",
+            name="Conductivity",
+            native_unit_of_measurement=Units.CONDUCTIVITY,
+            native_value=cond,
+        )
+    return {}
 
 
 def obj1010(
