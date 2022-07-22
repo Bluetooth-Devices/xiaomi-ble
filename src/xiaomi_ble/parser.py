@@ -924,14 +924,14 @@ class XiaomiBluetoothDeviceData(BluetoothData):
     ) -> dict[str, Any] | None:
         """Parser for Xiaomi sensors"""
         # check for adstruc length
-        i = 9  # till Frame Counter
+        i = 5  # till Frame Counter
         msg_length = len(data)
         if msg_length < i:
             _LOGGER.debug("Invalid data length (initial check), adv: %s", data.hex())
             return None
 
         # extract frame control bits
-        frctrl = data[4] + (data[5] << 8)
+        frctrl = data[0] + (data[1] << 8)
         frctrl_mesh = (frctrl >> 7) & 1  # mesh device
         frctrl_version = frctrl >> 12  # version
         frctrl_auth_mode = (frctrl >> 10) & 3
@@ -965,7 +965,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             if msg_length < i:
                 _LOGGER.debug("Invalid data length (in MAC check), adv: %s", data.hex())
                 return None
-            xiaomi_mac_reversed = data[9:15]
+            xiaomi_mac_reversed = data[5:11]
             xiaomi_mac = xiaomi_mac_reversed[::-1]
             if sys.platform != "darwin" and xiaomi_mac != source_mac:
                 _LOGGER.debug(
@@ -977,7 +977,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             xiaomi_mac = source_mac
 
         # determine the device type
-        device_id = data[6] + (data[7] << 8)
+        device_id = data[2] + (data[3] << 8)
         try:
             device_type = XIAOMI_TYPE_DICT[device_id]
         except KeyError:
@@ -991,7 +991,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
         self.set_device_type(device_type)
 
-        packet_id = data[8]
+        packet_id = data[4]
 
         sinfo = "MiVer: " + str(frctrl_version)
         sinfo += ", DevID: " + hex(device_id) + " : " + device_type
@@ -1106,7 +1106,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             _LOGGER.error("Encryption key should be 16 bytes (32 characters) long")
             return None
 
-        nonce = b"".join([xiaomi_mac[::-1], data[6:9], data[-7:-4]])
+        nonce = b"".join([xiaomi_mac[::-1], data[2:5], data[-7:-4]])
         aad = b"\x11"
         token = data[-4:]
         cipherpayload = data[i:-7]
@@ -1141,7 +1141,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             return None
         key = b"".join([self.aeskey[0:6], bytes.fromhex("8d3d3c97"), self.aeskey[6:]])
 
-        nonce = b"".join([data[4:9], data[-4:-1], xiaomi_mac[::-1][:-1]])
+        nonce = b"".join([data[0:5], data[-4:-1], xiaomi_mac[::-1][:-1]])
         aad = b"\x11"
         cipherpayload = data[i:-4]
         cipher = AES.new(key, AES.MODE_CCM, nonce=nonce, mac_len=4)
