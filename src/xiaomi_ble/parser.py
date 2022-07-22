@@ -914,7 +914,11 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.set_device_manufacturer("Xiaomi")
         self.set_device_name(service_info.name)
 
-        mac = bytes.fromhex(service_info.address.replace(":", ""))
+        mac_readable = "00:00:00:00:00:00"
+        if sys.platform != "darwin":
+            mac_readable = service_info.address
+
+        mac = bytes.fromhex(mac_readable.replace(":", ""))
 
         for id, data in service_info.service_data.items():
             self._parse_xiaomi(service_info.name, data, mac)
