@@ -5,18 +5,16 @@ MIT License applies.
 """
 from __future__ import annotations
 
-import logging
-import struct
-import sys
+import datetime
 import logging
 import math
 import struct
-import datetime
+import sys
 
 from bluetooth_sensor_state_data import BluetoothData
+from Cryptodome.Cipher import AES
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import SensorLibrary
-from Cryptodome.Cipher import AES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -1049,7 +1047,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                         "Invalid payload data length, payload: %s", payload.hex()
                     )
                     break
-                dobject = payload[payload_start + 3 : next_start]
+                dobject = payload[payload_start + 3:next_start]
                 if obj_length != 0:
                     resfunc = xiaomi_dataobject_dict.get(obj_typecode, None)
                     if resfunc:

@@ -145,7 +145,7 @@ def test_Xiaomi_CGDK2():
             None: {
                 "name": "Test",
                 "manufacturer": "Xiaomi",
-                "model": "CGG1-Encrypted",
+                "model": "CGDK2",
                 "sw_version": "Xiaomi (MiBeacon V5 encrypted)",
             }
         },
@@ -156,12 +156,6 @@ def test_Xiaomi_CGDK2():
                 device_class=DeviceClass.TEMPERATURE,
                 native_unit_of_measurement="°C",
             ),
-            KEY_HUMIDITY: SensorDescription(
-                device_key=KEY_HUMIDITY,
-                name="Humidity",
-                device_class=DeviceClass.HUMIDITY,
-                native_unit_of_measurement="%",
-            ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
                 name="Signal Strength",
@@ -170,21 +164,12 @@ def test_Xiaomi_CGDK2():
             ),
         },
         entity_values={
-            KEY_TEMPERATURE: SensorValue(device_key=KEY_TEMPERATURE, native_value=25.4),
-            KEY_HUMIDITY: SensorValue(device_key=KEY_HUMIDITY, native_value=59.6),
+            KEY_TEMPERATURE: SensorValue(device_key=KEY_TEMPERATURE, native_value=22.6),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
-
-    assert sensor_msg["firmware"] == "Xiaomi (MiBeacon V5 encrypted)"
-    assert sensor_msg["type"] == "CGDK2"
-    assert sensor_msg["mac"] == "582D34122089"
-    assert sensor_msg["packet"] == 7
-    assert sensor_msg["data"]
-    assert sensor_msg["temperature"] == 22.6
-    assert sensor_msg["rssi"] == -81
 
 
 def test_Xiaomi_LYWSD02():
@@ -243,7 +228,7 @@ def test_Xiaomi_LYWSD03MMC():
 
 def test_Xiaomi_LYWSD02MMC():
     """Test Xiaomi parser for LYWSD02MMC."""
-    aeskey = "814aac74c4f17b6c1581e1ab87816b99"
+    aeskey = "a115210eed7a88e50ad52662e732a9fb"
     data_string = (
         b"\x19\x16\x95\xfeXX\xe4\x16,\x84SV8\xc1\xa4+n\xf2\xe9\x12\x00\x00l\x88M\x9e"
     )
@@ -262,12 +247,6 @@ def test_Xiaomi_LYWSD02MMC():
             }
         },
         entity_descriptions={
-            KEY_TEMPERATURE: SensorDescription(
-                device_key=KEY_TEMPERATURE,
-                name="Temperature",
-                device_class=DeviceClass.TEMPERATURE,
-                native_unit_of_measurement="°C",
-            ),
             KEY_HUMIDITY: SensorDescription(
                 device_key=KEY_HUMIDITY,
                 name="Humidity",
@@ -282,23 +261,12 @@ def test_Xiaomi_LYWSD02MMC():
             ),
         },
         entity_values={
-            KEY_TEMPERATURE: SensorValue(device_key=KEY_TEMPERATURE, native_value=25.4),
-            KEY_HUMIDITY: SensorValue(device_key=KEY_HUMIDITY, native_value=59.6),
+            KEY_HUMIDITY: SensorValue(device_key=KEY_HUMIDITY, native_value=58),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
-    data_string = "043e290201000084535638c1a41d020106191695fe5858e4162c84535638c1a42b6ef2e91200006c884d9eb0"
-    aeskey = "a115210eed7a88e50ad52662e732a9fb"
-
-    assert sensor_msg["firmware"] == "Xiaomi (MiBeacon V5 encrypted)"
-    assert sensor_msg["type"] == "LYWSD02MMC"
-    assert sensor_msg["mac"] == "A4C138565384"
-    assert sensor_msg["packet"] == 44
-    assert sensor_msg["data"]
-    assert sensor_msg["humidity"] == 58
-    assert sensor_msg["rssi"] == -80
 
 
 def test_Xiaomi_LYWSD03MMC_encrypted():
@@ -320,12 +288,6 @@ def test_Xiaomi_LYWSD03MMC_encrypted():
             }
         },
         entity_descriptions={
-            KEY_TEMPERATURE: SensorDescription(
-                device_key=KEY_TEMPERATURE,
-                name="Temperature",
-                device_class=DeviceClass.TEMPERATURE,
-                native_unit_of_measurement="°C",
-            ),
             KEY_HUMIDITY: SensorDescription(
                 device_key=KEY_HUMIDITY,
                 name="Humidity",
@@ -340,21 +302,12 @@ def test_Xiaomi_LYWSD03MMC_encrypted():
             ),
         },
         entity_values={
-            KEY_TEMPERATURE: SensorValue(device_key=KEY_TEMPERATURE, native_value=25.4),
-            KEY_HUMIDITY: SensorValue(device_key=KEY_HUMIDITY, native_value=59.6),
+            KEY_HUMIDITY: SensorValue(device_key=KEY_HUMIDITY, native_value=46.7),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
-
-    assert sensor_msg["firmware"] == "Xiaomi (MiBeacon V5 encrypted)"
-    assert sensor_msg["type"] == "LYWSD03MMC"
-    assert sensor_msg["mac"] == "A4C1380283F4"
-    assert sensor_msg["packet"] == 80
-    assert sensor_msg["data"]
-    assert sensor_msg["humidity"] == 46.7
-    assert sensor_msg["rssi"] == -30
 
 
 def test_Xiaomi_XMWSDJ04MMC():
@@ -363,7 +316,7 @@ def test_Xiaomi_XMWSDJ04MMC():
     data_string = (
         b"\x16\x16\x95\xfeHY\x03\x12\xa4\x1bwn|\x96\xad\xd7\x00\x00\x00\xf2\xbfT["
     )
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="2C:11:65:25:70:04")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
