@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.0.4 (2022-07-22)
+### Fix
+* Workaround not knowing MAC on macOS ([`adcb639`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/adcb63967dbdfcd502c5fd15c27c33ceca5c7638))
+
 ## v0.0.3 (2022-07-22)
 ### Fix
 * Trim service uuid from start of service data ([`8c35dc1`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/8c35dc16cf3a782f045d567bdce26e5a3296bbf9))
