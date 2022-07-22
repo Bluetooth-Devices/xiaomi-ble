@@ -9,6 +9,7 @@ from sensor_state_data import (
     SensorDescription,
     SensorUpdate,
     SensorValue,
+    SensorDeviceInfo,
 )
 
 from xiaomi_ble.parser import XiaomiBluetoothDeviceData
@@ -48,38 +49,40 @@ def test_Xiaomi_LYWSDCGQ(caplog):
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "LYWSDCGQ",
-                "sw_version": "Xiaomi (MiBeacon V2)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="LYWSDCGQ",
+                sw_version="Xiaomi (MiBeacon V2)",
+                hw_version=None,
+            )
         },
         entity_descriptions={
             KEY_TEMPERATURE: SensorDescription(
                 device_key=KEY_TEMPERATURE,
-                name="Temperature",
                 device_class=DeviceClass.TEMPERATURE,
                 native_unit_of_measurement="°C",
             ),
             KEY_HUMIDITY: SensorDescription(
                 device_key=KEY_HUMIDITY,
-                name="Humidity",
                 device_class=DeviceClass.HUMIDITY,
                 native_unit_of_measurement="%",
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
-            KEY_TEMPERATURE: SensorValue(device_key=KEY_TEMPERATURE, native_value=25.4),
-            KEY_HUMIDITY: SensorValue(device_key=KEY_HUMIDITY, native_value=58.4),
+            KEY_TEMPERATURE: SensorValue(
+                device_key=KEY_TEMPERATURE, name="Temperature", native_value=25.4
+            ),
+            KEY_HUMIDITY: SensorValue(
+                device_key=KEY_HUMIDITY, name="Humidity", native_value=58.4
+            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -98,31 +101,32 @@ def test_Xiaomi_CGG1():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "CGG1-ENCRYPTED",
-                "sw_version": "Xiaomi (MiBeacon V5 encrypted)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="CGG1-ENCRYPTED",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
         },
         entity_descriptions={
             KEY_HUMIDITY: SensorDescription(
                 device_key=KEY_HUMIDITY,
-                name="Humidity",
                 device_class=DeviceClass.HUMIDITY,
                 native_unit_of_measurement="%",
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
-            KEY_HUMIDITY: SensorValue(device_key=KEY_HUMIDITY, native_value=59.6),
+            KEY_HUMIDITY: SensorValue(
+                name="Humidity", device_key=KEY_HUMIDITY, native_value=59.6
+            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -142,31 +146,32 @@ def test_Xiaomi_CGDK2():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "CGDK2",
-                "sw_version": "Xiaomi (MiBeacon V5 encrypted)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="CGDK2",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
         },
         entity_descriptions={
             KEY_TEMPERATURE: SensorDescription(
                 device_key=KEY_TEMPERATURE,
-                name="Temperature",
                 device_class=DeviceClass.TEMPERATURE,
                 native_unit_of_measurement="°C",
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
-            KEY_TEMPERATURE: SensorValue(device_key=KEY_TEMPERATURE, native_value=22.6),
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=22.6
+            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -189,38 +194,40 @@ def test_Xiaomi_LYWSD03MMC():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "LYWSD03MMC",
-                "sw_version": "Xiaomi (MiBeacon V3)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="LYWSD03MMC",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3)",
+            )
         },
         entity_descriptions={
             KEY_TEMPERATURE: SensorDescription(
                 device_key=KEY_TEMPERATURE,
-                name="Temperature",
                 device_class=DeviceClass.TEMPERATURE,
                 native_unit_of_measurement="°C",
             ),
             KEY_HUMIDITY: SensorDescription(
                 device_key=KEY_HUMIDITY,
-                name="Humidity",
                 device_class=DeviceClass.HUMIDITY,
                 native_unit_of_measurement="%",
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
-            KEY_TEMPERATURE: SensorValue(device_key=KEY_TEMPERATURE, native_value=27.2),
-            KEY_HUMIDITY: SensorValue(device_key=KEY_HUMIDITY, native_value=49.0),
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=27.2
+            ),
+            KEY_HUMIDITY: SensorValue(
+                name="Humidity", device_key=KEY_HUMIDITY, native_value=49.0
+            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -239,31 +246,32 @@ def test_Xiaomi_LYWSD02MMC():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "LYWSD02MMC",
-                "sw_version": "Xiaomi (MiBeacon V5 encrypted)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="LYWSD02MMC",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
         },
         entity_descriptions={
             KEY_HUMIDITY: SensorDescription(
                 device_key=KEY_HUMIDITY,
-                name="Humidity",
                 device_class=DeviceClass.HUMIDITY,
                 native_unit_of_measurement="%",
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
-            KEY_HUMIDITY: SensorValue(device_key=KEY_HUMIDITY, native_value=58),
+            KEY_HUMIDITY: SensorValue(
+                name="Humidity", device_key=KEY_HUMIDITY, native_value=58
+            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -280,31 +288,32 @@ def test_Xiaomi_LYWSD03MMC_encrypted():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "LYWSD03MMC",
-                "sw_version": "Xiaomi (MiBeacon V5 encrypted)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="LYWSD03MMC",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
         },
         entity_descriptions={
             KEY_HUMIDITY: SensorDescription(
                 device_key=KEY_HUMIDITY,
-                name="Humidity",
                 device_class=DeviceClass.HUMIDITY,
                 native_unit_of_measurement="%",
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
-            KEY_HUMIDITY: SensorValue(device_key=KEY_HUMIDITY, native_value=46.7),
+            KEY_HUMIDITY: SensorValue(
+                name="Humidity", device_key=KEY_HUMIDITY, native_value=46.7
+            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -323,31 +332,32 @@ def test_Xiaomi_XMWSDJ04MMC():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "XMWSDJ04MMC",
-                "sw_version": "Xiaomi (MiBeacon V5 encrypted)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="XMWSDJ04MMC",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
         },
         entity_descriptions={
             KEY_HUMIDITY: SensorDescription(
                 device_key=KEY_HUMIDITY,
-                name="Humidity",
                 device_class=DeviceClass.HUMIDITY,
                 native_unit_of_measurement="%",
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
-            KEY_HUMIDITY: SensorValue(device_key=KEY_HUMIDITY, native_value=45.0),
+            KEY_HUMIDITY: SensorValue(
+                name="Humidity", device_key=KEY_HUMIDITY, native_value=45.0
+            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -365,24 +375,24 @@ def test_Xiaomi_XMMF01JQD():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "XMMF01JQD",
-                "sw_version": "Xiaomi (MiBeacon V3)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="XMMF01JQD",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3)",
+            )
         },
         entity_descriptions={
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -426,24 +436,24 @@ def test_Xiaomi_JTYJGD03MI_smoke():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "JTYJGD03MI",
-                "sw_version": "Xiaomi (MiBeacon V5 encrypted)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="JTYJGD03MI",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
         },
         entity_descriptions={
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -464,24 +474,24 @@ def test_Xiaomi_JTYJGD03MI_press():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "JTYJGD03MI",
-                "sw_version": "Xiaomi (MiBeacon V5 encrypted)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="JTYJGD03MI",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
         },
         entity_descriptions={
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -499,31 +509,32 @@ def test_Xiaomi_HHCCJCY01():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "HHCCJCY01",
-                "sw_version": "Xiaomi (MiBeacon V2)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="HHCCJCY01",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V2)",
+            )
         },
         entity_descriptions={
             KEY_TEMPERATURE: SensorDescription(
                 device_key=KEY_TEMPERATURE,
-                name="Temperature",
                 device_class=DeviceClass.TEMPERATURE,
                 native_unit_of_measurement="°C",
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
-            KEY_TEMPERATURE: SensorValue(device_key=KEY_TEMPERATURE, native_value=19.6),
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=19.6
+            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -540,31 +551,32 @@ def test_Xiaomi_GCLS002():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "GCLS002",
-                "sw_version": "Xiaomi (MiBeacon V2)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="GCLS002",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V2)",
+            )
         },
         entity_descriptions={
             KEY_TEMPERATURE: SensorDescription(
                 device_key=KEY_TEMPERATURE,
-                name="Temperature",
                 device_class=DeviceClass.TEMPERATURE,
                 native_unit_of_measurement="°C",
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
-            KEY_TEMPERATURE: SensorValue(device_key=KEY_TEMPERATURE, native_value=31.6),
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=31.6
+            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -613,24 +625,24 @@ def test_Xiaomi_MUE4094RT():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "MUE4094RT",
-                "sw_version": "Xiaomi (MiBeacon V3)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="MUE4094RT",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3)",
+            )
         },
         entity_descriptions={
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -652,24 +664,24 @@ def test_Xiaomi_RTCGQ02LM():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "RTCGQ02LM",
-                "sw_version": "Xiaomi (MiBeacon V5 encrypted)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="RTCGQ02LM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
         },
         entity_descriptions={
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -693,40 +705,42 @@ def test_Xiaomi_MMC_T201_1():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "MMC-T201-1",
-                "sw_version": "Xiaomi (MiBeacon V2)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="MMC-T201-1",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V2)",
+            )
         },
         entity_descriptions={
             KEY_TEMPERATURE: SensorDescription(
                 device_key=KEY_TEMPERATURE,
-                name="Temperature",
                 device_class=DeviceClass.TEMPERATURE,
                 native_unit_of_measurement="°C",
             ),
             KEY_BATTERY: SensorDescription(
                 device_key=KEY_BATTERY,
-                name="Battery",
                 device_class=DeviceClass.BATTERY,
                 native_unit_of_measurement="%",
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
-            KEY_BATTERY: SensorValue(device_key=KEY_BATTERY, native_value=81),
+            KEY_BATTERY: SensorValue(
+                name="Battery", device_key=KEY_BATTERY, native_value=81
+            ),
             KEY_TEMPERATURE: SensorValue(
-                device_key=KEY_TEMPERATURE, native_value=36.87199806168224
+                name="Temperature",
+                device_key=KEY_TEMPERATURE,
+                native_value=36.87199806168224,
             ),
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -743,24 +757,24 @@ def test_Xiaomi_M1S_T500():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "M1S-T500",
-                "sw_version": "Xiaomi (MiBeacon V3)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="M1S-T500",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3)",
+            )
         },
         entity_descriptions={
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -782,24 +796,24 @@ def test_Xiaomi_ZNMS16LM_fingerprint():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "ZNMS16LM",
-                "sw_version": "Xiaomi (MiBeacon V4)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="ZNMS16LM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
         },
         entity_descriptions={
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -822,24 +836,24 @@ def test_Xiaomi_ZNMS16LM_lock():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "ZNMS16LM",
-                "sw_version": "Xiaomi (MiBeacon V4)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="ZNMS16LM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
         },
         entity_descriptions={
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -870,24 +884,24 @@ def test_Xiaomi_YLYK01YL():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "YLYK01YL",
-                "sw_version": "Xiaomi (MiBeacon V3)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="YLYK01YL",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3)",
+            )
         },
         entity_descriptions={
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -924,24 +938,24 @@ def test_Xiaomi_YLKG07YL_press():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "YLKG07YL/YLKG08YL",
-                "sw_version": "Xiaomi (MiBeacon V3 encrypted)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="YLKG07YL/YLKG08YL",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3 encrypted)",
+            )
         },
         entity_descriptions={
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
@@ -960,24 +974,24 @@ def test_Xiaomi_YLKG07YL_rotate():
     assert device.update(advertisement) == SensorUpdate(
         title=None,
         devices={
-            None: {
-                "name": "Test",
-                "manufacturer": "Xiaomi",
-                "model": "YLKG07YL/YLKG08YL",
-                "sw_version": "Xiaomi (MiBeacon V3 encrypted)",
-            }
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="YLKG07YL/YLKG08YL",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3 encrypted)",
+            )
         },
         entity_descriptions={
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
-                name="Signal Strength",
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )

@@ -511,13 +511,13 @@ def obj1004(xobj, device: XiaomiBluetoothDeviceData):
     """Temperature"""
     if len(xobj) == 2:
         (temp,) = T_STRUCT.unpack(xobj)
-        device.update_predefined_sensor(SensorLibrary.TEMPERATURE, temp / 10)
+        device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp / 10)
     return {}
 
 
 def obj1005(xobj, device: XiaomiBluetoothDeviceData):
     """Switch and Temperature"""
-    device.update_predefined_sensor(SensorLibrary.TEMPERATURE, xobj[1])
+    device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, xobj[1])
     return {"switch": xobj[0]}
 
 
@@ -525,7 +525,7 @@ def obj1006(xobj, device: XiaomiBluetoothDeviceData):
     """Humidity"""
     if len(xobj) == 2:
         (humi,) = H_STRUCT.unpack(xobj)
-        device.update_predefined_sensor(SensorLibrary.HUMIDITY, humi / 10)
+        device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi / 10)
     return {}
 
 
@@ -622,7 +622,7 @@ def obj100a(xobj, device: XiaomiBluetoothDeviceData):
     """Battery"""
     batt = xobj[0]
     volt = 2.2 + (3.1 - 2.2) * (batt / 100)
-    device.update_predefined_sensor(SensorLibrary.BATTERY, batt)
+    device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
     return {"voltage": volt}
 
 
@@ -630,8 +630,8 @@ def obj100d(xobj, device: XiaomiBluetoothDeviceData):
     """Temperature and humidity"""
     if len(xobj) == 4:
         (temp, humi) = TH_STRUCT.unpack(xobj)
-        device.update_predefined_sensor(SensorLibrary.TEMPERATURE, temp / 10)
-        device.update_predefined_sensor(SensorLibrary.HUMIDITY, humi / 10)
+        device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp / 10)
+        device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi / 10)
     return {}
 
 
@@ -658,8 +658,8 @@ def obj2000(xobj, device: XiaomiBluetoothDeviceData):
             - (1.02801 * pow(10, -8) * math.exp(0.53871 * temp2 / 100))
             + 36.413
         )
-        device.update_predefined_sensor(SensorLibrary.TEMPERATURE, body_temp)
-        device.update_predefined_sensor(SensorLibrary.BATTERY, bat)
+        device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, body_temp)
+        device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, bat)
 
     return {}
 
@@ -668,7 +668,7 @@ def obj2000(xobj, device: XiaomiBluetoothDeviceData):
 # https://miot-spec.org/miot-spec-v2/instances?status=all
 def obj4803(xobj, device: XiaomiBluetoothDeviceData):
     """Battery"""
-    device.update_predefined_sensor(SensorLibrary.BATTERY, xobj[0])
+    device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, xobj[0])
     return {}
 
 
@@ -682,7 +682,7 @@ def obj4c02(xobj, device: XiaomiBluetoothDeviceData):
     """Humidity"""
     if len(xobj) == 1:
         humi = xobj[0]
-        device.update_predefined_sensor(SensorLibrary.HUMIDITY, humi)
+        device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi)
     return {}
 
 
@@ -690,7 +690,7 @@ def obj4c01(xobj, device: XiaomiBluetoothDeviceData):
     """Temperature"""
     if len(xobj) == 4:
         temp = FLOAT_STRUCT.unpack(xobj)[0]
-        device.update_predefined_sensor(SensorLibrary.TEMPERATURE, temp)
+        device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp)
     return {}
 
 
@@ -698,7 +698,7 @@ def obj4c08(xobj, device: XiaomiBluetoothDeviceData):
     """Humidity"""
     if len(xobj) == 4:
         humi = FLOAT_STRUCT.unpack(xobj)[0]
-        device.update_predefined_sensor(SensorLibrary.HUMIDITY, humi)
+        device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi)
     return {}
 
 
