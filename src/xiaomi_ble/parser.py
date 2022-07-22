@@ -668,7 +668,7 @@ def obj2000(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
     return {}
 
 
-# The following data objects are device specific. For now onl
+# The following data objects are device specific. For now only
 #  added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL
 # https://miot-spec.org/miot-spec-v2/instances?status=all
 def obj4803(xobj: bytes, device: XiaomiBluetoothDeviceData) -> dict[str, Any]:
