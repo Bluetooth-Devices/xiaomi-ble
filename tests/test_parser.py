@@ -863,7 +863,7 @@ def test_Xiaomi_ZNMS16LM_lock():
         "action": "unlock outside the door",
         "method": "biometrics",
         "error": None,
-        "key id": 2,
+        "key id": "0x2",
         "timestamp": "2021-09-01T09:14:36",
         "locktype": "lock",
     }
