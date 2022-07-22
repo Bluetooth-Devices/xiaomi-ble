@@ -19,11 +19,6 @@ from sensor_state_data import SensorLibrary
 
 _LOGGER = logging.getLogger(__name__)
 
-PACKED_hHB = struct.Struct(">hHB")
-PACKED_hh = struct.Struct(">hh")
-PACKED_hhbhh = struct.Struct(">hhbhh")
-PACKED_hhhhh = struct.Struct(">hhhhh")
-
 
 def to_mac(addr: bytes) -> str:
     """Return formatted MAC address"""
@@ -84,6 +79,7 @@ XIAOMI_TYPE_DICT = {
     0x069E: "ZNMS16LM",
     0x069F: "ZNMS17LM",
     0x0380: "DSL-C08",
+    0x0DE7: "SU001-T",
 }
 
 # Structured objects for data conversions
