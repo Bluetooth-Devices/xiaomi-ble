@@ -919,9 +919,10 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.set_device_manufacturer("Xiaomi")
         self.set_device_name(service_info.name)
 
-        mac_readable = "00:00:00:00:00:00"
-        if sys.platform != "darwin":
-            mac_readable = service_info.address
+        mac_readable = service_info.address
+        if len(mac_readable) != 17 and mac_readable[2] != ":":
+            # On macOS we get a UUID, which is useless for MiBeacons
+            mac_readable = "00:00:00:00:00:00"
 
         mac = bytes.fromhex(mac_readable.replace(":", ""))
 
