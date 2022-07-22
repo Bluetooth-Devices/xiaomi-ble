@@ -9,6 +9,6 @@ from __future__ import annotations
 
 from .parser import XiaomiBluetoothDeviceData
 
-__version__ = "0.9.0"
+__version__ = "0.0.0"
 
 __all__ = ["XiaomiBluetoothDeviceData"]
