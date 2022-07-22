@@ -562,7 +562,6 @@ def obj1008(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Moisture"""
-    print("!!!!!!!!")
     device.update_sensor(
         key="moisture",
         name="Moisture",
