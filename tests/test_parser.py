@@ -41,7 +41,7 @@ def bytes_to_service_info(
 def test_Xiaomi_LYWSDCGQ(caplog):
     """Test Xiaomi parser for LYWSDCGQ."""
     data_string = b"\x15\x16\x95\xfeP \xaa\x01\xda!\x9354-X\r\x10\x04\xfe\x00H\x02"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="58:2D:34:35:93:21")
 
     device = XiaomiBluetoothDeviceData()
     assert device.supported(advertisement)
@@ -135,7 +135,7 @@ def test_Xiaomi_CGDK2():
     )
     aeskey = "a3bfe9853dd85a620debe3620caaa351"
 
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="58:2D:34:12:20:89")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -182,7 +182,7 @@ def test_Xiaomi_LYWSD03MMC():
     data_string = (
         b"\x15\x16\x95\xfeP0[\x05\x03L\x94\xb48\xc1\xa4\r\x10\x04\x10\x01\xea\x01"
     )
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:B4:94:4C")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -232,7 +232,7 @@ def test_Xiaomi_LYWSD02MMC():
     data_string = (
         b"\x19\x16\x95\xfeXX\xe4\x16,\x84SV8\xc1\xa4+n\xf2\xe9\x12\x00\x00l\x88M\x9e"
     )
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:56:53:84")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -273,7 +273,7 @@ def test_Xiaomi_LYWSD03MMC_encrypted():
     """Test Xiaomi parser for LYWSD03MMC with encryption."""
     data_string = b"\x1a\x16\x95\xfeXX[\x05P\xf4\x83\x028\xc1\xa4\x95\xefXv<&\x00\x00\x97\xe2\xab\xb5"
     aeskey = "e9ea895fac7cca6d30532432a516f3a8"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:02:83:F4")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -358,7 +358,7 @@ def test_Xiaomi_XMMF01JQD():
     data_string = (
         b"\x14\x16\x95\xfeP0\xe1\x04\x8eT\xd3\xe60S\xe2\x01\x10\x03\x00\x00\x00"
     )
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="E2:53:30:E6:D3:54")
 
     device = XiaomiBluetoothDeviceData()
     assert device.supported(advertisement)
@@ -419,7 +419,7 @@ def test_Xiaomi_JTYJGD03MI_smoke():
     """Test Xiaomi parser for JTYJGD03MI."""
     aeskey = "5b51a7c91cde6707c9ef18dfda143a58"
     data_string = b"\x19\x16\x95\xfeXY\x97\tf\xbc\x9c\xe3D\xefT\x01\x08\x12\x05\x00\x00\x00q^\xbe\x90"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="54:EF:44:E3:9C:BC")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -457,7 +457,7 @@ def test_Xiaomi_JTYJGD03MI_press():
     """Test Xiaomi parser for JTYJGD03MI."""
     aeskey = "5b51a7c91cde6707c9ef18dfda143a58"
     data_string = b'\x1b\x16\x95\xfeXY\x97\td\xbc\x9c\xe3D\xefT" `\x88\xfd\x00\x00\x00\x00:\x14\x8f\xb3'
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="54:EF:44:E3:9C:BC")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -492,7 +492,7 @@ def test_Xiaomi_JTYJGD03MI_press():
 def test_Xiaomi_HHCCJCY01():
     """Test Xiaomi parser for HHCCJCY01."""
     data_string = b"\x14\x16\x95\xfeq \x98\x00\x12\xf3Ok\x8d|\xc4\r\x04\x10\x02\xc4\x00"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="C4:7C:8D:6B:4F:F3")
 
     device = XiaomiBluetoothDeviceData()
     assert device.supported(advertisement)
@@ -533,7 +533,7 @@ def test_Xiaomi_GCLS002():
     """Test Xiaomi parser for GCLS002 / HHCCJCY09."""
     aeskey = "814aac74c4f17b6c1581e1ab87816b99"
     data_string = b"\x14\x16\x95\xfeq \xbc\x03\xcd>Ym\x8d|\xc4\r\x04\x10\x02<\x01"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="C4:7C:8D:6D:59:3E")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -606,7 +606,7 @@ def test_Xiaomi_MUE4094RT():
     """Test Xiaomi parser for MUE4094RT."""
     aeskey = "814aac74c4f17b6c1581e1ab87816b99"
     data_string = b"\x0c\x16\x95\xfe@0\xdd\x03$\x03\x00\x01\x01"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="DE:70:E8:B2:39:0C")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -645,7 +645,7 @@ def test_Xiaomi_RTCGQ02LM():
     """Test Xiaomi parser for RTCGQ02LM with wrong encryption key."""
     aeskey = "814aac74c4f17b6c1581e1ab87816b99"
     data_string = b"\x1b\x16\x95\xfeXY\x8d\n\x17\x0f\xc4\xe0D\xefT|\xc2z\\\x03\xa1\x00\x00\x00y\r\xf2X"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="54:EF:44:E0:C4:0F")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -686,7 +686,7 @@ def test_Xiaomi_MMC_T201_1():
     data_string = (
         b'\x17\x16\x95\xfep"\xdb\x00o\xc1o\xdd\xf9\x81\x00\t\x00 \x05\xc6\rc\rQ'
     )
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="00:81:F9:DD:6F:C1")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -736,7 +736,7 @@ def test_Xiaomi_M1S_T500():
     """Test Xiaomi parser for M1S-T500."""
     aeskey = "814aac74c4f17b6c1581e1ab87816b99"
     data_string = b"\x14\x16\x95\xfeq0\x89\x047\x11[\x17Cq\xe6\t\x10\x00\x02\x00\x03"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="E6:71:43:17:5B:11")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -775,7 +775,7 @@ def test_Xiaomi_ZNMS16LM_fingerprint():
     """Test Xiaomi parser for ZNMS16LM."""
     aeskey = "814aac74c4f17b6c1581e1ab87816b99"
     data_string = b"\x16\x16\x95\xfePD\x9e\x06B\x91\x8a\xebD\x1f\xd7\x06\x00\x05\xff\xff\xff\xff\x00"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="D7:1F:44:EB:8A:91")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -815,7 +815,7 @@ def test_Xiaomi_ZNMS16LM_lock():
     """Test Xiaomi parser for ZNMS16LM."""
     data_string = b"\x1a\x16\x95\xfePD\x9e\x06C\x91\x8a\xebD\x1f\xd7\x0b\x00\t \x02\x00\x01\x80|D/a"
     aeskey = "814aac74c4f17b6c1581e1ab87816b99"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="D7:1F:44:EB:8A:91")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -863,7 +863,7 @@ def test_Xiaomi_YLYK01YL():
     """Test Xiaomi parser for YLYK01YL."""
     data_string = b"\x14\x16\x95\xfeP0S\x01?tP\xe9A$\xf8\x01\x10\x03\x00\x00\x00"
     aeskey = "814aac74c4f17b6c1581e1ab87816b99"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="F8:24:41:E9:50:74")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -917,7 +917,7 @@ def test_Xiaomi_YLKG07YL_press():
     data_string = (
         b"\x18\x16\x95\xfeX0\xb6\x03\xd2\x8b\x98\xc5A$\xf8\xc3I\x14vu~\x00\x00\x00\x99"
     )
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="F8:24:41:C5:98:8B")
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
     assert device.supported(advertisement)
@@ -952,7 +952,7 @@ def test_Xiaomi_YLKG07YL_press():
 def test_Xiaomi_YLKG07YL_rotate():
     """Test Xiaomi parser for YLKG07YL, YLKG08YL while rotating dimmer."""
     data_string = b"\x18\x16\x95\xfeX0\xb6\x036\x8b\x98\xc5A$\xf8\x8b\xb8\xf2f\x13Q\x00\x00\x00\xd6"
-    advertisement = bytes_to_service_info(data_string)
+    advertisement = bytes_to_service_info(data_string, address="F8:24:41:C5:98:8B")
     aeskey = "b853075158487ca39a5b5ea9"
 
     device = XiaomiBluetoothDeviceData(aeskey=bytes.fromhex(aeskey))
