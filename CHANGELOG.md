@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.0 (2022-07-22)
+### Feature
+* Bump version ([`01656a0`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/01656a03ae6ece3bbcf361bf14355894cf359f0d))
+
 ## v0.0.5 (2022-07-22)
 ### Feat
 * Add support for Petoneer Smart Odor Eliminator Pro (SU001-T) ([`2281d03`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/2281d033323f8e78e5c2a192c8a900efe859308b))
