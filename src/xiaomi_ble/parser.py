@@ -235,7 +235,7 @@ def obj0008(xobj, device_type):
     returnData.update({"armed away": value})
     if len(xobj) == 5:
         timestamp = int.from_bytes(xobj[1:], "little")
-        timestamp = datetime.fromtimestamp(timestamp).isoformat()
+        timestamp = datetime.fromutctimestamp(timestamp).isoformat()
         returnData.update({"timestamp": timestamp})
     # Lift up door handle outside the door sends this event from DSL-C08.
     if device_type == "DSL-C08":
