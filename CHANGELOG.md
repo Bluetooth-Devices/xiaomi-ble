@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.0 (2022-07-23)
+### Feature
+* Expose type of encryption to use on XiaomiBluetoothDeviceData ([`935482d`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/935482d0a78daf10b6e2ff772d32d195eba923ea))
+
 ## v0.3.0 (2022-07-23)
 ### Feature
 * Add lux sensor to cgpr1 ([#5](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/5)) ([`accb30e`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/accb30eaa5dc710518e02b92bbfa1ed6c495c992))
