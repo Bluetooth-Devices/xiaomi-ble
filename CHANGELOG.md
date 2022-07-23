@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.0 (2022-07-23)
+### Feature
+* Add support for more sensor types ([`0a87594`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/0a875940fdf7330d53a03f3ca7b7a489353396b6))
+
+### Fix
+* Fix test regression ([`1f80374`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/1f80374c5c56049235ee55f1fc885b8da2cadbb6))
+* Remove stray print ([`55d67d7`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/55d67d741c1c7dd8da14729619515e09680542e1))
+
 ## v0.1.0 (2022-07-22)
 ### Feature
 * Bump version ([`01656a0`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/01656a03ae6ece3bbcf361bf14355894cf359f0d))
