@@ -327,19 +327,19 @@ def obj000f(
 ) -> dict[str, Any]:
     """Moving with light"""
     if len(xobj) == 3:
-        (value,) = LIGHT_STRUCT.unpack(xobj + b"\x00")
+        (illum,) = LIGHT_STRUCT.unpack(xobj + b"\x00")
 
         if device_type in ["MJYD02YL", "RTCGQ02LM"]:
             # MJYD02YL:  1 - moving no light, 100 - moving with light
             # RTCGQ02LM: 0 - moving no light, 256 - moving with light
-            return {"motion": 1, "motion timer": 1, "light": int(value >= 100)}
+            return {"motion": 1, "motion timer": 1, "light": int(illum >= 100)}
         elif device_type == "CGPR1":
             # CGPR1:     moving, value is illumination in lux
+            device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
             return {
                 "motion": 1,
                 "motion timer": 1,
-                "illuminance": value,
-                "light": int(value >= 100),
+                "light": int(illum >= 100),
             }
         else:
             return {}
@@ -555,6 +555,7 @@ def obj1007(
     if len(xobj) == 3:
         (illum,) = ILL_STRUCT.unpack(xobj + b"\x00")
         device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
+        return {"light": 1 if illum == 100 else 0}
     return {}
 
 
