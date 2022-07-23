@@ -19,7 +19,7 @@ KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_BATTERY = DeviceKey(key="battery", device_id=None)
 KEY_SIGNAL_STRENGTH = DeviceKey(key="signal_strength", device_id=None)
-KEY_ILLUMINANCE =  DeviceKey(key="illuminance", device_id=None)
+KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
 KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
 KEY_MOISTURE = DeviceKey(key="moisture", device_id=None)
 
@@ -542,65 +542,83 @@ def test_Xiaomi_HHCCJCY01_all_values():
     """Test Xiaomi parser for HHCCJCY01."""
 
     device = XiaomiBluetoothDeviceData()
-    device.update(bytes_to_service_info(b'q \x98\x00fz>j\x8d|\xc4\r\x07\x10\x03\x00\x00\x00', address="C4:7C:8D:6A:5C:E6"))
-    device.update(bytes_to_service_info(b'q \x98\x00hz>j\x8d|\xc4\r\t\x10\x02W\x02', address="C4:7C:8D:6A:5C:E6"))
-    device.update(bytes_to_service_info(b'q \x98\x00Gz>j\x8d|\xc4\r\x08\x10\x01@', address="C4:7C:8D:6A:5C:E6"))
-    assert device.update( bytes_to_service_info(b'q \x98\x00iz>j\x8d|\xc4\r\x04\x10\x02\xf4\x00', address="C4:7C:8D:6A:5C:E6")) == SensorUpdate(
-            title=None,
-            devices={
-                None: SensorDeviceInfo(
-                    name="Test",
-                    manufacturer="Xiaomi",
-                    model="HHCCJCY01",
-                    hw_version=None,
-                    sw_version="Xiaomi (MiBeacon V2)",
-                )
-            },
-            entity_descriptions={
-                KEY_TEMPERATURE: SensorDescription(
-                    device_key=KEY_TEMPERATURE,
-                    device_class=DeviceClass.TEMPERATURE,
-                    native_unit_of_measurement=Units.TEMP_CELSIUS,
-                ),
-                KEY_ILLUMINANCE: SensorDescription(
-                    device_key=KEY_ILLUMINANCE,
-                    device_class=DeviceClass.ILLUMINANCE,
-                    native_unit_of_measurement=Units.LIGHT_LUX,
-                ),
-                KEY_CONDUCTIVITY: SensorDescription(
-                    device_key=KEY_CONDUCTIVITY,
-                    device_class=None,
-                    native_unit_of_measurement=Units.CONDUCTIVITY,
-                ),
-                KEY_MOISTURE: SensorDescription(
-                    device_key=KEY_MOISTURE,
-                    device_class=None,
-                    native_unit_of_measurement=Units.PERCENTAGE,
-                ),
-                KEY_SIGNAL_STRENGTH: SensorDescription(
-                    device_key=KEY_SIGNAL_STRENGTH,
-                    device_class=DeviceClass.SIGNAL_STRENGTH,
-                    native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
-                ),
-            },
-            entity_values={
-                KEY_TEMPERATURE: SensorValue(
-                    name="Temperature", device_key=KEY_TEMPERATURE, native_value=24.4
-                ),
-                KEY_ILLUMINANCE: SensorValue(
-                    name="Illuminance", device_key=KEY_ILLUMINANCE, native_value=0
-                ),
-                KEY_CONDUCTIVITY: SensorValue(
-                    name="Conductivity", device_key=KEY_CONDUCTIVITY, native_value=599
-                ),
-                KEY_MOISTURE: SensorValue(
-                    name="Moisture", device_key=KEY_MOISTURE, native_value=64
-                ),
-                KEY_SIGNAL_STRENGTH: SensorValue(
-                    name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
-                ),
-            },
+    device.update(
+        bytes_to_service_info(
+            b"q \x98\x00fz>j\x8d|\xc4\r\x07\x10\x03\x00\x00\x00",
+            address="C4:7C:8D:6A:3E:7A",
         )
+    )
+    device.update(
+        bytes_to_service_info(
+            b"q \x98\x00hz>j\x8d|\xc4\r\t\x10\x02W\x02", address="C4:7C:8D:6A:3E:7A"
+        )
+    )
+    device.update(
+        bytes_to_service_info(
+            b"q \x98\x00Gz>j\x8d|\xc4\r\x08\x10\x01@", address="C4:7C:8D:6A:3E:7A"
+        )
+    )
+    assert device.update(
+        bytes_to_service_info(
+            b"q \x98\x00iz>j\x8d|\xc4\r\x04\x10\x02\xf4\x00",
+            address="C4:7C:8D:6A:3E:7A",
+        )
+    ) == SensorUpdate(
+        title=None,
+        devices={
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="HHCCJCY01",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V2)",
+            )
+        },
+        entity_descriptions={
+            KEY_TEMPERATURE: SensorDescription(
+                device_key=KEY_TEMPERATURE,
+                device_class=DeviceClass.TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+            ),
+            KEY_ILLUMINANCE: SensorDescription(
+                device_key=KEY_ILLUMINANCE,
+                device_class=DeviceClass.ILLUMINANCE,
+                native_unit_of_measurement=Units.LIGHT_LUX,
+            ),
+            KEY_CONDUCTIVITY: SensorDescription(
+                device_key=KEY_CONDUCTIVITY,
+                device_class=None,
+                native_unit_of_measurement=Units.CONDUCTIVITY,
+            ),
+            KEY_MOISTURE: SensorDescription(
+                device_key=KEY_MOISTURE,
+                device_class=None,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=24.4
+            ),
+            KEY_ILLUMINANCE: SensorValue(
+                name="Illuminance", device_key=KEY_ILLUMINANCE, native_value=0
+            ),
+            KEY_CONDUCTIVITY: SensorValue(
+                name="Conductivity", device_key=KEY_CONDUCTIVITY, native_value=599
+            ),
+            KEY_MOISTURE: SensorValue(
+                name="Moisture", device_key=KEY_MOISTURE, native_value=64
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
 
 
 def test_Xiaomi_GCLS002():

@@ -979,8 +979,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             xiaomi_mac = xiaomi_mac_reversed[::-1]
             if sys.platform != "darwin" and xiaomi_mac != source_mac:
                 _LOGGER.debug(
-                    "Xiaomi MAC address doesn't match data MAC address. Data: %s",
-                    data.hex(),
+                    "MAC address doesn't match data frame. Expected: %s, Got: %s)",
+                    to_mac(xiaomi_mac),
+                    to_mac(source_mac),
                 )
                 return None
         else:
