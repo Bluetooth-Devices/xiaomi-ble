@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.0 (2022-07-23)
+### Feature
+* Add lux sensor to cgpr1 ([#5](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/5)) ([`accb30e`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/accb30eaa5dc710518e02b92bbfa1ed6c495c992))
+
 ## v0.2.0 (2022-07-23)
 ### Feature
 * Add support for more sensor types ([`0a87594`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/0a875940fdf7330d53a03f3ca7b7a489353396b6))
