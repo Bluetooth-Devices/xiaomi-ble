@@ -13,7 +13,7 @@ from sensor_state_data import (
     Units,
 )
 
-from xiaomi_ble.parser import XiaomiBluetoothDeviceData
+from xiaomi_ble.parser import EncryptionScheme, XiaomiBluetoothDeviceData
 
 KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
@@ -41,6 +41,27 @@ def bytes_to_service_info(
         service_uuids=["0000fe95-0000-1000-8000-00805f9b34fb"],
         source="",
     )
+
+
+def test_encryption_needs_v2():
+    """Test that we can detect what kind of encryption key a device needs."""
+    data_string = b"X0\xb6\x03\xd2\x8b\x98\xc5A$\xf8\xc3I\x14vu~\x00\x00\x00\x99"
+    advertisement = bytes_to_service_info(data_string, address="F8:24:41:C5:98:8B")
+
+    device = XiaomiBluetoothDeviceData()
+
+    assert device.supported(advertisement)
+    assert device.encryption_scheme == EncryptionScheme.MIBEACON_LEGACY
+
+
+def test_encryption_needs_v5():
+    """Test that we can detect what kind of encryption key a device needs."""
+    data_string = b"XXH\x0bh_\x124-XZ\x0b\x18A\xe2\xaa\x00\x0e\x00\xa4\x96O\xb5"
+    advertisement = bytes_to_service_info(data_string, address="5A:58:2D:34:12:5F")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert device.encryption_scheme == EncryptionScheme.MIBEACON_4_5
 
 
 def test_Xiaomi_LYWSDCGQ(caplog):

@@ -10,6 +10,7 @@ import logging
 import math
 import struct
 import sys
+from enum import Enum
 from typing import Any
 
 from bluetooth_sensor_state_data import BluetoothData
@@ -18,6 +19,18 @@ from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import SensorLibrary, Units
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class EncryptionScheme(Enum):
+
+    # No encryption is needed to use this device
+    NONE = "none"
+
+    # 12 byte encryption key expected
+    MIBEACON_LEGACY = "mibeacon_legacy"
+
+    # 16 byte encryption key expected
+    MIBEACON_4_5 = "mibeacon_4_5"
 
 
 def to_mac(addr: bytes) -> str:
@@ -913,6 +926,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         super().__init__()
         self.aeskey = aeskey
         self.unhandled: dict[str, Any] = {}
+        self.encryption_scheme = EncryptionScheme.NONE
 
     def _start_update(self, service_info: BluetoothServiceInfo) -> None:
         """Update from BLE advertisement data."""
@@ -1051,8 +1065,10 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 sinfo += ", Encryption"
                 firmware = "Xiaomi (MiBeacon V" + str(frctrl_version) + " encrypted)"
                 if frctrl_version <= 3:
+                    self.encryption_scheme = EncryptionScheme.MIBEACON_LEGACY
                     payload = self._decrypt_mibeacon_legacy(data, i, xiaomi_mac)
                 else:
+                    self.encryption_scheme = EncryptionScheme.MIBEACON_4_5
                     payload = self._decrypt_mibeacon_v4_v5(data, i, xiaomi_mac)
             else:  # No encryption
                 # check minimum advertisement length with data
