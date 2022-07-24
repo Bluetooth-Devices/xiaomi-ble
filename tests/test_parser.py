@@ -1,5 +1,6 @@
 """The tests for the Xiaomi ble parser."""
 import logging
+from unittest.mock import patch
 
 import pytest
 from home_assistant_bluetooth import BluetoothServiceInfo
@@ -27,6 +28,13 @@ KEY_MOISTURE = DeviceKey(key="moisture", device_id=None)
 @pytest.fixture(autouse=True)
 def logging_config(caplog):
     caplog.set_level(logging.DEBUG)
+
+
+@pytest.fixture(autouse=True)
+def mock_platform():
+    with patch("sys.platform") as p:
+        p.return_value = "linux"
+        yield p
 
 
 def bytes_to_service_info(

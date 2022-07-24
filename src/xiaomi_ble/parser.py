@@ -927,6 +927,25 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.aeskey = aeskey
         self.unhandled: dict[str, Any] = {}
         self.encryption_scheme = EncryptionScheme.NONE
+        self.mac_known = sys.platform != "darwin"
+
+    def supported(self, data: BluetoothServiceInfo) -> bool:
+        if not super().supported(data):
+            return False
+
+        # Where a device uses encryption we need to known its actual MAC address.
+        # As the encryption uses it as part of the nonce.
+        # On macOS we instead only know its CoreBluetooth UUID.
+        # It seems its impossible to automatically get that in the general case.
+        # So devices do duplicate the MAC in the advertisement, we use that
+        # when we can on macOS.
+        # We may want to ask the user for the MAC address during config flow
+        # For now, just hide these devices for macOS users.
+        if self.encryption_scheme != EncryptionScheme.NONE:
+            if not self.mac_known:
+                return False
+
+        return True
 
     def _start_update(self, service_info: BluetoothServiceInfo) -> None:
         """Update from BLE advertisement data."""
@@ -999,6 +1018,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                     to_mac(source_mac),
                 )
                 return None
+            self.mac_known = True
         else:
             xiaomi_mac = source_mac
 
