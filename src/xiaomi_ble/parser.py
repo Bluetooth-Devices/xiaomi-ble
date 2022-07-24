@@ -565,7 +565,7 @@ def obj1007(
         (illum,) = ILL_STRUCT.unpack(xobj + b"\x00")
         if device_type in ["MJYD02YL", "MCCGQ02HL"]:
             # 100 means light, else dark (0 or 1)
-            # MCCGQ02HL might use obj1018 for light sensor, just added here to be sure. 
+            # MCCGQ02HL might use obj1018 for light sensor, just added here to be sure.
             return {"light": 1 if illum == 100 else 0}
         elif device_type in ["HHCCJCY01", "GCLS002"]:
             # illumination in lux
