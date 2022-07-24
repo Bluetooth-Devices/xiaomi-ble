@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.0 (2022-07-24)
+### Feature
+* New bindkey_verified variable to track whether encryption is working ([`dc622a5`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/dc622a511e1909d96d706b77ff86c8ad1905bda0))
+
 ## v0.4.1 (2022-07-24)
 ### Fix
 * Hide encrypted devices on macOS where we don't know MAC address (for now) ([`20d0e62`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/20d0e62939907b8d58888cd346bda5f3365f943c))
