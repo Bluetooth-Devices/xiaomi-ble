@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.1 (2022-07-24)
+### Fix
+* Hide encrypted devices on macOS where we don't know MAC address (for now) ([`20d0e62`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/20d0e62939907b8d58888cd346bda5f3365f943c))
+
 ## v0.4.0 (2022-07-23)
 ### Feature
 * Expose type of encryption to use on XiaomiBluetoothDeviceData ([`935482d`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/935482d0a78daf10b6e2ff772d32d195eba923ea))
