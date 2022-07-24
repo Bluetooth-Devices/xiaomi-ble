@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.1 (2022-07-24)
+### Fix
+* Unset bindkey_verified on legacy devices if payload is corrupt as may be wrong key ([`f57827a`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/f57827a7caa0c9c6721f1d9773e89f3472ccf5c7))
+
 ## v0.5.0 (2022-07-24)
 ### Feature
 * New bindkey_verified variable to track whether encryption is working ([`dc622a5`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/dc622a511e1909d96d706b77ff86c8ad1905bda0))
