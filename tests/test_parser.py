@@ -111,6 +111,43 @@ def test_bindkey_wrong():
     )
 
 
+def test_bindkey_wrong_legacy():
+    """Test Xiaomi parser for YLKG07YL with wrong encryption key."""
+    bindkey = "b853075158487aa39a5b5ea9"
+    data_string = b"X0\xb6\x03\xd2\x8b\x98\xc5A$\xf8\xc3I\x14vu~\x00\x00\x00\x99"
+    advertisement = bytes_to_service_info(data_string, address="F8:24:41:C5:98:8B")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title=None,
+        devices={
+            None: SensorDeviceInfo(
+                name="Test",
+                manufacturer="Xiaomi",
+                model="YLKG07YL/YLKG08YL",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+    assert device.unhandled == {}
+
+
 def test_Xiaomi_LYWSDCGQ(caplog):
     """Test Xiaomi parser for LYWSDCGQ."""
     data_string = b"P \xaa\x01\xda!\x9354-X\r\x10\x04\xfe\x00H\x02"

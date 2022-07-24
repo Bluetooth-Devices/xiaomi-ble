@@ -1137,6 +1137,12 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 obj_length = payload[payload_start + 2]
                 next_start = payload_start + 3 + obj_length
                 if payload_length < next_start:
+                    # The payload segments are corrupted - if this is legacy encryption
+                    # then the key is probably just wrong
+                    # V4 encryption has an authentication tag, so we don't apply the
+                    # same restriction there.
+                    if self.encryption_scheme == EncryptionScheme.MIBEACON_LEGACY:
+                        self.bindkey_verified = False
                     _LOGGER.debug(
                         "Invalid payload data length, payload: %s", payload.hex()
                     )
