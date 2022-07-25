@@ -349,11 +349,7 @@ def obj000f(
         elif device_type == "CGPR1":
             # CGPR1:     moving, value is illumination in lux
             device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
-            return {
-                "motion": 1,
-                "motion timer": 1,
-                "light": int(illum >= 100),
-            }
+            return {"motion": 1, "motion timer": 1}
         else:
             return {}
     else:
@@ -567,8 +563,15 @@ def obj1007(
     """Illuminance"""
     if len(xobj) == 3:
         (illum,) = ILL_STRUCT.unpack(xobj + b"\x00")
-        device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
-        return {"light": 1 if illum == 100 else 0}
+        if device_type in ["MJYD02YL", "MCCGQ02HL"]:
+            # 100 means light, else dark (0 or 1)
+            # MCCGQ02HL might use obj1018 for light sensor, just added here to be sure.
+            return {"light": 1 if illum == 100 else 0}
+        elif device_type in ["HHCCJCY01", "GCLS002"]:
+            # illumination in lux
+            device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
+        else:
+            return {}
     return {}
 
 
