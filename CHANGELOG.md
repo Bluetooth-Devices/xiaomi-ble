@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.0 (2022-07-25)
+### Feature
+* Add Formaldehyde, Consumable and Voltage sensor ([`8292de7`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/8292de7425597897d562ea43380af221c661df90))
+
 ## v0.5.2 (2022-07-25)
 ### Fix
 * Add special casing for when illumination is used for a binary sensor instead of a sensor ([`59c5729`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/59c5729b4c2f39944d61ab65c3aee40c6d041d21))
