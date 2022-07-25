@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.2 (2022-07-25)
+### Fix
+* Add special casing for when illumination is used for a binary sensor instead of a sensor ([`59c5729`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/59c5729b4c2f39944d61ab65c3aee40c6d041d21))
+
 ## v0.5.1 (2022-07-24)
 ### Fix
 * Unset bindkey_verified on legacy devices if payload is corrupt as may be wrong key ([`f57827a`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/f57827a7caa0c9c6721f1d9773e89f3472ccf5c7))
