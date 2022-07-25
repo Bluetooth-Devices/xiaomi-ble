@@ -609,7 +609,13 @@ def obj1010(
     """Formaldehyde"""
     if len(xobj) == 2:
         (fmdh,) = FMDH_STRUCT.unpack(xobj)
-        return {"formaldehyde": fmdh / 100}
+        device.update_sensor(
+            key="formaldehyde",
+            name="Formaldehyde",
+            native_unit_of_measurement=Units.CONCENTRATION_MILLIGRAMS_PER_CUBIC_METER,
+            native_value=fmdh / 100,
+        )
+        return {}
     else:
         return {}
 
@@ -625,7 +631,13 @@ def obj1013(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Consumable (in percent)"""
-    return {"consumable": xobj[0]}
+    device.update_sensor(
+        key="consumable",
+        name="Consumable",
+        native_unit_of_measurement=Units.PERCENTAGE,
+        native_value=xobj[0],
+    )
+    return {}
 
 
 def obj1014(
@@ -693,7 +705,13 @@ def obj100a(
     batt = xobj[0]
     volt = 2.2 + (3.1 - 2.2) * (batt / 100)
     device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
-    return {"voltage": volt}
+    device.update_sensor(
+        key="voltage",
+        name="Voltage",
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        native_value=volt,
+    )
+    return {}
 
 
 def obj100d(
