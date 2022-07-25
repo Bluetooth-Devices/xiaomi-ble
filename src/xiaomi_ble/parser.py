@@ -628,7 +628,13 @@ def obj1013(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Consumable (in percent)"""
-    return {"consumable": xobj[0]}
+    device.update_sensor(
+        key="consumable",
+        name="Consumable",
+        native_unit_of_measurement=Units.PERCENTAGE,
+        native_value=xobj[0],
+    )
+    return {}
 
 
 def obj1014(
