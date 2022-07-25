@@ -606,7 +606,13 @@ def obj1010(
     """Formaldehyde"""
     if len(xobj) == 2:
         (fmdh,) = FMDH_STRUCT.unpack(xobj)
-        return {"formaldehyde": fmdh / 100}
+        device.update_sensor(
+            key="formaldehyde",
+            name="Formaldehyde",
+            native_unit_of_measurement=Units.CONCENTRATION_MILLIGRAMS_PER_CUBIC_METER,
+            native_value=fmdh / 100,
+        )
+        return {}
     else:
         return {}
 
