@@ -702,7 +702,13 @@ def obj100a(
     batt = xobj[0]
     volt = 2.2 + (3.1 - 2.2) * (batt / 100)
     device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
-    return {"voltage": volt}
+    device.update_sensor(
+        key="voltage",
+        name="Voltage",
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        native_value=volt,
+    )
+    return {}
 
 
 def obj100d(
