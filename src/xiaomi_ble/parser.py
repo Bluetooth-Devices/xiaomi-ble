@@ -966,6 +966,10 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # or encryption is not in use
         self.bindkey_verified = False
 
+        # This is set to true if we successfully detected a payload
+        # This includes the case where we parsed but skipped unsupported tags
+        self.seen_payload = False
+
     def supported(self, data: BluetoothServiceInfo) -> bool:
         if not super().supported(data):
             return False
@@ -1182,6 +1186,8 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                             data.hex(),
                         )
                 payload_start = next_start
+
+            self.seen_payload = True
 
         return self.unhandled
 
