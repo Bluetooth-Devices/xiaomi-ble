@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.1 (2022-07-27)
+### Fix
+* Voltage sensor should have a device class ([`600bb78`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/600bb7819752b6f742e515eea177b65c83b1d3dc))
+
 ## v0.6.0 (2022-07-25)
 ### Feature
 * Add Formaldehyde, Consumable and Voltage sensor ([`8292de7`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/8292de7425597897d562ea43380af221c661df90))
