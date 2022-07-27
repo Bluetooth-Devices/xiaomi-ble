@@ -966,9 +966,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # or encryption is not in use
         self.bindkey_verified = False
 
-        # This is set to true if we successfully detected a payload
-        # This includes the case where we parsed but skipped unsupported tags
-        self.seen_payload = False
+        # If this is True, then we have not seen an advertisement with a payload
+        # Until we see a payload, we can't tell if this device is encrypted or not
+        self.pending = True
 
     def supported(self, data: BluetoothServiceInfo) -> bool:
         if not super().supported(data):
@@ -1121,6 +1121,8 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
         # check that data contains object
         if frctrl_object_include != 0:
+            self.pending = False
+
             # check for encryption
             if frctrl_is_encrypted != 0:
                 sinfo += ", Encryption"
@@ -1186,8 +1188,6 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                             data.hex(),
                         )
                 payload_start = next_start
-
-            self.seen_payload = True
 
         return self.unhandled
 

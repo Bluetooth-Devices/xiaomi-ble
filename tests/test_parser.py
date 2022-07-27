@@ -61,7 +61,7 @@ def test_blank_advertisemnts_then_encrypted():
     assert device.supported(advertisement)
 
     assert device.encryption_scheme == EncryptionScheme.NONE
-    assert device.seen_payload == False
+    assert device.pending == True
     assert not device.bindkey_verified
 
     # Second advertisement has encryption
@@ -70,7 +70,7 @@ def test_blank_advertisemnts_then_encrypted():
     device.update(advertisement)
 
     assert device.encryption_scheme == EncryptionScheme.MIBEACON_4_5
-    assert device.seen_payload == False
+    assert device.pending == False
     assert not device.bindkey_verified
 
 
@@ -88,7 +88,7 @@ def test_blank_advertisemnts_then_unencrypted():
     assert device.supported(advertisement)
 
     assert device.encryption_scheme == EncryptionScheme.NONE
-    assert device.seen_payload == False
+    assert device.pending == True
     assert not device.bindkey_verified
 
     # Second advertisement has encryption
@@ -97,7 +97,7 @@ def test_blank_advertisemnts_then_unencrypted():
     device.update(advertisement)
 
     assert device.encryption_scheme == EncryptionScheme.NONE
-    assert device.seen_payload == True
+    assert device.pending == False
     assert not device.bindkey_verified
 
 
