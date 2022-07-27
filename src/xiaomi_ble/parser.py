@@ -16,7 +16,7 @@ from typing import Any
 from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
 from home_assistant_bluetooth import BluetoothServiceInfo
-from sensor_state_data import SensorLibrary, Units
+from sensor_state_data import SensorLibrary, Units, DeviceClass
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -708,6 +708,7 @@ def obj100a(
     device.update_sensor(
         key="voltage",
         name="Voltage",
+        device_class=DeviceClass.VOLT,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         native_value=volt,
     )
