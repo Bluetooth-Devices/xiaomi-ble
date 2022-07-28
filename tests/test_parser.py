@@ -55,13 +55,14 @@ def test_blank_advertisemnts_then_encrypted():
     """Test that we can reject empty payloads."""
     device = XiaomiBluetoothDeviceData()
 
-    # First advertisement has a header but no payload, so we can't tell if it has encryption
+    # First advertisement has a header but no payload, so we can't tell
+    # if it has encryption
     data_string = b"0X[\x05\x02H<\xd48\xc1\xa4\x08"
     advertisement = bytes_to_service_info(data_string, address="A4:C1:38:D4:3C:48")
     assert device.supported(advertisement)
 
     assert device.encryption_scheme == EncryptionScheme.NONE
-    assert device.pending == True
+    assert device.pending is True
     assert not device.bindkey_verified
 
     # Second advertisement has encryption
@@ -70,7 +71,7 @@ def test_blank_advertisemnts_then_encrypted():
     device.update(advertisement)
 
     assert device.encryption_scheme == EncryptionScheme.MIBEACON_4_5
-    assert device.pending == False
+    assert device.pending is False
     assert not device.bindkey_verified
 
 
@@ -82,13 +83,14 @@ def test_blank_advertisemnts_then_unencrypted():
 
     device = XiaomiBluetoothDeviceData()
 
-    # First advertisement has a header but no payload, so we can't tell if it has encryption
+    # First advertisement has a header but no payload, so we can't tell
+    # if it has encryption
     data_string = b"1 \x98\x00\x12\xf3Ok\x8d|\xc4\r"
     advertisement = bytes_to_service_info(data_string, address="C4:7C:8D:6B:4F:F3")
     assert device.supported(advertisement)
 
     assert device.encryption_scheme == EncryptionScheme.NONE
-    assert device.pending == True
+    assert device.pending is True
     assert not device.bindkey_verified
 
     # Second advertisement has encryption
@@ -97,7 +99,7 @@ def test_blank_advertisemnts_then_unencrypted():
     device.update(advertisement)
 
     assert device.encryption_scheme == EncryptionScheme.NONE
-    assert device.pending == False
+    assert device.pending is False
     assert not device.bindkey_verified
 
 
