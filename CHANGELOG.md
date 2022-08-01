@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.7.0 (2022-08-01)
+### Feature
+* Add XMZNMSBMCN03 ([#9](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/9)) ([`7ff0d49`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/7ff0d49f73f8150e520aaa77868a4f1bd65363b1))
+
 ## v0.6.4 (2022-08-01)
 ### Fix
 * Refactor tests to avoid mypy failure ([`c1456d7`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/c1456d7fd96300ffc7bcc21c7d17d6ec63e7a287))
