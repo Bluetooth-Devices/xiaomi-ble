@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.3 (2022-08-01)
+### Fix
+* Unset bindkey_verified if bindkey starts to fail ([`d2fc9eb`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/d2fc9eb36289a0c4779e97439e682016ae0de1fc))
+
 ## v0.6.2 (2022-07-28)
 ### Fix
 * Track whether or not we have seen a packet with a payload (HA75833) ([#8](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/8)) ([`c99f9a2`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/c99f9a2cbd09ac6cebd31349d49d6f038bfea0e6))
