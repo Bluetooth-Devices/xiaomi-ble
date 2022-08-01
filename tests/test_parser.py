@@ -72,7 +72,6 @@ def test_blank_advertisemnts_then_encrypted():
 
     assert device.encryption_scheme == EncryptionScheme.MIBEACON_4_5
     assert device.pending is False
-    assert device.last_service_info == advertisement
 
 
 def test_blank_advertisemnts_then_unencrypted():
@@ -91,7 +90,6 @@ def test_blank_advertisemnts_then_unencrypted():
 
     assert device.encryption_scheme == EncryptionScheme.NONE
     assert device.pending is True
-    assert device.last_service_info is None
 
     # Second advertisement has encryption
     data_string = b"q \x98\x00\x12\xf3Ok\x8d|\xc4\r\x04\x10\x02\xc4\x00"
@@ -100,6 +98,49 @@ def test_blank_advertisemnts_then_unencrypted():
 
     assert device.encryption_scheme == EncryptionScheme.NONE
     assert device.pending is False
+
+
+def test_blank_advertisemnts_then_encrypted_last_service_info():
+    """Test that we can capture valid service info records"""
+    device = XiaomiBluetoothDeviceData()
+
+    # First advertisement has a header but no payload, so we can't tell
+    # if it has encryption
+    data_string = b"0X[\x05\x02H<\xd48\xc1\xa4\x08"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:D4:3C:48")
+    assert device.supported(advertisement)
+
+    assert device.last_service_info is None
+
+    # Second advertisement has encryption
+    data_string = b"XX[\x05\x01H<\xd48\xc1\xa4\x9c\xf2U\xcf\xdd\x00\x00\x00/\xae/\xf2"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:D4:3C:48")
+    device.update(advertisement)
+
+    assert device.last_service_info == advertisement
+
+
+def test_blank_advertisemnts_then_unencrypted_last_service_info():
+    """Test that we can capture valid service info records."""
+
+    # NOTE: THIS IS SYNTHETIC TEST DATA - i took a known unecrypted device and flipped
+    # frctrl_object_include, then truncated it to not include the data payload
+
+    device = XiaomiBluetoothDeviceData()
+
+    # First advertisement has a header but no payload, so we can't tell
+    # if it has encryption
+    data_string = b"1 \x98\x00\x12\xf3Ok\x8d|\xc4\r"
+    advertisement = bytes_to_service_info(data_string, address="C4:7C:8D:6B:4F:F3")
+    assert device.supported(advertisement)
+
+    assert device.last_service_info is None
+
+    # Second advertisement has encryption
+    data_string = b"q \x98\x00\x12\xf3Ok\x8d|\xc4\r\x04\x10\x02\xc4\x00"
+    advertisement = bytes_to_service_info(data_string, address="C4:7C:8D:6B:4F:F3")
+    device.update(advertisement)
+
     assert device.last_service_info == advertisement
 
 
