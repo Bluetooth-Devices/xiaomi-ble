@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.4 (2022-08-01)
+### Fix
+* Refactor tests to avoid mypy failure ([`c1456d7`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/c1456d7fd96300ffc7bcc21c7d17d6ec63e7a287))
+* Track last full service info so that we can quickly reauth the bindkey ([`c4feb20`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/c4feb20468fdfdd1a9c80c0bee77bef2a250d462))
+
 ## v0.6.3 (2022-08-01)
 ### Fix
 * Unset bindkey_verified if bindkey starts to fail ([`d2fc9eb`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/d2fc9eb36289a0c4779e97439e682016ae0de1fc))
