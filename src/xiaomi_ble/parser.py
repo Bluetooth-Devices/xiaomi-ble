@@ -1198,8 +1198,15 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # check for minimum length of encrypted advertisement
         if len(data) < i + 9:
             _LOGGER.debug("Invalid data length (for decryption), adv: %s", data.hex())
-        # try to find encryption key for current device
+            return None
+
+        if not self.bindkey:
+            self.bindkey_verified = False
+            _LOGGER.debug("Encryption key not set and adv is encrypted")
+            return None
+
         if not self.bindkey or len(self.bindkey) != 16:
+            self.bindkey_verified = False
             _LOGGER.error("Encryption key should be 16 bytes (32 characters) long")
             return None
 
@@ -1213,12 +1220,14 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         try:
             decrypted_payload = cipher.decrypt_and_verify(cipherpayload, token)
         except ValueError as error:
+            self.bindkey_verified = False
             _LOGGER.warning("Decryption failed: %s", error)
             _LOGGER.debug("token: %s", token.hex())
             _LOGGER.debug("nonce: %s", nonce.hex())
             _LOGGER.debug("cipherpayload: %s", cipherpayload.hex())
             return None
         if decrypted_payload is None:
+            self.bindkey_verified = False
             _LOGGER.error(
                 "Decryption failed for %s, decrypted payload is None",
                 to_mac(xiaomi_mac),
@@ -1234,9 +1243,18 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # check for minimum length of encrypted advertisement
         if len(data) < i + 7:
             _LOGGER.debug("Invalid data length (for decryption), adv: %s", data.hex())
-        if not self.bindkey or len(self.bindkey) != 12:
+            return None
+
+        if not self.bindkey:
+            self.bindkey_verified = False
+            _LOGGER.debug("Encryption key not set and adv is encrypted")
+            return None
+
+        if len(self.bindkey) != 12:
+            self.bindkey_verified = False
             _LOGGER.error("Encryption key should be 12 bytes (24 characters) long")
             return None
+
         key = b"".join([self.bindkey[0:6], bytes.fromhex("8d3d3c97"), self.bindkey[6:]])
 
         nonce = b"".join([data[0:5], data[-4:-1], xiaomi_mac[::-1][:-1]])
@@ -1248,11 +1266,13 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         try:
             decrypted_payload = cipher.decrypt(cipherpayload)
         except ValueError as error:
+            self.bindkey_verified = False
             _LOGGER.warning("Decryption failed: %s", error)
             _LOGGER.debug("nonce: %s", nonce.hex())
             _LOGGER.debug("cipherpayload: %s", cipherpayload.hex())
             return None
         if decrypted_payload is None:
+            self.bindkey_verified = False
             _LOGGER.warning(
                 "Decryption failed for %s, decrypted payload is None",
                 to_mac(xiaomi_mac),

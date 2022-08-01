@@ -159,6 +159,21 @@ def test_bindkey_wrong():
     )
 
 
+def test_bindkey_verified_can_be_unset_v4():
+    """Test Xiaomi parser for RTCGQ02LM with wrong encryption key."""
+    bindkey = "814aac74c4f17b6c1581e1ab87816b99"
+    data_string = (
+        b"XY\x8d\n\x17\x0f\xc4\xe0D\xefT|" b"\xc2z\\\x03\xa1\x00\x00\x00y\r\xf2X"
+    )
+    advertisement = bytes_to_service_info(data_string, address="54:EF:44:E0:C4:0F")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    device.bindkey_verified = True
+
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+
+
 def test_bindkey_wrong_legacy():
     """Test Xiaomi parser for YLKG07YL with wrong encryption key."""
     bindkey = "b853075158487aa39a5b5ea9"
@@ -194,6 +209,19 @@ def test_bindkey_wrong_legacy():
     )
 
     assert device.unhandled == {}
+
+
+def test_bindkey_verified_can_be_unset_legacy():
+    """Test Xiaomi parser for YLKG07YL with wrong encryption key."""
+    bindkey = "b853075158487aa39a5b5ea9"
+    data_string = b"X0\xb6\x03\xd2\x8b\x98\xc5A$\xf8\xc3I\x14vu~\x00\x00\x00\x99"
+    advertisement = bytes_to_service_info(data_string, address="F8:24:41:C5:98:8B")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    device.bindkey_verified = True
+
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
 
 
 def test_Xiaomi_LYWSDCGQ(caplog):
