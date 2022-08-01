@@ -970,6 +970,11 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # Until we see a payload, we can't tell if this device is encrypted or not
         self.pending = True
 
+        # The last service_info we saw that had a payload
+        # We keep this to help in reauth flows where we want to reprocess and old
+        # value with a new bindkey.
+        self.last_service_info: BluetoothServiceInfo | None = None
+
     def supported(self, data: BluetoothServiceInfo) -> bool:
         if not super().supported(data):
             return False
@@ -1002,18 +1007,17 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         mac = bytes.fromhex(mac_readable.replace(":", ""))
 
         for id, data in service_info.service_data.items():
-            self._parse_xiaomi(service_info.name, data, mac)
+            if self._parse_xiaomi(service_info.name, data, mac):
+                self.last_service_info = service_info
 
-    def _parse_xiaomi(
-        self, name: str, data: bytes, source_mac: bytes
-    ) -> dict[str, Any] | None:
+    def _parse_xiaomi(self, name: str, data: bytes, source_mac: bytes) -> bool:
         """Parser for Xiaomi sensors"""
         # check for adstruc length
         i = 5  # till Frame Counter
         msg_length = len(data)
         if msg_length < i:
             _LOGGER.debug("Invalid data length (initial check), adv: %s", data.hex())
-            return None
+            return False
 
         # extract frame control bits
         frctrl = data[0] + (data[1] << 8)
@@ -1034,7 +1038,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 "Device is a mesh type device, which is not supported. Data: %s",
                 data.hex(),
             )
-            return None
+            return False
 
         # Check that version is 2 or higher
         if frctrl_version < 2:
@@ -1042,14 +1046,14 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 "Device is using old data format, which is not supported. Data: %s",
                 data.hex(),
             )
-            return None
+            return False
 
         # Check that MAC in data is the same as the source MAC
         if frctrl_mac_include != 0:
             i += 6
             if msg_length < i:
                 _LOGGER.debug("Invalid data length (in MAC check), adv: %s", data.hex())
-                return None
+                return False
             xiaomi_mac_reversed = data[5:11]
             xiaomi_mac = xiaomi_mac_reversed[::-1]
             if sys.platform != "darwin" and xiaomi_mac != source_mac:
@@ -1058,7 +1062,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                     to_mac(xiaomi_mac),
                     to_mac(source_mac),
                 )
-                return None
+                return False
             self.mac_known = True
         else:
             xiaomi_mac = source_mac
@@ -1074,7 +1078,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 data.hex(),
             )
             _LOGGER.debug("Unknown Xiaomi device found. Data: %s", data.hex())
-            return None
+            return False
 
         self.set_device_type(device_type)
 
@@ -1105,7 +1109,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 _LOGGER.debug(
                     "Invalid data length (in capability check), adv: %s", data.hex()
                 )
-                return None
+                return False
             capability_types = data[i - 1]
             sinfo += ", Capability: " + hex(capability_types)
             if (capability_types & 0x20) != 0:
@@ -1115,39 +1119,39 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                         "Invalid data length (in capability type check), adv: %s",
                         data.hex(),
                     )
-                    return None
+                    return False
                 capability_io = data[i - 1]
                 sinfo += ", IO: " + hex(capability_io)
 
         # check that data contains object
-        if frctrl_object_include != 0:
-            self.pending = False
-
-            # check for encryption
-            if frctrl_is_encrypted != 0:
-                sinfo += ", Encryption"
-                firmware = "Xiaomi (MiBeacon V" + str(frctrl_version) + " encrypted)"
-                if frctrl_version <= 3:
-                    self.encryption_scheme = EncryptionScheme.MIBEACON_LEGACY
-                    payload = self._decrypt_mibeacon_legacy(data, i, xiaomi_mac)
-                else:
-                    self.encryption_scheme = EncryptionScheme.MIBEACON_4_5
-                    payload = self._decrypt_mibeacon_v4_v5(data, i, xiaomi_mac)
-            else:  # No encryption
-                # check minimum advertisement length with data
-                firmware = "Xiaomi (MiBeacon V" + str(frctrl_version) + ")"
-                sinfo += ", No encryption"
-                if msg_length < i + 3:
-                    _LOGGER.debug(
-                        "Invalid data length (in non-encrypted data), adv: %s",
-                        data.hex(),
-                    )
-                    return None
-                payload = data[i:]
-        else:
+        if frctrl_object_include == 0:
             # data does not contain Object
             _LOGGER.debug("Advertisement doesn't contain payload, adv: %s", data.hex())
-            return None
+            return False
+
+        self.pending = False
+
+        # check for encryption
+        if frctrl_is_encrypted != 0:
+            sinfo += ", Encryption"
+            firmware = "Xiaomi (MiBeacon V" + str(frctrl_version) + " encrypted)"
+            if frctrl_version <= 3:
+                self.encryption_scheme = EncryptionScheme.MIBEACON_LEGACY
+                payload = self._decrypt_mibeacon_legacy(data, i, xiaomi_mac)
+            else:
+                self.encryption_scheme = EncryptionScheme.MIBEACON_4_5
+                payload = self._decrypt_mibeacon_v4_v5(data, i, xiaomi_mac)
+        else:  # No encryption
+            # check minimum advertisement length with data
+            firmware = "Xiaomi (MiBeacon V" + str(frctrl_version) + ")"
+            sinfo += ", No encryption"
+            if msg_length < i + 3:
+                _LOGGER.debug(
+                    "Invalid data length (in non-encrypted data), adv: %s",
+                    data.hex(),
+                )
+                return False
+            payload = data[i:]
 
         self.set_device_type(device_type)
         self.set_device_sw_version(firmware)
@@ -1189,7 +1193,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                         )
                 payload_start = next_start
 
-        return self.unhandled
+        return True
 
     def _decrypt_mibeacon_v4_v5(
         self, data: bytes, i: int, xiaomi_mac: bytes

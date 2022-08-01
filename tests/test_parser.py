@@ -63,6 +63,7 @@ def test_blank_advertisemnts_then_encrypted():
 
     assert device.encryption_scheme == EncryptionScheme.NONE
     assert device.pending is True
+    assert device.last_service_info is None
 
     # Second advertisement has encryption
     data_string = b"XX[\x05\x01H<\xd48\xc1\xa4\x9c\xf2U\xcf\xdd\x00\x00\x00/\xae/\xf2"
@@ -71,6 +72,7 @@ def test_blank_advertisemnts_then_encrypted():
 
     assert device.encryption_scheme == EncryptionScheme.MIBEACON_4_5
     assert device.pending is False
+    assert device.last_service_info == advertisement
 
 
 def test_blank_advertisemnts_then_unencrypted():
@@ -89,6 +91,7 @@ def test_blank_advertisemnts_then_unencrypted():
 
     assert device.encryption_scheme == EncryptionScheme.NONE
     assert device.pending is True
+    assert device.last_service_info is None
 
     # Second advertisement has encryption
     data_string = b"q \x98\x00\x12\xf3Ok\x8d|\xc4\r\x04\x10\x02\xc4\x00"
@@ -97,6 +100,7 @@ def test_blank_advertisemnts_then_unencrypted():
 
     assert device.encryption_scheme == EncryptionScheme.NONE
     assert device.pending is False
+    assert device.last_service_info == advertisement
 
 
 def test_encryption_needs_v2():
