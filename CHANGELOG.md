@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.0 (2022-08-06)
+### Feature
+* Support polling MiFlora battery ([#11](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/11)) ([`f08707b`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/f08707bd45d250a44ea7ca5da059feae61851089))
+
 ## v0.7.0 (2022-08-01)
 ### Feature
 * Add XMZNMSBMCN03 ([#9](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/9)) ([`7ff0d49`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/7ff0d49f73f8150e520aaa77868a4f1bd65363b1))
