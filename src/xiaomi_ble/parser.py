@@ -16,11 +16,11 @@ from typing import Any
 
 from bleak import BleakClient
 from bleak.backends.device import BLEDevice
+from bleak_retry_connector import establish_connection
 from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import DeviceClass, SensorLibrary, SensorUpdate, Units
-from bleak_retry_connector import establish_connection
 
 from xiaomi_ble.const import CHARACTERISTIC_BATTERY, TIMEOUT_1DAY
 
