@@ -13,10 +13,15 @@ import sys
 from enum import Enum
 from typing import Any
 
+from bleak import BleakClient
+from bleak.backends.device import BLEDevice
+from bleak_retry_connector import establish_connection
 from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
 from home_assistant_bluetooth import BluetoothServiceInfo
-from sensor_state_data import DeviceClass, SensorLibrary, Units
+from sensor_state_data import DeviceClass, SensorLibrary, SensorUpdate, Units
+
+from xiaomi_ble.const import CHARACTERISTIC_BATTERY, TIMEOUT_1DAY
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -1083,6 +1088,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
         self.set_device_type(device_type)
 
+        self.device_id = device_id
+        self.device_type = device_type
+
         packet_id = data[4]
 
         sinfo = "MiVer: " + str(frctrl_version)
@@ -1285,3 +1293,37 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             return None
         self.bindkey_verified = True
         return decrypted_payload
+
+    def poll_needed(
+        self, service_info: BluetoothServiceInfo, last_poll: float | None
+    ) -> bool:
+        """
+        This is called every time we get a service_info for a device. It means the
+        device is working and online. If 24 hours has passed, it may be a good
+        time to poll the device.
+        """
+        if self.device_id != 0x0098:
+            return False
+
+        return not last_poll or last_poll > TIMEOUT_1DAY
+
+    async def async_poll(self, ble_device: BLEDevice) -> SensorUpdate:
+        """
+        Poll the device to retrieve any values we can't get from passive listening.
+        """
+        if self.device_id == 0x0098:
+            client = await establish_connection(
+                BleakClient, ble_device, ble_device.address
+            )
+            try:
+                battery_char = client.services.get_characteristic(
+                    CHARACTERISTIC_BATTERY
+                )
+                payload = await client.read_gatt_char(battery_char)
+            finally:
+                await client.disconnect()
+
+            self.set_device_sw_version(payload[2:].decode("utf-8"))
+            self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, payload[0])
+
+        return self._finish_update()
