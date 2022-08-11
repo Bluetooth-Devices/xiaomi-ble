@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.0 (2022-08-11)
+### Feature
+* Intial support for binary_sensor devices ([#12](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/12)) ([`fc0ff14`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/fc0ff143d695beedd190cc002e1173c8c17f5783))
+
 ## v0.8.2 (2022-08-11)
 ### Fix
 * Set title and device name to something useful ([`73c4d4b`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/73c4d4b59f6729f9806bdf85d2544698840f4198))
