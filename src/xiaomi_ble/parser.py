@@ -21,9 +21,15 @@ from Cryptodome.Cipher import AES
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import DeviceClass, SensorLibrary, SensorUpdate, Units
 
-from xiaomi_ble.const import CHARACTERISTIC_BATTERY, TIMEOUT_1DAY
+from .const import CHARACTERISTIC_BATTERY, TIMEOUT_1DAY
+from .devices import DEVICE_TYPES
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def short_address(address: str) -> str:
+    """Convert a Bluetooth address to a short address."""
+    return address.replace("-", "").replace(":", "")[-6:].upper()
 
 
 class EncryptionScheme(Enum):
@@ -47,59 +53,6 @@ def to_unformatted_mac(addr: str) -> str:
     """Return unformatted MAC address"""
     return "".join(f"{i:02X}" for i in addr[:])
 
-
-# Device type dictionary
-# {device type code: device name}
-XIAOMI_TYPE_DICT = {
-    0x0C3C: "CGC1",
-    0x0576: "CGD1",
-    0x066F: "CGDK2",
-    0x0347: "CGG1",
-    0x0B48: "CGG1-ENCRYPTED",
-    0x03D6: "CGH1",
-    0x0A83: "CGPR1",
-    0x03BC: "GCLS002",
-    0x0098: "HHCCJCY01",
-    0x015D: "HHCCPOT002",
-    0x02DF: "JQJCY01YM",
-    0x0997: "JTYJGD03MI",
-    0x1568: "K9B-1BTN",
-    0x1569: "K9B-2BTN",
-    0x0DFD: "K9B-3BTN",
-    0x01AA: "LYWSDCGQ",
-    0x045B: "LYWSD02",
-    0x16E4: "LYWSD02MMC",
-    0x055B: "LYWSD03MMC",
-    0x098B: "MCCGQ02HL",
-    0x06D3: "MHO-C303",
-    0x0387: "MHO-C401",
-    0x07F6: "MJYD02YL",
-    0x04E9: "MJZNMSQ01YD",
-    0x00DB: "MMC-T201-1",
-    0x03DD: "MUE4094RT",
-    0x0489: "M1S-T500",
-    0x0A8D: "RTCGQ02LM",
-    0x0863: "SJWS01LM",
-    0x045C: "V-SK152",
-    0x040A: "WX08ZM",
-    0x04E1: "XMMF01JQD",
-    0x1203: "XMWSDJ04MMC",
-    0x1949: "XMWXKG01YL",
-    0x098C: "XMZNMST02YD",
-    0x07BF: "YLAI003",
-    0x0153: "YLYK01YL",
-    0x068E: "YLYK01YL-FANCL",
-    0x04E6: "YLYK01YL-VENFAN",
-    0x03BF: "YLYB01YL-BHFRC",
-    0x03B6: "YLKG07YL/YLKG08YL",
-    0x0083: "YM-K1501",
-    0x0113: "YM-K1501EU",
-    0x069E: "ZNMS16LM",
-    0x069F: "ZNMS17LM",
-    0x0380: "DSL-C08",
-    0x0DE7: "SU001-T",
-    0x0784: "XMZNMSBMCN03",
-}
 
 # Structured objects for data conversions
 TH_STRUCT = struct.Struct("<hH")
@@ -1002,21 +955,14 @@ class XiaomiBluetoothDeviceData(BluetoothData):
     def _start_update(self, service_info: BluetoothServiceInfo) -> None:
         """Update from BLE advertisement data."""
         _LOGGER.debug("Parsing Xiaomi BLE advertisement data: %s", service_info)
-        self.set_device_manufacturer("Xiaomi")
-        self.set_device_name(service_info.name)
-
-        mac_readable = service_info.address
-        if len(mac_readable) != 17 and mac_readable[2] != ":":
-            # On macOS we get a UUID, which is useless for MiBeacons
-            mac_readable = "00:00:00:00:00:00"
-
-        mac = bytes.fromhex(mac_readable.replace(":", ""))
 
         for id, data in service_info.service_data.items():
-            if self._parse_xiaomi(service_info.name, data, mac):
+            if self._parse_xiaomi(service_info, service_info.name, data):
                 self.last_service_info = service_info
 
-    def _parse_xiaomi(self, name: str, data: bytes, source_mac: bytes) -> bool:
+    def _parse_xiaomi(
+        self, service_info: BluetoothServiceInfo, name: str, data: bytes
+    ) -> bool:
         """Parser for Xiaomi sensors"""
         # check for adstruc length
         i = 5  # till Frame Counter
@@ -1024,6 +970,13 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         if msg_length < i:
             _LOGGER.debug("Invalid data length (initial check), adv: %s", data.hex())
             return False
+
+        mac_readable = service_info.address
+        if len(mac_readable) != 17 and mac_readable[2] != ":":
+            # On macOS we get a UUID, which is useless for MiBeacons
+            mac_readable = "00:00:00:00:00:00"
+
+        source_mac = bytes.fromhex(mac_readable.replace(":", ""))
 
         # extract frame control bits
         frctrl = data[0] + (data[1] << 8)
@@ -1076,7 +1029,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # determine the device type
         device_id = data[2] + (data[3] << 8)
         try:
-            device_type = XIAOMI_TYPE_DICT[device_id]
+            device = DEVICE_TYPES[device_id]
         except KeyError:
             _LOGGER.info(
                 "BLE ADV from UNKNOWN Xiaomi device: MAC: %s, ADV: %s",
@@ -1086,7 +1039,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             _LOGGER.debug("Unknown Xiaomi device found. Data: %s", data.hex())
             return False
 
-        self.set_device_type(device_type)
+        device_type = device.model
 
         self.device_id = device_id
         self.device_type = device_type
@@ -1132,6 +1085,12 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 capability_io = data[i - 1]
                 sinfo += ", IO: " + hex(capability_io)
 
+        identifier = short_address(service_info.address)
+        self.set_title(f"{device.name} {identifier} ({device.model})")
+        self.set_device_name(f"{device.name} {identifier}")
+        self.set_device_type(device.model)
+        self.set_device_manufacturer(device.manufacturer)
+
         # check that data contains object
         if frctrl_object_include == 0:
             # data does not contain Object
@@ -1162,7 +1121,6 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 return False
             payload = data[i:]
 
-        self.set_device_type(device_type)
         self.set_device_sw_version(firmware)
 
         if payload is not None:
