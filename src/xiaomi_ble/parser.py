@@ -535,7 +535,7 @@ def obj1007(
             # 100 means light, else dark (0 or 1)
             # MCCGQ02HL might use obj1018 for light sensor, just added here to be sure.
             device.update_predefined_binary_sensor(
-                BinarySensorDeviceClass.LIGHT, True if illum == 100 else False
+                BinarySensorDeviceClass.LIGHT, illum == 100
             )
         elif device_type in ["HHCCJCY01", "GCLS002"]:
             # illumination in lux
