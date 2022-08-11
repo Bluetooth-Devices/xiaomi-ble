@@ -19,7 +19,13 @@ from bleak_retry_connector import establish_connection
 from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
 from home_assistant_bluetooth import BluetoothServiceInfo
-from sensor_state_data import DeviceClass, SensorLibrary, SensorUpdate, Units
+from sensor_state_data import (
+    BinarySensorDeviceClass,
+    DeviceClass,
+    SensorLibrary,
+    SensorUpdate,
+    Units,
+)
 
 from .const import CHARACTERISTIC_BATTERY, TIMEOUT_1DAY
 from .devices import DEVICE_TYPES
@@ -304,7 +310,10 @@ def obj000f(
         if device_type in ["MJYD02YL", "RTCGQ02LM"]:
             # MJYD02YL:  1 - moving no light, 100 - moving with light
             # RTCGQ02LM: 0 - moving no light, 256 - moving with light
-            return {"motion": 1, "motion timer": 1, "light": int(illum >= 100)}
+            device.update_predefined_binary_sensor(
+                BinarySensorDeviceClass.LIGHT, bool(illum >= 100)
+            )
+            return {"motion": 1, "motion timer": 1}
         elif device_type == "CGPR1":
             # CGPR1:     moving, value is illumination in lux
             device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
@@ -525,7 +534,9 @@ def obj1007(
         if device_type in ["MJYD02YL", "MCCGQ02HL"]:
             # 100 means light, else dark (0 or 1)
             # MCCGQ02HL might use obj1018 for light sensor, just added here to be sure.
-            return {"light": 1 if illum == 100 else 0}
+            device.update_predefined_binary_sensor(
+                BinarySensorDeviceClass.LIGHT, illum == 100
+            )
         elif device_type in ["HHCCJCY01", "GCLS002"]:
             # illumination in lux
             device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
@@ -603,14 +614,18 @@ def obj1014(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Moisture"""
-    return {"moisture": xobj[0]}
+    device.update_predefined_binary_sensor(
+        BinarySensorDeviceClass.MOISTURE, xobj[0] > 0
+    )
+    return {}
 
 
 def obj1015(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Smoke"""
-    return {"smoke detector": xobj[0]}
+    device.update_predefined_binary_sensor(BinarySensorDeviceClass.SMOKE, xobj[0] > 0)
+    return {}
 
 
 def obj1017(
