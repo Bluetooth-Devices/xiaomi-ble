@@ -1303,7 +1303,8 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         time to poll the device.
         """
         if self.pending:
-            # Never need to poll if we are pending as we don't even know what kind of device we are
+            # Never need to poll if we are pending as we don't even know what
+            # kind of device we are
             return False
 
         if self.device_id != 0x0098:
