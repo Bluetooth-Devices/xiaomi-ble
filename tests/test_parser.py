@@ -278,7 +278,7 @@ def test_Xiaomi_LYWSDCGQ(caplog):
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title='Temperature/Humidity Sensor 359321 (LYWSDCGQ)',
+        title="Temperature/Humidity Sensor 359321 (LYWSDCGQ)",
         devices={
             None: SensorDeviceInfo(
                 name="Temperature/Humidity Sensor 359321",
@@ -329,7 +329,7 @@ def test_Xiaomi_CGG1():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title='Temperature/Humidity Sensor 34125F (CGG1-ENCRYPTED)',
+        title="Temperature/Humidity Sensor 34125F (CGG1-ENCRYPTED)",
         devices={
             None: SensorDeviceInfo(
                 name="Temperature/Humidity Sensor 34125F",
@@ -373,7 +373,7 @@ def test_Xiaomi_CGDK2():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title='Temperature/Humidity Sensor 122089 (CGDK2)',
+        title="Temperature/Humidity Sensor 122089 (CGDK2)",
         devices={
             None: SensorDeviceInfo(
                 name="Temperature/Humidity Sensor 122089",
@@ -419,7 +419,7 @@ def test_Xiaomi_LYWSD03MMC():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title='Temperature/Humidity Sensor B4944C (LYWSD03MMC)',
+        title="Temperature/Humidity Sensor B4944C (LYWSD03MMC)",
         devices={
             None: SensorDeviceInfo(
                 name="Temperature/Humidity Sensor B4944C",
@@ -470,10 +470,10 @@ def test_Xiaomi_LYWSD02MMC():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title='Temperature/Humidity Sensor 565384 (LYWSD02MMC)' ,
+        title="Temperature/Humidity Sensor 565384 (LYWSD02MMC)",
         devices={
             None: SensorDeviceInfo(
-                name='Temperature/Humidity Sensor 565384',
+                name="Temperature/Humidity Sensor 565384",
                 manufacturer="Xiaomi",
                 model="LYWSD02MMC",
                 hw_version=None,
@@ -558,7 +558,7 @@ def test_Xiaomi_XMWSDJ04MMC():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title='Thermometer 257004 (XMWSDJ04MMC)',
+        title="Thermometer 257004 (XMWSDJ04MMC)",
         devices={
             None: SensorDeviceInfo(
                 name="Thermometer 257004",
@@ -603,7 +603,7 @@ def test_Xiaomi_XMMF01JQD():
         title="Magic Cube E6D354 (XMMF01JQD)",
         devices={
             None: SensorDeviceInfo(
-                name='Magic Cube E6D354',
+                name="Magic Cube E6D354",
                 manufacturer="Xiaomi",
                 model="XMMF01JQD",
                 hw_version=None,
@@ -664,7 +664,7 @@ def test_Xiaomi_JTYJGD03MI_smoke():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title='Thermometer E39CBC (JTYJGD03MI)',
+        title="Thermometer E39CBC (JTYJGD03MI)",
         devices={
             None: SensorDeviceInfo(
                 name="Thermometer E39CBC",
@@ -741,10 +741,10 @@ def test_Xiaomi_HHCCJCY01():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title='Plant Sensor 6B4FF3 (HHCCJCY01)' ,
+        title="Plant Sensor 6B4FF3 (HHCCJCY01)",
         devices={
             None: SensorDeviceInfo(
-                name='Plant Sensor 6B4FF3' ,
+                name="Plant Sensor 6B4FF3",
                 manufacturer="Xiaomi",
                 model="HHCCJCY01",
                 hw_version=None,
@@ -800,7 +800,7 @@ def test_Xiaomi_HHCCJCY01_all_values():
             address="C4:7C:8D:6A:3E:7A",
         )
     ) == SensorUpdate(
-        title='Plant Sensor 6A3E7A (HHCCJCY01)' ,
+        title="Plant Sensor 6A3E7A (HHCCJCY01)",
         devices={
             None: SensorDeviceInfo(
                 name="Plant Sensor 6A3E7A",
@@ -1116,7 +1116,7 @@ def test_Xiaomi_ZNMS16LM_lock():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title='Door Lock EB8A91 (ZNMS16LM)' ,
+        title="Door Lock EB8A91 (ZNMS16LM)",
         devices={
             None: SensorDeviceInfo(
                 name="Door Lock EB8A91",
@@ -1164,7 +1164,7 @@ def test_Xiaomi_YLYK01YL():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title='Remote Control E95074 (YLYK01YL)',
+        title="Remote Control E95074 (YLYK01YL)",
         devices={
             None: SensorDeviceInfo(
                 name="Remote Control E95074",
