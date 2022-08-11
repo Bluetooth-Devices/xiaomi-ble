@@ -12,6 +12,9 @@ from sensor_state_data import (
     SensorUpdate,
     SensorValue,
     Units,
+    BinarySensorValue,
+    BinarySensorDescription,
+    BinarySensorDeviceClass,
 )
 
 from xiaomi_ble.parser import EncryptionScheme, XiaomiBluetoothDeviceData
@@ -23,6 +26,7 @@ KEY_SIGNAL_STRENGTH = DeviceKey(key="signal_strength", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
 KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
 KEY_MOISTURE = DeviceKey(key="moisture", device_id=None)
+KEY_SMOKE = DeviceKey(key="smoke", device_id=None)
 
 
 @pytest.fixture(autouse=True)
@@ -686,11 +690,18 @@ def test_Xiaomi_JTYJGD03MI_smoke():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_SMOKE: BinarySensorDescription(
+                device_key=KEY_SMOKE,
+                device_class=BinarySensorDeviceClass.SMOKE,
+            ),
+        },
+        binary_entity_values={
+            KEY_SMOKE: BinarySensorValue(
+                name="Smoke", device_key=KEY_SMOKE, native_value=True
+            ),
+        },
     )
-
-    assert device.unhandled == {
-        "smoke detector": 1,
-    }
 
 
 def test_Xiaomi_JTYJGD03MI_press():
