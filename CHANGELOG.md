@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.2 (2022-08-11)
+### Fix
+* Set title and device name to something useful ([`73c4d4b`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/73c4d4b59f6729f9806bdf85d2544698840f4198))
+
 ## v0.8.1 (2022-08-11)
 ### Fix
 * Never poll if still pending ([`f617708`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/f617708e4f67d0a6a4d0b853efee5568a14f8aba))
