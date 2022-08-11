@@ -5,6 +5,9 @@ from unittest.mock import patch
 import pytest
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import (
+    BinarySensorDescription,
+    BinarySensorDeviceClass,
+    BinarySensorValue,
     DeviceClass,
     DeviceKey,
     SensorDescription,
@@ -12,9 +15,6 @@ from sensor_state_data import (
     SensorUpdate,
     SensorValue,
     Units,
-    BinarySensorValue,
-    BinarySensorDescription,
-    BinarySensorDeviceClass,
 )
 
 from xiaomi_ble.parser import EncryptionScheme, XiaomiBluetoothDeviceData

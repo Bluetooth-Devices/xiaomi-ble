@@ -19,8 +19,13 @@ from bleak_retry_connector import establish_connection
 from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
 from home_assistant_bluetooth import BluetoothServiceInfo
-from sensor_state_data import DeviceClass, SensorLibrary, SensorUpdate, Units
-from sensor_state_data import BinarySensorDeviceClass
+from sensor_state_data import (
+    BinarySensorDeviceClass,
+    DeviceClass,
+    SensorLibrary,
+    SensorUpdate,
+    Units,
+)
 
 from .const import CHARACTERISTIC_BATTERY, TIMEOUT_1DAY
 from .devices import DEVICE_TYPES
@@ -619,9 +624,7 @@ def obj1015(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Smoke"""
-    device.update_predefined_binary_sensor(
-        BinarySensorDeviceClass.SMOKE, xobj[0] > 0
-    )
+    device.update_predefined_binary_sensor(BinarySensorDeviceClass.SMOKE, xobj[0] > 0)
     return {}
 
 
