@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.1 (2022-08-11)
+### Fix
+* Never poll if still pending ([`f617708`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/f617708e4f67d0a6a4d0b853efee5568a14f8aba))
+
 ## v0.8.0 (2022-08-06)
 ### Feature
 * Support polling MiFlora battery ([#11](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/11)) ([`f08707b`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/f08707bd45d250a44ea7ca5da059feae61851089))
