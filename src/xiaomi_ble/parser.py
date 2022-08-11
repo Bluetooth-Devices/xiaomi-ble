@@ -1302,6 +1302,10 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         device is working and online. If 24 hours has passed, it may be a good
         time to poll the device.
         """
+        if self.pending:
+            # Never need to poll if we are pending as we don't even know what kind of device we are
+            return False
+
         if self.device_id != 0x0098:
             return False
 
