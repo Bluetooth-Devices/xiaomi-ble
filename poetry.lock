@@ -87,7 +87,7 @@ typing-extensions = ">=4.2.0"
 
 [[package]]
 name = "bleak-retry-connector"
-version = "1.4.0"
+version = "1.5.0"
 description = "A connector for Bleak Clients that handles transient connection failures"
 category = "main"
 optional = false
@@ -163,7 +163,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "coverage"
-version = "6.4.2"
+version = "6.4.3"
 description = "Code coverage measurement for Python"
 category = "dev"
 optional = false
@@ -612,7 +612,7 @@ use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "sensor-state-data"
-version = "2.0.2"
+version = "2.1.2"
 description = "Models for storing and converting Sensor Data state"
 category = "main"
 optional = false
@@ -802,7 +802,7 @@ docs = ["myst-parser", "Sphinx", "sphinx-rtd-theme"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "410ae02b6c954802dddfa281dba63fc4bc1e10ba64a9cd4f49ca5932181d5139"
+content-hash = "db11060377f39b6fd3c0aad7712fc13e5ff1611133318e881509291b5bd7e1b2"
 
 [metadata.files]
 alabaster = []
