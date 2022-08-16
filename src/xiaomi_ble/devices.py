@@ -58,15 +58,15 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         model="JTYJGD03MI",
     ),
     0x1568: DeviceEntry(
-        name="K9B",
+        name="Switch (single button)",
         model="K9B-1BTN",
     ),
     0x1569: DeviceEntry(
-        name="K9B",
+        name="Switch (double button)",
         model="K9B-2BTN",
     ),
     0x0DFD: DeviceEntry(
-        name="K9B",
+        name="Switch (triple button)",
         model="K9B-3BTN",
     ),
     0x01AA: DeviceEntry(
@@ -198,7 +198,7 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         model="SU001-T",
     ),
     0x0784: DeviceEntry(
-        name="Lock",
-        model="XMZNMSBMCN03",
+        name="Smart Door Lock",
+        model="XMZNMS04LM",
     ),
 }
