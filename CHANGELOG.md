@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.1 (2022-08-16)
+### Fix
+* Rename Smart Door Lock E ([#13](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/13)) ([`ef11f5f`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/ef11f5fd799e9a67223b8dbe5569a33c3e214bc0))
+
 ## v0.9.0 (2022-08-11)
 ### Feature
 * Intial support for binary_sensor devices ([#12](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/12)) ([`fc0ff14`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/fc0ff143d695beedd190cc002e1173c8c17f5783))
