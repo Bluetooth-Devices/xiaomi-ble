@@ -183,10 +183,10 @@ def test_bindkey_wrong():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Motion Sensor E0C40F (RTCGQ02LM)",
+        title="Motion Sensor C40F (RTCGQ02LM)",
         devices={
             None: SensorDeviceInfo(
-                name="Motion Sensor E0C40F",
+                name="Motion Sensor C40F",
                 manufacturer="Xiaomi",
                 model="RTCGQ02LM",
                 hw_version=None,
@@ -233,10 +233,10 @@ def test_bindkey_wrong_legacy():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Dimmer Switch C5988B (YLKG07YL/YLKG08YL)",
+        title="Dimmer Switch 988B (YLKG07YL/YLKG08YL)",
         devices={
             None: SensorDeviceInfo(
-                name="Dimmer Switch C5988B",
+                name="Dimmer Switch 988B",
                 manufacturer="Xiaomi",
                 model="YLKG07YL/YLKG08YL",
                 hw_version=None,
@@ -282,10 +282,10 @@ def test_Xiaomi_LYWSDCGQ(caplog):
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Temperature/Humidity Sensor 359321 (LYWSDCGQ)",
+        title="Temperature/Humidity Sensor 9321 (LYWSDCGQ)",
         devices={
             None: SensorDeviceInfo(
-                name="Temperature/Humidity Sensor 359321",
+                name="Temperature/Humidity Sensor 9321",
                 manufacturer="Xiaomi",
                 model="LYWSDCGQ",
                 sw_version="Xiaomi (MiBeacon V2)",
@@ -333,10 +333,10 @@ def test_Xiaomi_CGG1():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Temperature/Humidity Sensor 34125F (CGG1-ENCRYPTED)",
+        title="Temperature/Humidity Sensor 125F (CGG1-ENCRYPTED)",
         devices={
             None: SensorDeviceInfo(
-                name="Temperature/Humidity Sensor 34125F",
+                name="Temperature/Humidity Sensor 125F",
                 manufacturer="Xiaomi",
                 model="CGG1-ENCRYPTED",
                 hw_version=None,
@@ -377,10 +377,10 @@ def test_Xiaomi_CGDK2():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Temperature/Humidity Sensor 122089 (CGDK2)",
+        title="Temperature/Humidity Sensor 2089 (CGDK2)",
         devices={
             None: SensorDeviceInfo(
-                name="Temperature/Humidity Sensor 122089",
+                name="Temperature/Humidity Sensor 2089",
                 manufacturer="Xiaomi",
                 model="CGDK2",
                 hw_version=None,
@@ -423,10 +423,10 @@ def test_Xiaomi_LYWSD03MMC():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Temperature/Humidity Sensor B4944C (LYWSD03MMC)",
+        title="Temperature/Humidity Sensor 944C (LYWSD03MMC)",
         devices={
             None: SensorDeviceInfo(
-                name="Temperature/Humidity Sensor B4944C",
+                name="Temperature/Humidity Sensor 944C",
                 manufacturer="Xiaomi",
                 model="LYWSD03MMC",
                 hw_version=None,
@@ -474,10 +474,10 @@ def test_Xiaomi_LYWSD02MMC():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Temperature/Humidity Sensor 565384 (LYWSD02MMC)",
+        title="Temperature/Humidity Sensor 5384 (LYWSD02MMC)",
         devices={
             None: SensorDeviceInfo(
-                name="Temperature/Humidity Sensor 565384",
+                name="Temperature/Humidity Sensor 5384",
                 manufacturer="Xiaomi",
                 model="LYWSD02MMC",
                 hw_version=None,
@@ -519,10 +519,10 @@ def test_Xiaomi_LYWSD03MMC_encrypted():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Temperature/Humidity Sensor 0283F4 (LYWSD03MMC)",
+        title="Temperature/Humidity Sensor 83F4 (LYWSD03MMC)",
         devices={
             None: SensorDeviceInfo(
-                name="Temperature/Humidity Sensor 0283F4",
+                name="Temperature/Humidity Sensor 83F4",
                 manufacturer="Xiaomi",
                 model="LYWSD03MMC",
                 hw_version=None,
@@ -562,10 +562,10 @@ def test_Xiaomi_XMWSDJ04MMC():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Thermometer 257004 (XMWSDJ04MMC)",
+        title="Thermometer 7004 (XMWSDJ04MMC)",
         devices={
             None: SensorDeviceInfo(
-                name="Thermometer 257004",
+                name="Thermometer 7004",
                 manufacturer="Xiaomi",
                 model="XMWSDJ04MMC",
                 hw_version=None,
@@ -604,10 +604,10 @@ def test_Xiaomi_XMMF01JQD():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Magic Cube E6D354 (XMMF01JQD)",
+        title="Magic Cube D354 (XMMF01JQD)",
         devices={
             None: SensorDeviceInfo(
-                name="Magic Cube E6D354",
+                name="Magic Cube D354",
                 manufacturer="Xiaomi",
                 model="XMMF01JQD",
                 hw_version=None,
@@ -668,10 +668,10 @@ def test_Xiaomi_JTYJGD03MI_smoke():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Thermometer E39CBC (JTYJGD03MI)",
+        title="Thermometer 9CBC (JTYJGD03MI)",
         devices={
             None: SensorDeviceInfo(
-                name="Thermometer E39CBC",
+                name="Thermometer 9CBC",
                 manufacturer="Xiaomi",
                 model="JTYJGD03MI",
                 hw_version=None,
@@ -716,10 +716,10 @@ def test_Xiaomi_JTYJGD03MI_press():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Thermometer E39CBC (JTYJGD03MI)",
+        title="Thermometer 9CBC (JTYJGD03MI)",
         devices={
             None: SensorDeviceInfo(
-                name="Thermometer E39CBC",
+                name="Thermometer 9CBC",
                 manufacturer="Xiaomi",
                 model="JTYJGD03MI",
                 hw_version=None,
@@ -752,10 +752,10 @@ def test_Xiaomi_HHCCJCY01():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Plant Sensor 6B4FF3 (HHCCJCY01)",
+        title="Plant Sensor 4FF3 (HHCCJCY01)",
         devices={
             None: SensorDeviceInfo(
-                name="Plant Sensor 6B4FF3",
+                name="Plant Sensor 4FF3",
                 manufacturer="Xiaomi",
                 model="HHCCJCY01",
                 hw_version=None,
@@ -811,10 +811,10 @@ def test_Xiaomi_HHCCJCY01_all_values():
             address="C4:7C:8D:6A:3E:7A",
         )
     ) == SensorUpdate(
-        title="Plant Sensor 6A3E7A (HHCCJCY01)",
+        title="Plant Sensor 3E7A (HHCCJCY01)",
         devices={
             None: SensorDeviceInfo(
-                name="Plant Sensor 6A3E7A",
+                name="Plant Sensor 3E7A",
                 manufacturer="Xiaomi",
                 model="HHCCJCY01",
                 hw_version=None,
@@ -877,10 +877,10 @@ def test_Xiaomi_GCLS002():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Grow Care Garden 6D593E (GCLS002)",
+        title="Grow Care Garden 593E (GCLS002)",
         devices={
             None: SensorDeviceInfo(
-                name="Grow Care Garden 6D593E",
+                name="Grow Care Garden 593E",
                 manufacturer="Xiaomi",
                 model="GCLS002",
                 hw_version=None,
@@ -951,10 +951,10 @@ def test_Xiaomi_MUE4094RT():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Nightlight B2390C (MUE4094RT)",
+        title="Nightlight 390C (MUE4094RT)",
         devices={
             None: SensorDeviceInfo(
-                name="Nightlight B2390C",
+                name="Nightlight 390C",
                 manufacturer="Xiaomi",
                 model="MUE4094RT",
                 hw_version=None,
@@ -994,10 +994,10 @@ def test_Xiaomi_MMC_T201_1():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Baby Thermometer DD6FC1 (MMC-T201-1)",
+        title="Baby Thermometer 6FC1 (MMC-T201-1)",
         devices={
             None: SensorDeviceInfo(
-                name="Baby Thermometer DD6FC1",
+                name="Baby Thermometer 6FC1",
                 manufacturer="Xiaomi",
                 model="MMC-T201-1",
                 hw_version=None,
@@ -1046,10 +1046,10 @@ def test_Xiaomi_M1S_T500():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Smart Toothbrush 175B11 (M1S-T500)",
+        title="Smart Toothbrush 5B11 (M1S-T500)",
         devices={
             None: SensorDeviceInfo(
-                name="Smart Toothbrush 175B11",
+                name="Smart Toothbrush 5B11",
                 manufacturer="Xiaomi",
                 model="M1S-T500",
                 hw_version=None,
@@ -1087,10 +1087,10 @@ def test_Xiaomi_ZNMS16LM_fingerprint():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Door Lock EB8A91 (ZNMS16LM)",
+        title="Door Lock 8A91 (ZNMS16LM)",
         devices={
             None: SensorDeviceInfo(
-                name="Door Lock EB8A91",
+                name="Door Lock 8A91",
                 manufacturer="Xiaomi",
                 model="ZNMS16LM",
                 hw_version=None,
@@ -1127,10 +1127,10 @@ def test_Xiaomi_ZNMS16LM_lock():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Door Lock EB8A91 (ZNMS16LM)",
+        title="Door Lock 8A91 (ZNMS16LM)",
         devices={
             None: SensorDeviceInfo(
-                name="Door Lock EB8A91",
+                name="Door Lock 8A91",
                 manufacturer="Xiaomi",
                 model="ZNMS16LM",
                 hw_version=None,
@@ -1175,10 +1175,10 @@ def test_Xiaomi_YLYK01YL():
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Remote Control E95074 (YLYK01YL)",
+        title="Remote Control 5074 (YLYK01YL)",
         devices={
             None: SensorDeviceInfo(
-                name="Remote Control E95074",
+                name="Remote Control 5074",
                 manufacturer="Xiaomi",
                 model="YLYK01YL",
                 hw_version=None,
@@ -1228,10 +1228,10 @@ def test_Xiaomi_YLKG07YL_press():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Dimmer Switch C5988B (YLKG07YL/YLKG08YL)",
+        title="Dimmer Switch 988B (YLKG07YL/YLKG08YL)",
         devices={
             None: SensorDeviceInfo(
-                name="Dimmer Switch C5988B",
+                name="Dimmer Switch 988B",
                 manufacturer="Xiaomi",
                 model="YLKG07YL/YLKG08YL",
                 hw_version=None,
@@ -1265,10 +1265,10 @@ def test_Xiaomi_YLKG07YL_rotate():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Dimmer Switch C5988B (YLKG07YL/YLKG08YL)",
+        title="Dimmer Switch 988B (YLKG07YL/YLKG08YL)",
         devices={
             None: SensorDeviceInfo(
-                name="Dimmer Switch C5988B",
+                name="Dimmer Switch 988B",
                 manufacturer="Xiaomi",
                 model="YLKG07YL/YLKG08YL",
                 hw_version=None,
