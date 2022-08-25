@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.2 (2022-08-25)
+### Fix
+* Use short_address from bluetooth_data_tools ([#16](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/16)) ([`d370cca`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/d370cca23c4c585437de5946d33383a550d06bc3))
+
 ## v0.9.1 (2022-08-16)
 ### Fix
 * Rename Smart Door Lock E ([#13](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/13)) ([`ef11f5f`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/ef11f5fd799e9a67223b8dbe5569a33c3e214bc0))
