@@ -16,6 +16,7 @@ from typing import Any
 from bleak import BleakClient
 from bleak.backends.device import BLEDevice
 from bleak_retry_connector import establish_connection
+from bluetooth_data_tools import short_address
 from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
 from home_assistant_bluetooth import BluetoothServiceInfo
@@ -31,11 +32,6 @@ from .const import CHARACTERISTIC_BATTERY, TIMEOUT_1DAY
 from .devices import DEVICE_TYPES
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def short_address(address: str) -> str:
-    """Convert a Bluetooth address to a short address."""
-    return address.replace("-", "").replace(":", "")[-6:].upper()
 
 
 class EncryptionScheme(Enum):
