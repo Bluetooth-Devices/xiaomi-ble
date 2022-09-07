@@ -1298,7 +1298,7 @@ def test_Xiaomi_K9B():
 
 def test_Xiaomi_M1SBB_MI():
     """Test Xiaomi parser for Linptech M1SBB(MI)."""
-    data_string = b"\x0f\xdc\xc3\x0f\xe9(\x92T\x87k^\xf7\xc1\x1e\xf1\xf0"
+    data_string = b"XY\x89\x18\x9ag\xe5f8\xc1\xa4\x9d\xd9z\xf3&\x00\x00\xc8\xa6\x0b\xd5"
     advertisement = bytes_to_service_info(data_string, address="A4:C1:38:66:E5:67")
     bindkey = "0fdcc30fe9289254876b5ef7c11ef1f0"
 

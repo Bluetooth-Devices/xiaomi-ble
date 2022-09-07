@@ -771,10 +771,7 @@ def obj4a0f(
     """Door/window broken open"""
     dev_forced = xobj[0]
     if dev_forced == 1:
-        return {
-            "opening": 1,
-            "status": "door/window broken open"
-        }
+        return {"opening": 1, "status": "door/window broken open"}
     else:
         return {}
 
@@ -810,9 +807,7 @@ def obj4a1a(
 ) -> dict[str, Any]:
     """Door Not Closed"""
     if xobj[0] == 1:
-        return {
-            "opening": 1,
-            "status": "door not closed"}
+        return {"opening": 1, "status": "door not closed"}
     else:
         return {}
 
