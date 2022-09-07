@@ -1302,9 +1302,9 @@ def test_Xiaomi_M1SBB_MI():
     advertisement = bytes_to_service_info(data_string, address="A4:C1:38:66:E5:67")
     bindkey = "0fdcc30fe9289254876b5ef7c11ef1f0"
 
-    device = XiaomiBluetoothDeviceData()
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
     assert device.supported(advertisement)
-    assert not device.bindkey_verified
+    assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
         title="Door/Window Sensor E567 (M1SBB(MI))",
         devices={
