@@ -128,7 +128,7 @@ BLE_LOCK_METHOD = {
 
 
 # Advertisement conversion of measurement data
-# https://iot.mi.com/new/doc/embedded-development/ble/object-definition
+# https://iot.mi.com/new/doc/accesses/direct-access/embedded-development/ble/object-definition
 def obj0003(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -732,7 +732,7 @@ def obj2000(
 
 
 # The following data objects are device specific. For now only
-#  added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL
+#  added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH M1SBB(MI)
 # https://miot-spec.org/miot-spec-v2/instances?status=all
 def obj4803(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
@@ -742,12 +742,89 @@ def obj4803(
     return {}
 
 
+def obj4804(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Opening (state)"""
+    opening_state = xobj[0]
+    # State of the door/window, used in combination with obj4a12
+    if opening_state == 1:
+        opening = 1
+    elif opening_state == 2:
+        opening = 0
+    else:
+        return {}
+    return {"opening": opening}
+
+
 def obj4a01(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Low Battery"""
     low_batt = xobj[0]
     return {"low battery": low_batt}
+
+
+def obj4a0f(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Door/window broken open"""
+    dev_forced = xobj[0]
+    if dev_forced == 1:
+        return {
+            "opening": 1,
+            "status": "door/window broken open"
+        }
+    else:
+        return {}
+
+
+def obj4a12(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Opening (event)"""
+    opening_state = xobj[0]
+    # Opening event, used in combination with obj4804
+    if opening_state == 1:
+        opening = 1
+    elif opening_state == 2:
+        opening = 0
+    else:
+        return {}
+    return {"opening": opening}
+
+
+def obj4a13(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Button"""
+    click = xobj[0]
+    if click == 1:
+        return {"button": "toggle"}
+    else:
+        return {}
+
+
+def obj4a1a(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Door Not Closed"""
+    if xobj[0] == 1:
+        return {
+            "opening": 1,
+            "status": "door not closed"}
+    else:
+        return {}
+
+
+def obj4c01(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Temperature"""
+    if len(xobj) == 4:
+        temp = FLOAT_STRUCT.unpack(xobj)[0]
+        device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp)
+    return {}
 
 
 def obj4c02(
@@ -760,13 +837,11 @@ def obj4c02(
     return {}
 
 
-def obj4c01(
+def obj4c03(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
-    """Temperature"""
-    if len(xobj) == 4:
-        temp = FLOAT_STRUCT.unpack(xobj)[0]
-        device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp)
+    """Battery"""
+    device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, xobj[0])
     return {}
 
 
@@ -885,9 +960,15 @@ xiaomi_dataobject_dict = {
     0x100E: obj100e,
     0x2000: obj2000,
     0x4803: obj4803,
+    0x4804: obj4804,
     0x4A01: obj4a01,
+    0x4A0F: obj4a0f,
+    0x4A12: obj4a12,
+    0x4A13: obj4a13,
+    0x4A1A: obj4a1a,
     0x4C01: obj4c01,
     0x4C02: obj4c02,
+    0x4C03: obj4c03,
     0x4C08: obj4c08,
     0x4C14: obj4c14,
     0x4E0C: obj4e0c,

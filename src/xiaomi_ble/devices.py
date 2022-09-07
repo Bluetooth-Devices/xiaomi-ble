@@ -69,6 +69,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Switch (triple button)",
         model="K9B-3BTN",
     ),
+    0x1889: DeviceEntry(
+        name="Door/Window Sensor",
+        model="M1SBB(MI)",
+    ),
     0x01AA: DeviceEntry(
         name="Temperature/Humidity Sensor",
         model="LYWSDCGQ",
