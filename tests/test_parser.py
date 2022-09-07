@@ -1404,7 +1404,7 @@ def test_Xiaomi_M1SBB_MI_obj4a13():
         },
     )
 
-    assert device.unhandled == {'button': 'toggle'}
+    assert device.unhandled == {"button": "toggle"}
 
 
 def test_Xiaomi_XMWXKG01YL():
