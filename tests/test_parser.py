@@ -1296,8 +1296,8 @@ def test_Xiaomi_K9B():
     """Test Xiaomi parser for K9B."""
 
 
-def test_Xiaomi_M1SBB_MI():
-    """Test Xiaomi parser for Linptech M1SBB(MI)."""
+def test_Xiaomi_M1SBB_MI_obj4804():
+    """Test Xiaomi parser for Linptech M1SBB(MI) with obj4804."""
     data_string = b"XY\x89\x18\x9ag\xe5f8\xc1\xa4\x9d\xd9z\xf3&\x00\x00\xc8\xa6\x0b\xd5"
     advertisement = bytes_to_service_info(data_string, address="A4:C1:38:66:E5:67")
     bindkey = "0fdcc30fe9289254876b5ef7c11ef1f0"
@@ -1332,6 +1332,84 @@ def test_Xiaomi_M1SBB_MI():
 
     assert device.unhandled == {
         "opening": 1,
+    }
+
+
+def test_Xiaomi_M1SBB_MI_obj4a12():
+    """Test Xiaomi parser for Linptech M1SBB(MI) with obj4a12."""
+    data_string = b"XY\x89\x18vg\xe5f8\xc1\xa4\xaa\x89\x02\xba&\x00\x00#\xc3\xbc\xa8"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:66:E5:67")
+    bindkey = "0fdcc30fe9289254876b5ef7c11ef1f0"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Door/Window Sensor E567 (M1SBB(MI))",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door/Window Sensor E567",
+                manufacturer="Xiaomi",
+                model="M1SBB(MI)",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+    assert device.unhandled == {
+        "opening": 1,
+    }
+
+
+def test_Xiaomi_M1SBB_MI_obj4a13():
+    """Test Xiaomi parser for Linptech M1SBB(MI) with obj4a13."""
+    data_string = b"XY\x89\x18\x91g\xe5f8\xc1\xa4\xd6\x12\rm&\x00\x00o\xbc\x0c\xb4"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:66:E5:67")
+    bindkey = "0fdcc30fe9289254876b5ef7c11ef1f0"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Door/Window Sensor E567 (M1SBB(MI))",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door/Window Sensor E567",
+                manufacturer="Xiaomi",
+                model="M1SBB(MI)",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+    assert device.unhandled == {
+        "button": 1,
     }
 
 
