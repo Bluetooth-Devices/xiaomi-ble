@@ -1330,9 +1330,7 @@ def test_Xiaomi_M1SBB_MI_obj4804():
         },
     )
 
-    assert device.unhandled == {
-        "opening": 1,
-    }
+    assert device.unhandled == {"opening": 1}
 
 
 def test_Xiaomi_M1SBB_MI_obj4a12():
@@ -1369,9 +1367,7 @@ def test_Xiaomi_M1SBB_MI_obj4a12():
         },
     )
 
-    assert device.unhandled == {
-        "opening": 1,
-    }
+    assert device.unhandled == {"opening": 1}
 
 
 def test_Xiaomi_M1SBB_MI_obj4a13():
@@ -1408,9 +1404,7 @@ def test_Xiaomi_M1SBB_MI_obj4a13():
         },
     )
 
-    assert device.unhandled == {
-        "button": 1,
-    }
+    assert device.unhandled == {'button': 'toggle'}
 
 
 def test_Xiaomi_XMWXKG01YL():
