@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.3 (2022-09-12)
+### Fix
+* Bump bleak-retry-connector ([#18](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/18)) ([`08fc5aa`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/08fc5aab0e6cf2e772cff962c7cf801328ef66e9))
+
 ## v0.9.2 (2022-08-25)
 ### Fix
 * Use short_address from bluetooth_data_tools ([#16](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/16)) ([`d370cca`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/d370cca23c4c585437de5946d33383a550d06bc3))
