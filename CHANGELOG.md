@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.10.0 (2022-09-13)
+### Feature
+* Update for bleak 0.17 support ([#19](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/19)) ([`db14912`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/db14912f6c57f20363e85d49fe320765606e7ed3))
+
 ## v0.9.3 (2022-09-12)
 ### Fix
 * Bump bleak-retry-connector ([#18](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/18)) ([`08fc5aa`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/08fc5aab0e6cf2e772cff962c7cf801328ef66e9))
