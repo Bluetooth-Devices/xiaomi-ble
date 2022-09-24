@@ -632,7 +632,10 @@ def obj1017(
         (no_motion_time,) = M_STRUCT.unpack(xobj)
         # seconds since last motion detected message
         # 0 = motion detected
-        return {"motion": 1 if no_motion_time == 0 else 0, "no motion time": no_motion_time}
+        return {
+            "motion": 1 if no_motion_time == 0 else 0,
+            "no motion time": no_motion_time
+        }
     else:
         return {}
 
@@ -772,7 +775,10 @@ def obj4818(
         (no_motion_time,) = struct.unpack("<H", xobj)
         # seconds since last motion detected message
         # 0 = motion detected
-        return {"motion": 1 if no_motion_time == 0 else 0, "no motion time": no_motion_time}
+        return {
+            "motion": 1 if no_motion_time == 0 else 0,
+            "no motion time": no_motion_time
+        }
     else:
         return {}
 
@@ -987,7 +993,7 @@ xiaomi_dataobject_dict = {
     0x4805: obj4805,
     0x4818: obj4818,
     0x4A01: obj4a01,
-    0x4a08: obj4a08,
+    0x4A08: obj4a08,
     0x4A0F: obj4a0f,
     0x4A12: obj4a12,
     0x4A13: obj4a13,
