@@ -634,7 +634,7 @@ def obj1017(
         # 0 = motion detected
         return {
             "motion": 1 if no_motion_time == 0 else 0,
-            "no motion time": no_motion_time
+            "no motion time": no_motion_time,
         }
     else:
         return {}
@@ -777,7 +777,7 @@ def obj4818(
         # 0 = motion detected
         return {
             "motion": 1 if no_motion_time == 0 else 0,
-            "no motion time": no_motion_time
+            "no motion time": no_motion_time,
         }
     else:
         return {}
