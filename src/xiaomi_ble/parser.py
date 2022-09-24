@@ -627,13 +627,12 @@ def obj1015(
 def obj1017(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
-    """Motion"""
+    """Time in seconds without motion"""
     if len(xobj) == 4:
-        (motion,) = M_STRUCT.unpack(xobj)
-        # seconds since last motion detected message (not used, we use motion
-        # timer in obj000f)
+        (no_motion_time,) = M_STRUCT.unpack(xobj)
+        # seconds since last motion detected message
         # 0 = motion detected
-        return {"motion": 1 if motion == 0 else 0}
+        return {"motion": 1 if no_motion_time == 0 else 0, "no motion time": no_motion_time}
     else:
         return {}
 
@@ -732,7 +731,7 @@ def obj2000(
 
 
 # The following data objects are device specific. For now only
-#  added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH M1SBB(MI)
+#  added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI)
 # https://miot-spec.org/miot-spec-v2/instances?status=all
 def obj4803(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
@@ -757,12 +756,41 @@ def obj4804(
     return {"opening": opening}
 
 
+def obj4805(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Illuminance in lux"""
+    (illu,) = struct.unpack("f", xobj)
+    return {"illuminance": illu}
+
+
+def obj4818(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Time in seconds of no motion"""
+    if len(xobj) == 2:
+        (no_motion_time,) = struct.unpack("<H", xobj)
+        # seconds since last motion detected message
+        # 0 = motion detected
+        return {"motion": 1 if no_motion_time == 0 else 0, "no motion time": no_motion_time}
+    else:
+        return {}
+
+
 def obj4a01(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Low Battery"""
     low_batt = xobj[0]
     return {"low battery": low_batt}
+
+
+def obj4a08(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Motion detected with Illuminance in lux"""
+    (illu,) = struct.unpack("f", xobj)
+    return {"motion": 1, "motion timer": 1, "illuminance": illu}
 
 
 def obj4a0f(
@@ -956,7 +984,10 @@ xiaomi_dataobject_dict = {
     0x2000: obj2000,
     0x4803: obj4803,
     0x4804: obj4804,
+    0x4805: obj4805,
+    0x4818: obj4818,
     0x4A01: obj4a01,
+    0x4a08: obj4a08,
     0x4A0F: obj4a0f,
     0x4A12: obj4a12,
     0x4A13: obj4a13,
