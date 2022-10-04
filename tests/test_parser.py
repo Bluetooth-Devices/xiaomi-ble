@@ -16,8 +16,8 @@ from sensor_state_data import (
     SensorValue,
     Units,
 )
-from xiaomi_ble.const import SERVICE_HHCCJCY10
 
+from xiaomi_ble.const import SERVICE_HHCCJCY10
 from xiaomi_ble.parser import EncryptionScheme, XiaomiBluetoothDeviceData
 
 KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
