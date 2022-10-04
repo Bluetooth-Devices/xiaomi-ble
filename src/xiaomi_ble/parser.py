@@ -28,7 +28,7 @@ from sensor_state_data import (
     Units,
 )
 
-from .const import CHARACTERISTIC_BATTERY, TIMEOUT_1DAY
+from .const import CHARACTERISTIC_BATTERY, SERVICE_HHCCJCY10, TIMEOUT_1DAY
 from .devices import DEVICE_TYPES
 
 _LOGGER = logging.getLogger(__name__)
@@ -970,6 +970,49 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         for id, data in service_info.service_data.items():
             if self._parse_xiaomi(service_info, service_info.name, data):
                 self.last_service_info = service_info
+
+        if hhc_data := service_info.service_data.get(SERVICE_HHCCJCY10):
+            if self._parse_hhcc(service_info, service_info.name, hhc_data):
+                self.last_service_info = service_info
+
+    def _parse_hhcc(
+        self, service_info: BluetoothServiceInfo, name: str, data: bytes
+    ) -> bool:
+        """Parser for Pink version of HHCCJCY10."""
+        if len(data) != 9:
+            return False
+
+        identifier = short_address(service_info.address)
+        self.set_title(f"Plant Sensor {identifier} (HHCCJCY10)")
+        self.set_device_name(f"Plant Sensor {identifier}")
+        self.set_device_type("HHCCJCY10")
+        self.set_device_manufacturer("HHCC Plant Technology Co. Ltd")
+
+        xvalue_1 = data[0:3]
+        (moist, temp) = struct.unpack(">BH", xvalue_1)
+        self.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp / 10)
+        self.update_sensor(
+            key="moisture",
+            name="Moisture",
+            native_unit_of_measurement=Units.PERCENTAGE,
+            native_value=moist,
+        )
+
+        xvalue_2 = data[3:6]
+        (illu,) = struct.unpack(">i", b"\x00" + xvalue_2)
+        self.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illu)
+
+        xvalue_3 = data[6:9]
+        (batt, cond) = struct.unpack(">BH", xvalue_3)
+        self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
+        self.update_sensor(
+            key="conductivity",
+            name="Conductivity",
+            native_unit_of_measurement=Units.CONDUCTIVITY,
+            native_value=cond,
+        )
+
+        return True
 
     def _parse_xiaomi(
         self, service_info: BluetoothServiceInfo, name: str, data: bytes

@@ -16,6 +16,7 @@ from sensor_state_data import (
     SensorValue,
     Units,
 )
+from xiaomi_ble.const import SERVICE_HHCCJCY10
 
 from xiaomi_ble.parser import EncryptionScheme, XiaomiBluetoothDeviceData
 
@@ -860,6 +861,86 @@ def test_Xiaomi_HHCCJCY01_all_values():
             ),
             KEY_MOISTURE: SensorValue(
                 name="Moisture", device_key=KEY_MOISTURE, native_value=64
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
+def test_Xiaomi_HHCCJCY10():
+    """Test Xiaomi parser for HHCCJCY10."""
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.update(
+        BluetoothServiceInfo(
+            name="Test",
+            address="DC:23:4D:E5:5B:FC",
+            rssi=-60,
+            manufacturer_data={},
+            service_data={SERVICE_HHCCJCY10: b"\x0e\x00n\x014\xa4(\x00["},
+            service_uuids=[SERVICE_HHCCJCY10],
+            source="",
+        )
+    ) == SensorUpdate(
+        title="Plant Sensor 5BFC (HHCCJCY10)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Plant Sensor 5BFC",
+                manufacturer="HHCC Plant Technology Co. Ltd",
+                model="HHCCJCY10",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_TEMPERATURE: SensorDescription(
+                device_key=KEY_TEMPERATURE,
+                device_class=DeviceClass.TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+            ),
+            KEY_ILLUMINANCE: SensorDescription(
+                device_key=KEY_ILLUMINANCE,
+                device_class=DeviceClass.ILLUMINANCE,
+                native_unit_of_measurement=Units.LIGHT_LUX,
+            ),
+            KEY_CONDUCTIVITY: SensorDescription(
+                device_key=KEY_CONDUCTIVITY,
+                device_class=None,
+                native_unit_of_measurement=Units.CONDUCTIVITY,
+            ),
+            KEY_MOISTURE: SensorDescription(
+                device_key=KEY_MOISTURE,
+                device_class=None,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            KEY_BATTERY: SensorDescription(
+                device_key=KEY_BATTERY,
+                device_class=DeviceClass.BATTERY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=11.0
+            ),
+            KEY_ILLUMINANCE: SensorValue(
+                name="Illuminance", device_key=KEY_ILLUMINANCE, native_value=79012
+            ),
+            KEY_CONDUCTIVITY: SensorValue(
+                name="Conductivity", device_key=KEY_CONDUCTIVITY, native_value=91
+            ),
+            KEY_MOISTURE: SensorValue(
+                name="Moisture", device_key=KEY_MOISTURE, native_value=14
+            ),
+            KEY_BATTERY: SensorValue(
+                name="Battery", device_key=KEY_BATTERY, native_value=40
             ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
