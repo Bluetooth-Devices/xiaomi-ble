@@ -835,12 +835,12 @@ def test_Xiaomi_HHCCJCY01_all_values():
             ),
             KEY_CONDUCTIVITY: SensorDescription(
                 device_key=KEY_CONDUCTIVITY,
-                device_class=None,
+                device_class=DeviceClass.CONDUCTIVITY,
                 native_unit_of_measurement=Units.CONDUCTIVITY,
             ),
             KEY_MOISTURE: SensorDescription(
                 device_key=KEY_MOISTURE,
-                device_class=None,
+                device_class=DeviceClass.MOISTURE,
                 native_unit_of_measurement=Units.PERCENTAGE,
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
@@ -907,12 +907,12 @@ def test_Xiaomi_HHCCJCY10():
             ),
             KEY_CONDUCTIVITY: SensorDescription(
                 device_key=KEY_CONDUCTIVITY,
-                device_class=None,
+                device_class=DeviceClass.CONDUCTIVITY,
                 native_unit_of_measurement=Units.CONDUCTIVITY,
             ),
             KEY_MOISTURE: SensorDescription(
                 device_key=KEY_MOISTURE,
-                device_class=None,
+                device_class=DeviceClass.MOISTURE,
                 native_unit_of_measurement=Units.PERCENTAGE,
             ),
             KEY_BATTERY: SensorDescription(

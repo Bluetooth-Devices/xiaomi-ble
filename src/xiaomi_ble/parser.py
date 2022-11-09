@@ -28,7 +28,12 @@ from sensor_state_data import (
     Units,
 )
 
-from .const import CHARACTERISTIC_BATTERY, SERVICE_HHCCJCY10, TIMEOUT_1DAY
+from .const import (
+    CHARACTERISTIC_BATTERY,
+    SERVICE_HHCCJCY10,
+    SERVICE_MIBEACON,
+    TIMEOUT_1DAY,
+)
 from .devices import DEVICE_TYPES
 
 _LOGGER = logging.getLogger(__name__)
@@ -545,12 +550,7 @@ def obj1008(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Moisture"""
-    device.update_sensor(
-        key="moisture",
-        name="Moisture",
-        native_unit_of_measurement=Units.PERCENTAGE,
-        native_value=xobj[0],
-    )
+    device.update_predefined_sensor(SensorLibrary.MOISTURE__PERCENTAGE, xobj[0])
     return {}
 
 
@@ -560,12 +560,7 @@ def obj1009(
     """Conductivity"""
     if len(xobj) == 2:
         (cond,) = CND_STRUCT.unpack(xobj)
-        device.update_sensor(
-            key="conductivity",
-            name="Conductivity",
-            native_unit_of_measurement=Units.CONDUCTIVITY,
-            native_value=cond,
-        )
+        device.update_predefined_sensor(SensorLibrary.CONDUCTIVITY__CONDUCTIVITY, cond)
     return {}
 
 
@@ -575,11 +570,9 @@ def obj1010(
     """Formaldehyde"""
     if len(xobj) == 2:
         (fmdh,) = FMDH_STRUCT.unpack(xobj)
-        device.update_sensor(
-            key="formaldehyde",
-            name="Formaldehyde",
-            native_unit_of_measurement=Units.CONCENTRATION_MILLIGRAMS_PER_CUBIC_METER,
-            native_value=fmdh / 100,
+        device.update_predefined_sensor(
+            SensorLibrary.FORMALDEHYDE__CONCENTRATION_MILLIGRAMS_PER_CUBIC_METER,
+            fmdh / 100,
         )
         return {}
     else:
@@ -675,13 +668,7 @@ def obj100a(
     batt = xobj[0]
     volt = 2.2 + (3.1 - 2.2) * (batt / 100)
     device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
-    device.update_sensor(
-        key="voltage",
-        name="Voltage",
-        device_class=DeviceClass.VOLTAGE,
-        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
-        native_value=volt,
-    )
+    device.update_predefined_sensor(SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT, volt)
     return {}
 
 
@@ -967,17 +954,15 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         """Update from BLE advertisement data."""
         _LOGGER.debug("Parsing Xiaomi BLE advertisement data: %s", service_info)
 
-        for id, data in service_info.service_data.items():
-            if self._parse_xiaomi(service_info, service_info.name, data):
-                self.last_service_info = service_info
+        for uuid, data in service_info.service_data.items():
+            if uuid == SERVICE_MIBEACON:
+                if self._parse_xiaomi(service_info, service_info.name, data):
+                    self.last_service_info = service_info
+            elif uuid == SERVICE_HHCCJCY10:
+                if self._parse_hhcc(service_info, data):
+                    self.last_service_info = service_info
 
-        if hhc_data := service_info.service_data.get(SERVICE_HHCCJCY10):
-            if self._parse_hhcc(service_info, service_info.name, hhc_data):
-                self.last_service_info = service_info
-
-    def _parse_hhcc(
-        self, service_info: BluetoothServiceInfo, name: str, data: bytes
-    ) -> bool:
+    def _parse_hhcc(self, service_info: BluetoothServiceInfo, data: bytes) -> bool:
         """Parser for Pink version of HHCCJCY10."""
         if len(data) != 9:
             return False
@@ -991,12 +976,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         xvalue_1 = data[0:3]
         (moist, temp) = struct.unpack(">BH", xvalue_1)
         self.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp / 10)
-        self.update_sensor(
-            key="moisture",
-            name="Moisture",
-            native_unit_of_measurement=Units.PERCENTAGE,
-            native_value=moist,
-        )
+        self.update_predefined_sensor(SensorLibrary.MOISTURE__PERCENTAGE, moist)
 
         xvalue_2 = data[3:6]
         (illu,) = struct.unpack(">i", b"\x00" + xvalue_2)
@@ -1005,12 +985,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         xvalue_3 = data[6:9]
         (batt, cond) = struct.unpack(">BH", xvalue_3)
         self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
-        self.update_sensor(
-            key="conductivity",
-            name="Conductivity",
-            native_unit_of_measurement=Units.CONDUCTIVITY,
-            native_value=cond,
-        )
+        self.update_predefined_sensor(SensorLibrary.CONDUCTIVITY__CONDUCTIVITY, cond)
 
         return True
 
