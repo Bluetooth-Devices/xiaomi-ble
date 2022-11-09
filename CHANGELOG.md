@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.11.0 (2022-11-09)
+### Feature
+* Add linptech ms1bb and hs1bb ([`52a21dd`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/52a21dd062d9a2172c8e23008f1ee80bbef6ce5e))
+
 ## v0.10.0 (2022-09-13)
 ### Feature
 * Update for bleak 0.17 support ([#19](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/19)) ([`db14912`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/db14912f6c57f20363e85d49fe320765606e7ed3))
