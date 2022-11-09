@@ -22,7 +22,6 @@ from Cryptodome.Cipher import AES
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import (
     BinarySensorDeviceClass,
-    DeviceClass,
     SensorLibrary,
     SensorUpdate,
     Units,
@@ -668,7 +667,9 @@ def obj100a(
     batt = xobj[0]
     volt = 2.2 + (3.1 - 2.2) * (batt / 100)
     device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
-    device.update_predefined_sensor(SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT, volt)
+    device.update_predefined_sensor(
+        SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT, volt
+    )
     return {}
 
 
