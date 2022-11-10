@@ -28,7 +28,7 @@ from sensor_state_data import (
     Units,
 )
 
-from .const import CHARACTERISTIC_BATTERY, TIMEOUT_1DAY
+from .const import CHARACTERISTIC_BATTERY, CHARACTERISTIC_COMMAND, TIMEOUT_1DAY
 from .devices import DEVICE_TYPES
 
 _LOGGER = logging.getLogger(__name__)
@@ -1414,3 +1414,26 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, payload[0])
 
         return self._finish_update()
+
+    def supports_identify(self) -> bool:
+        """
+        Returns true if this device supports the "identify" function.
+        """
+        # If more devices support this, pull this into devices.py metadata
+        return self.device_id == 0x0098
+
+    async def async_identify(self, ble_device: BLEDevice) -> None:
+        """
+        Poll the device to retrieve any values we can't get from passive listening.
+        """
+        if self.device_id == 0x0098:
+            client = await establish_connection(
+                BleakClient, ble_device, ble_device.address
+            )
+            try:
+                command_char = client.services.get_characteristic(
+                    CHARACTERISTIC_COMMAND
+                )
+                await client.write_gatt_char(command_char, b"\xfd\xff")
+            finally:
+                await client.disconnect()
