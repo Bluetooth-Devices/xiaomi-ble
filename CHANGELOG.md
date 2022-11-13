@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.12.1 (2022-11-13)
+### Fix
+* Unit of measurement formaldehyde ([#23](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/23)) ([`48035a1`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/48035a1dd704c23d1b8e74be0c7342d7d7da61b7))
+
 ## v0.12.0 (2022-11-12)
 ### Feature
 * Add support for HHCCJCY10 ([#21](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/21)) ([`0f387c2`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/0f387c244644a8469de935ce4e5800d882868d81))
