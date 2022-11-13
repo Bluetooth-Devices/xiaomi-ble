@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.12.0 (2022-11-12)
+### Feature
+* Add support for HHCCJCY10 ([#21](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/21)) ([`0f387c2`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/0f387c244644a8469de935ce4e5800d882868d81))
+
 ## v0.11.0 (2022-11-09)
 ### Feature
 * Add linptech ms1bb and hs1bb ([`52a21dd`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/52a21dd062d9a2172c8e23008f1ee80bbef6ce5e))
