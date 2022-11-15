@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.12.2 (2022-11-15)
+### Fix
+* Bump sensor-state-data ([#24](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/24)) ([`c2dd39c`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/c2dd39ca898910c6458f90033068d8924ecadf51))
+
 ## v0.12.1 (2022-11-13)
 ### Fix
 * Unit of measurement formaldehyde ([#23](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/23)) ([`48035a1`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/48035a1dd704c23d1b8e74be0c7342d7d7da61b7))
