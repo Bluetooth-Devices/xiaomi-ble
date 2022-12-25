@@ -20,6 +20,8 @@ from sensor_state_data import (
 from xiaomi_ble.const import SERVICE_HHCCJCY10
 from xiaomi_ble.parser import EncryptionScheme, XiaomiBluetoothDeviceData
 
+KEY_BINARY_OPENING = DeviceKey(key="opening", device_id=None)
+KEY_BINARY_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_BATTERY = DeviceKey(key="battery", device_id=None)
@@ -1054,10 +1056,20 @@ def test_Xiaomi_MUE4094RT():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_BINARY_OPENING: BinarySensorDescription(
+                device_key=KEY_BINARY_OPENING,
+                device_class=BinarySensorDeviceClass.OPENING,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OPENING: BinarySensorValue(
+                device_key=KEY_BINARY_OPENING, name="Opening", native_value=True
+            ),
+        },
     )
 
     assert device.unhandled == {
-        "motion": 1,
         "motion timer": 1,
     }
 
