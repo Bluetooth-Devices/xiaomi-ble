@@ -1057,14 +1057,14 @@ def test_Xiaomi_MUE4094RT():
             ),
         },
         binary_entity_descriptions={
-            KEY_BINARY_OPENING: BinarySensorDescription(
-                device_key=KEY_BINARY_OPENING,
-                device_class=BinarySensorDeviceClass.OPENING,
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
             ),
         },
         binary_entity_values={
-            KEY_BINARY_OPENING: BinarySensorValue(
-                device_key=KEY_BINARY_OPENING, name="Opening", native_value=True
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
             ),
         },
     )
@@ -1464,9 +1464,19 @@ def test_Xiaomi_MS1BB_MI_obj4818():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=False
+            ),
+        },
     )
-
-    assert device.unhandled == {"motion": 0, "no motion time": 60}
+    assert device.unhandled == {"no motion time": 60}
 
 
 def test_Xiaomi_MS1BB_MI_obj4a08():
@@ -1490,6 +1500,11 @@ def test_Xiaomi_MS1BB_MI_obj4a08():
             )
         },
         entity_descriptions={
+            KEY_ILLUMINANCE: SensorDescription(
+                device_key=KEY_ILLUMINANCE,
+                device_class=DeviceClass.ILLUMINANCE,
+                native_unit_of_measurement=Units.LIGHT_LUX,
+            ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
                 device_class=DeviceClass.SIGNAL_STRENGTH,
@@ -1497,13 +1512,27 @@ def test_Xiaomi_MS1BB_MI_obj4a08():
             ),
         },
         entity_values={
+            KEY_ILLUMINANCE: SensorValue(
+                name="Illuminance", device_key=KEY_ILLUMINANCE, native_value=228
+            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
+            ),
+        },
     )
 
-    assert device.unhandled == {"motion": 1, "motion timer": 1, "illuminance": 228.0}
+    assert device.unhandled == {"motion timer": 1}
 
 
 def test_Xiaomi_MS1BB_MI_obj4804():
@@ -1538,9 +1567,18 @@ def test_Xiaomi_MS1BB_MI_obj4804():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_BINARY_OPENING: BinarySensorDescription(
+                device_key=KEY_BINARY_OPENING,
+                device_class=BinarySensorDeviceClass.OPENING,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OPENING: BinarySensorValue(
+                device_key=KEY_BINARY_OPENING, name="Opening", native_value=True
+            ),
+        },
     )
-
-    assert device.unhandled == {"opening": 1}
 
 
 def test_Xiaomi_MS1BB_MI_obj4a12():
@@ -1575,9 +1613,18 @@ def test_Xiaomi_MS1BB_MI_obj4a12():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_BINARY_OPENING: BinarySensorDescription(
+                device_key=KEY_BINARY_OPENING,
+                device_class=BinarySensorDeviceClass.OPENING,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OPENING: BinarySensorValue(
+                device_key=KEY_BINARY_OPENING, name="Opening", native_value=True
+            ),
+        },
     )
-
-    assert device.unhandled == {"opening": 1}
 
 
 def test_Xiaomi_MS1BB_MI_obj4a13():
