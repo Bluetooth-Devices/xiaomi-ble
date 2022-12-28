@@ -22,6 +22,7 @@ from xiaomi_ble.parser import EncryptionScheme, XiaomiBluetoothDeviceData
 
 KEY_BINARY_DOOR = DeviceKey(key="door", device_id=None)
 KEY_BINARY_OPENING = DeviceKey(key="opening", device_id=None)
+KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN = DeviceKey(key="door_left_open", device_id=None)
 KEY_BINARY_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
@@ -1580,7 +1581,7 @@ def test_Xiaomi_MS1BB_MI_obj4804():
 
 def test_Xiaomi_MS1BB_MI_obj4a12():
     """Test Xiaomi parser for Linptech MS1BB(MI) with obj4a12."""
-    data_string = b"XY\x89\x18vg\xe5f8\xc1\xa4\xaa\x89\x02\xba&\x00\x00#\xc3\xbc\xa8"
+    data_string = b"XY\x89\x18ug\xe5f8\xc1\xa4i\xdd\xf3\xa1&\x00\x00\xa2J\x1bE"
     advertisement = bytes_to_service_info(data_string, address="A4:C1:38:66:E5:67")
     bindkey = "0fdcc30fe9289254876b5ef7c11ef1f0"
 
@@ -1615,10 +1616,19 @@ def test_Xiaomi_MS1BB_MI_obj4a12():
                 device_key=KEY_BINARY_OPENING,
                 device_class=BinarySensorDeviceClass.OPENING,
             ),
+            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorDescription(
+                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
+                device_class=BinarySensorDeviceClass.PROBLEM,
+            ),
         },
         binary_entity_values={
             KEY_BINARY_OPENING: BinarySensorValue(
-                device_key=KEY_BINARY_OPENING, name="Opening", native_value=True
+                device_key=KEY_BINARY_OPENING, name="Opening", native_value=False
+            ),
+            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorValue(
+                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
+                name="Door left open",
+                native_value=False,
             ),
         },
     )
@@ -1702,15 +1712,22 @@ def test_Xiaomi_XMZNMS08LM():
                 device_key=KEY_BINARY_DOOR,
                 device_class=BinarySensorDeviceClass.DOOR,
             ),
+            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorDescription(
+                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
+                device_class=BinarySensorDeviceClass.PROBLEM,
+            ),
         },
         binary_entity_values={
             KEY_BINARY_DOOR: BinarySensorValue(
                 device_key=KEY_BINARY_DOOR, name="Door", native_value=False
             ),
+            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorValue(
+                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
+                name="Door left open",
+                native_value=False,
+            ),
         },
     )
-
-    assert device.unhandled == {"door action": "close the door"}
 
 
 def test_Xiaomi_HS1BB_battery():
