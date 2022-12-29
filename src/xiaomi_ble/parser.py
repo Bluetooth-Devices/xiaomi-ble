@@ -137,10 +137,11 @@ def obj0003(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Motion"""
+    # MUE4094RT does not send motion clear.
     device.update_predefined_binary_sensor(
         BinarySensorDeviceClass.MOTION, bool(xobj[0])
     )
-    return {"motion timer": xobj[0]}
+    return {}
 
 
 def obj0006(
@@ -192,6 +193,18 @@ def obj0007(
     if door_byte == 0x00:
         # open the door
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.DOOR, True)
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.PROBLEM,
+            False,  # reset door stuck
+            key="door_stuck",
+            name="Door stuck",
+        )
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.GENERIC,
+            False,  # reset knock on the door
+            key="knock_on_the_door",
+            name="Knock on the door",
+        )
     elif door_byte == 0x01:
         # close the door
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.DOOR, False)
@@ -200,6 +213,12 @@ def obj0007(
             False,  # reset door left open
             key="door_left_open",
             name="Door left open",
+        )
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.TAMPER,
+            False,  # reset pry the door
+            key="pry_the_door",
+            name="Pry the door",
         )
     elif door_byte == 0x02:
         # timeout, not closed
@@ -337,24 +356,17 @@ def obj000f(
     """Moving with light"""
     if len(xobj) == 3:
         (illum,) = LIGHT_STRUCT.unpack(xobj + b"\x00")
-
+        device.update_predefined_binary_sensor(BinarySensorDeviceClass.MOTION, True)
         if device_type in ["MJYD02YL", "RTCGQ02LM"]:
             # MJYD02YL:  1 - moving no light, 100 - moving with light
             # RTCGQ02LM: 0 - moving no light, 256 - moving with light
             device.update_predefined_binary_sensor(
                 BinarySensorDeviceClass.LIGHT, bool(illum >= 100)
             )
-            device.update_predefined_binary_sensor(BinarySensorDeviceClass.MOTION, True)
-            return {"motion timer": 1}
         elif device_type == "CGPR1":
             # CGPR1:     moving, value is illumination in lux
             device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
-            device.update_predefined_binary_sensor(BinarySensorDeviceClass.MOTION, True)
-            return {"motion timer": 1}
-        else:
-            return {}
-    else:
-        return {}
+    return {}
 
 
 def obj1001(
@@ -573,8 +585,6 @@ def obj1007(
         elif device_type in ["HHCCJCY01", "GCLS002"]:
             # illumination in lux
             device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
-        else:
-            return {}
     return {}
 
 
@@ -606,9 +616,7 @@ def obj1010(
             SensorLibrary.FORMALDEHYDE__CONCENTRATION_MILLIGRAMS_PER_CUBIC_METER,
             fmdh / 100,
         )
-        return {}
-    else:
-        return {}
+    return {}
 
 
 def obj1012(
@@ -656,16 +664,16 @@ def obj1017(
     if len(xobj) == 4:
         (no_motion_time,) = M_STRUCT.unpack(xobj)
         # seconds since last motion detected message
-        # 0 = motion detected
-        if no_motion_time == 0:
+        # 0x1017 is send 3 seconds after 0x000f, 5 seconds arter 0x1007
+        # and at 60, 120, 300, 600, 1200 and 1800 seconds after last motion.
+        # Anything <= 30 seconds is regarded motion detected in the MiHome app.
+        if no_motion_time <= 30:
             device.update_predefined_binary_sensor(BinarySensorDeviceClass.MOTION, True)
         else:
             device.update_predefined_binary_sensor(
                 BinarySensorDeviceClass.MOTION, False
             )
-        return {"no motion time": no_motion_time}
-    else:
-        return {}
+    return {}
 
 
 def obj1018(
@@ -770,7 +778,7 @@ def obj2000(
 
 
 # The following data objects are device specific. For now only
-#  added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI)
+# added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI)
 # https://miot-spec.org/miot-spec-v2/instances?status=all
 def obj4803(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
@@ -792,13 +800,16 @@ def obj4804(
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, False)
         device.update_predefined_binary_sensor(
             BinarySensorDeviceClass.PROBLEM,
-            False,
+            False,  # reset door left open
             key="door_left_open",
             name="Door left open",
         )
-
-    else:
-        return {}
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.PROBLEM,
+            False,  # reset device forcibly removed
+            key="device forcibly removed",
+            name="Device forcibly removed",
+        )
     return {}
 
 
@@ -819,15 +830,15 @@ def obj4818(
         (no_motion_time,) = struct.unpack("<H", xobj)
         # seconds since last motion detected message
         # 0 = motion detected
-        if no_motion_time == 0:
+        # also send at 60, 120, 300, 600, 1200 and 1800 seconds after last motion.
+        # Anything <= 30 seconds is regarded motion detected in the MiHome app.
+        if no_motion_time <= 30:
             device.update_predefined_binary_sensor(BinarySensorDeviceClass.MOTION, True)
         else:
             device.update_predefined_binary_sensor(
                 BinarySensorDeviceClass.MOTION, False
             )
-        return {"no motion time": no_motion_time}
-    else:
-        return {}
+    return {}
 
 
 def obj4a01(
@@ -845,7 +856,7 @@ def obj4a08(
     (illum,) = struct.unpack("f", xobj)
     device.update_predefined_binary_sensor(BinarySensorDeviceClass.MOTION, True)
     device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
-    return {"motion timer": 1}
+    return {}
 
 
 def obj4a0f(
@@ -861,9 +872,7 @@ def obj4a0f(
             key="device_forcibly_removed",
             name="Device forcibly removed",
         )
-        return {}
-    else:
-        return {}
+    return {}
 
 
 def obj4a12(
@@ -882,8 +891,12 @@ def obj4a12(
             key="door_left_open",
             name="Door left open",
         )
-    else:
-        return {}
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.PROBLEM,
+            False,  # reset device forcibly removed
+            key="device_forcibly_removed",
+            name="Device forcibly removed",
+        )
     return {}
 
 
@@ -894,8 +907,7 @@ def obj4a13(
     click = xobj[0]
     if click == 1:
         return {"button": "toggle"}
-    else:
-        return {}
+    return {}
 
 
 def obj4a1a(
