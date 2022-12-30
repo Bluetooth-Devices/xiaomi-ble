@@ -721,8 +721,8 @@ def obj2000(
     return {}
 
 
-# The following data objects are device specific. For now only
-#  added for LYWSD02MMC, MJWSD05MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI), K9BB
+# The following data objects are device specific. For now only added for 
+# LYWSD02MMC, MJWSD05MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI), K9BB
 # https://miot-spec.org/miot-spec-v2/instances?status=all
 def obj4803(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
@@ -992,9 +992,11 @@ def obj4e0e(
     return result
 
 
-def obj4e1c(xobj):
+def obj4e1c(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
     """Device reset"""
-    return {"device reset": xobj[0]}
+    return {"device reset": True}
 
 
 # Dataobject dictionary
@@ -1041,7 +1043,7 @@ xiaomi_dataobject_dict = {
     0x4C03: obj4c03,
     0x4C08: obj4c08,
     0x4C14: obj4c14,
-    0x4e1c: obj4e1c,
+    0x4E1c: obj4e1c,
     0x4E0C: obj4e0c,
     0x4E0D: obj4e0d,
     0x4E0E: obj4e0e,
