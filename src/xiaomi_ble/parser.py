@@ -968,13 +968,7 @@ def obj4c14(
 ) -> dict[str, Any]:
     """Mode"""
     mode = xobj[0]
-    device.update_sensor(
-        key="mode",
-        name="Mode",
-        native_unit_of_measurement=None,
-        native_value=mode,
-    )
-    return {}
+    return {"mode": mode}
 
 
 def obj4e0c(
