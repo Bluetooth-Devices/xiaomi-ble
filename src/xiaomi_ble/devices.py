@@ -69,6 +69,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Switch (triple button)",
         model="K9B-3BTN",
     ),
+    0x1C10: DeviceEntry(
+        name="Switch (single button)",
+        model="K9BB-1BTN",
+    ),
     0x1889: DeviceEntry(
         name="Door/Window Sensor",
         model="MS1BB(MI)",
@@ -92,6 +96,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
     0x055B: DeviceEntry(
         name="Temperature/Humidity Sensor",
         model="LYWSD03MMC",
+    ),
+    0x2832: DeviceEntry(
+        name="Temperature/Humidity Sensor",
+        model="MJWSD05MMC",
     ),
     0x098B: DeviceEntry(
         name="Door/Window Sensor",
@@ -152,6 +160,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
     0x1949: DeviceEntry(
         name="Button",
         model="XMWXKG01YL",
+    ),
+    0x2387: DeviceEntry(
+        name="Button",
+        model="XMWXKG01LM",
     ),
     0x098C: DeviceEntry(
         name="Push Pull Lock",
