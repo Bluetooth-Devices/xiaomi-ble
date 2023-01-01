@@ -194,67 +194,65 @@ def obj0007(
     if door_byte == 0x00:
         # open the door
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.DOOR, True)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            False,  # reset door stuck
+        device.update_binary_sensor(
             key="door_stuck",
+            native_value=False,  # reset door stuck
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Door stuck",
         )
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.GENERIC,
-            False,  # reset knock on the door
+        device.update_binary_sensor(
             key="knock_on_the_door",
+            native_value=False,  # reset knock on the door
             name="Knock on the door",
         )
     elif door_byte == 0x01:
         # close the door
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.DOOR, False)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            False,  # reset door left open
+        device.update_binary_sensor(
             key="door_left_open",
+            native_value=False,  # reset door left open
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Door left open",
         )
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.TAMPER,
-            False,  # reset pry the door
+        device.update_binary_sensor(
             key="pry_the_door",
+            native_value=False,  # reset pry the door
+            device_class=BinarySensorDeviceClass.TAMPER,
             name="Pry the door",
         )
     elif door_byte == 0x02:
         # timeout, not closed
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.DOOR, True)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            True,
+        device.update_binary_sensor(
             key="door_left_open",
+            native_value=True,
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Door left open",
         )
     elif door_byte == 0x03:
         # knock on the door
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.DOOR, False)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.GENERIC,
-            True,
+        device.update_binary_sensor(
             key="knock_on_the_door",
+            native_value=True,
             name="Knock on the door",
         )
     elif door_byte == 0x04:
         # pry the door
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.DOOR, True)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.TAMPER,
-            True,
+        device.update_binary_sensor(
             key="pry_the_door",
+            native_value=True,
+            device_class=BinarySensorDeviceClass.TAMPER,
             name="Pry the door",
         )
     elif door_byte == 0x05:
         # door stuck
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.DOOR, False)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            True,
+        device.update_binary_sensor(
             key="door_stuck",
+            native_value=True,
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Door stuck",
         )
     return {}
@@ -696,19 +694,19 @@ def obj1019(
     elif open_obj == 1:
         # closed
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, False)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            False,  # reset door left open
+        device.update_binary_sensor(
             key="door_left_open",
+            native_value=False,  # reset door left open
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Door left open",
         )
     elif open_obj == 2:
         # closing timeout
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, True)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            True,
+        device.update_binary_sensor(
             key="door_left_open",
+            native_value=True,
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Door left open",
         )
     elif open_obj == 3:
@@ -799,16 +797,16 @@ def obj4804(
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, True)
     elif opening_state == 2:
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, False)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            False,  # reset door left open
+        device.update_binary_sensor(
             key="door_left_open",
+            native_value=False,  # reset door left open
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Door left open",
         )
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            False,  # reset device forcibly removed
-            key="device forcibly removed",
+        device.update_binary_sensor(
+            key="device_forcibly_removed",
+            native_value=False,  # reset device forcibly removed
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Device forcibly removed",
         )
     return {}
@@ -867,10 +865,10 @@ def obj4a0f(
     dev_forced = xobj[0]
     if dev_forced == 1:
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, True)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            True,
+        device.update_binary_sensor(
             key="device_forcibly_removed",
+            native_value=True,
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Device forcibly removed",
         )
     return {}
@@ -886,16 +884,16 @@ def obj4a12(
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, True)
     elif opening_state == 2:
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, False)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            False,
+        device.update_binary_sensor(
             key="door_left_open",
+            native_value=False,
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Door left open",
         )
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            False,  # reset device forcibly removed
+        device.update_binary_sensor(
             key="device_forcibly_removed",
+            native_value=False,  # reset device forcibly removed
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Device forcibly removed",
         )
     return {}
@@ -917,10 +915,10 @@ def obj4a1a(
     """Door left open"""
     if xobj[0] == 1:
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, True)
-        device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.PROBLEM,
-            True,
+        device.update_binary_sensor(
             key="door_left_open",
+            native_value=False,
+            device_class=BinarySensorDeviceClass.PROBLEM,
             name="Door left open",
         )
     return {}
@@ -969,13 +967,7 @@ def obj4c14(
 ) -> dict[str, Any]:
     """Mode"""
     mode = xobj[0]
-    device.update_sensor(
-        key="mode",
-        name="Mode",
-        native_unit_of_measurement=None,
-        native_value=mode,
-    )
-    return {}
+    return {"mode": mode}
 
 
 def obj4e0c(
