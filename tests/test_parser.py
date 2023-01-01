@@ -20,14 +20,22 @@ from sensor_state_data import (
 from xiaomi_ble.const import SERVICE_HHCCJCY10
 from xiaomi_ble.parser import EncryptionScheme, XiaomiBluetoothDeviceData
 
-KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
-KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_BATTERY = DeviceKey(key="battery", device_id=None)
-KEY_SIGNAL_STRENGTH = DeviceKey(key="signal_strength", device_id=None)
-KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
+KEY_BINARY_DOOR = DeviceKey(key="door", device_id=None)
+KEY_BINARY_MOTION = DeviceKey(key="motion", device_id=None)
+KEY_BINARY_OPENING = DeviceKey(key="opening", device_id=None)
+KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN = DeviceKey(key="door_left_open", device_id=None)
+KEY_BINARY_PROBLEM_DEVICE_FORCIBLY_REMOVED = DeviceKey(
+    key="device_forcibly_removed", device_id=None
+)
+KEY_BINARY_TAMPER_PRY_THE_DOOR = DeviceKey(key="pry_the_door", device_id=None)
 KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
+KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
+KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
 KEY_MOISTURE = DeviceKey(key="moisture", device_id=None)
+KEY_SIGNAL_STRENGTH = DeviceKey(key="signal_strength", device_id=None)
 KEY_SMOKE = DeviceKey(key="smoke", device_id=None)
+KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
 
 
 @pytest.fixture(autouse=True)
@@ -598,7 +606,7 @@ def test_Xiaomi_XMWSDJ04MMC():
 
 def test_Xiaomi_XMMF01JQD():
     """Test Xiaomi parser for XMMF01JQD."""
-    data_string = b"P0\xe1\x04\x8eT\xd3\xe60S\xe2\x01\x10\x03\x00\x00\x00"
+    data_string = b"P0\xe1\x04\x8eT\xd3\xe60S\xe2\x01\x10\x03\x01\x00\x00"
     advertisement = bytes_to_service_info(data_string, address="E2:53:30:E6:D3:54")
 
     device = XiaomiBluetoothDeviceData()
@@ -628,9 +636,7 @@ def test_Xiaomi_XMMF01JQD():
             ),
         },
     )
-
-    # FIXME
-    # assert sensor_msg["button"] == "left"
+    assert device.unhandled == {"button": "left"}
 
 
 def test_Xiaomi_CGC1():
@@ -1025,6 +1031,7 @@ def test_Xiaomi_MJYD02YL():
 
 def test_Xiaomi_MUE4094RT():
     """Test Xiaomi parser for MUE4094RT."""
+    # Motion sensor hasn't been implemented yet, as it needs a motion reset timer.
     data_string = b"@0\xdd\x03$\x03\x00\x01\x01"
     advertisement = bytes_to_service_info(data_string, address="DE:70:E8:B2:39:0C")
 
@@ -1054,12 +1061,18 @@ def test_Xiaomi_MUE4094RT():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        # binary_entity_descriptions={
+        #     KEY_BINARY_MOTION: BinarySensorDescription(
+        #         device_key=KEY_BINARY_MOTION,
+        #         device_class=BinarySensorDeviceClass.MOTION,
+        #     ),
+        # },
+        # binary_entity_values={
+        #     KEY_BINARY_MOTION: BinarySensorValue(
+        #         device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
+        #     ),
+        # },
     )
-
-    assert device.unhandled == {
-        "motion": 1,
-        "motion timer": 1,
-    }
 
 
 def test_Xiaomi_CGPR1():
@@ -1377,7 +1390,7 @@ def test_Xiaomi_K9B():
     """Test Xiaomi parser for K9B."""
 
 
-def test_Xiaomi_MS1BB_MI_obj4803():
+def test_Xiaomi_HS1BB_MI_obj4803():
     """Test Xiaomi parser for Linptech HS1BB(MI) battery (4803)."""
     data_string = b"XY\xeb*\x9e\xe9\x8e\x058\xc1\xa4\xd0z\xd3\xe38\x00\x003c]\x10"
     advertisement = bytes_to_service_info(data_string, address="A4:C1:38:05:8E:E9")
@@ -1420,7 +1433,7 @@ def test_Xiaomi_MS1BB_MI_obj4803():
     )
 
 
-def test_Xiaomi_MS1BB_MI_obj4818():
+def test_Xiaomi_HS1BB_MI_obj4818():
     """Test Xiaomi parser for Linptech HS1BB(MI) no motion time (4818)."""
     data_string = b"XY\xeb*\xc1\xe9\x8e\x058\xc1\xa4\x07YS\x0f\x8d8\x00\x00\xb7zp\xf8"
     advertisement = bytes_to_service_info(data_string, address="A4:C1:38:05:8E:E9")
@@ -1452,9 +1465,18 @@ def test_Xiaomi_MS1BB_MI_obj4818():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=False
+            ),
+        },
     )
-
-    assert device.unhandled == {"motion": 0, "no motion time": 60}
 
 
 def test_Xiaomi_MS1BB_MI_obj4a08():
@@ -1478,6 +1500,11 @@ def test_Xiaomi_MS1BB_MI_obj4a08():
             )
         },
         entity_descriptions={
+            KEY_ILLUMINANCE: SensorDescription(
+                device_key=KEY_ILLUMINANCE,
+                device_class=DeviceClass.ILLUMINANCE,
+                native_unit_of_measurement=Units.LIGHT_LUX,
+            ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
                 device_class=DeviceClass.SIGNAL_STRENGTH,
@@ -1485,13 +1512,25 @@ def test_Xiaomi_MS1BB_MI_obj4a08():
             ),
         },
         entity_values={
+            KEY_ILLUMINANCE: SensorValue(
+                name="Illuminance", device_key=KEY_ILLUMINANCE, native_value=228
+            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
+            ),
+        },
     )
-
-    assert device.unhandled == {"motion": 1, "motion timer": 1, "illuminance": 228.0}
 
 
 def test_Xiaomi_MS1BB_MI_obj4804():
@@ -1526,14 +1565,23 @@ def test_Xiaomi_MS1BB_MI_obj4804():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_BINARY_OPENING: BinarySensorDescription(
+                device_key=KEY_BINARY_OPENING,
+                device_class=BinarySensorDeviceClass.OPENING,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OPENING: BinarySensorValue(
+                device_key=KEY_BINARY_OPENING, name="Opening", native_value=True
+            ),
+        },
     )
-
-    assert device.unhandled == {"opening": 1}
 
 
 def test_Xiaomi_MS1BB_MI_obj4a12():
     """Test Xiaomi parser for Linptech MS1BB(MI) with obj4a12."""
-    data_string = b"XY\x89\x18vg\xe5f8\xc1\xa4\xaa\x89\x02\xba&\x00\x00#\xc3\xbc\xa8"
+    data_string = b"XY\x89\x18ug\xe5f8\xc1\xa4i\xdd\xf3\xa1&\x00\x00\xa2J\x1bE"
     advertisement = bytes_to_service_info(data_string, address="A4:C1:38:66:E5:67")
     bindkey = "0fdcc30fe9289254876b5ef7c11ef1f0"
 
@@ -1563,9 +1611,36 @@ def test_Xiaomi_MS1BB_MI_obj4a12():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_BINARY_OPENING: BinarySensorDescription(
+                device_key=KEY_BINARY_OPENING,
+                device_class=BinarySensorDeviceClass.OPENING,
+            ),
+            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorDescription(
+                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
+                device_class=BinarySensorDeviceClass.PROBLEM,
+            ),
+            KEY_BINARY_PROBLEM_DEVICE_FORCIBLY_REMOVED: BinarySensorDescription(
+                device_key=KEY_BINARY_PROBLEM_DEVICE_FORCIBLY_REMOVED,
+                device_class=BinarySensorDeviceClass.PROBLEM,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OPENING: BinarySensorValue(
+                device_key=KEY_BINARY_OPENING, name="Opening", native_value=False
+            ),
+            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorValue(
+                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
+                name="Door left open",
+                native_value=False,
+            ),
+            KEY_BINARY_PROBLEM_DEVICE_FORCIBLY_REMOVED: BinarySensorValue(
+                device_key=KEY_BINARY_PROBLEM_DEVICE_FORCIBLY_REMOVED,
+                name="Device forcibly removed",
+                native_value=False,
+            ),
+        },
     )
-
-    assert device.unhandled == {"opening": 1}
 
 
 def test_Xiaomi_MS1BB_MI_obj4a13():
@@ -1607,6 +1682,213 @@ def test_Xiaomi_MS1BB_MI_obj4a13():
 
 def test_Xiaomi_XMWXKG01YL():
     """Test Xiaomi parser for XMWXKG01YL."""
+
+
+def test_Xiaomi_XMZNMS08LM():
+    """Test Xiaomi parser for XMZNMS08LM."""
+    bindkey = "2c3795afa33019a8afdc17ba99e6f217"
+    data_string = b"HU9\x0e3\x9cq\xc0$\x1f\xff\xee\x80S\x00\x00\x02\xb4\xc59"
+    advertisement = bytes_to_service_info(data_string, address="EE:89:73:44:BE:98")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Door Lock BE98 (XMZNMS08LM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door Lock BE98",
+                manufacturer="Xiaomi",
+                model="XMZNMS08LM",
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+                hw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_DOOR: BinarySensorDescription(
+                device_key=KEY_BINARY_DOOR,
+                device_class=BinarySensorDeviceClass.DOOR,
+            ),
+            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorDescription(
+                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
+                device_class=BinarySensorDeviceClass.PROBLEM,
+            ),
+            KEY_BINARY_TAMPER_PRY_THE_DOOR: BinarySensorDescription(
+                device_key=KEY_BINARY_TAMPER_PRY_THE_DOOR,
+                device_class=BinarySensorDeviceClass.TAMPER,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_DOOR: BinarySensorValue(
+                device_key=KEY_BINARY_DOOR, name="Door", native_value=False
+            ),
+            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorValue(
+                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
+                name="Door left open",
+                native_value=False,
+            ),
+            KEY_BINARY_TAMPER_PRY_THE_DOOR: BinarySensorValue(
+                device_key=KEY_BINARY_TAMPER_PRY_THE_DOOR,
+                name="Pry the door",
+                native_value=False,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_HS1BB_battery():
+    """Test Xiaomi parser for HS1BB battery."""
+    data_string = b"XY\xeb*\x9e\xe9\x8e\x058\xc1\xa4\xd0z\xd3\xe38\x00\x003c]\x10"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:05:8E:E9")
+    bindkey = "7475a4a77584401780ffc3ee62dd353c"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Motion Sensor 8EE9 (HS1BB(MI))",
+        devices={
+            None: SensorDeviceInfo(
+                name="Motion Sensor 8EE9",
+                manufacturer="Xiaomi",
+                model="HS1BB(MI)",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_BATTERY: SensorDescription(
+                device_key=KEY_BATTERY,
+                device_class=DeviceClass.BATTERY,
+                native_unit_of_measurement="%",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_BATTERY: SensorValue(
+                name="Battery", device_key=KEY_BATTERY, native_value=100
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
+def test_Xiaomi_HS1BB_no_motion():
+    """Test Xiaomi parser for HS1BB."""
+    data_string = b"XY\xeb*\xc1\xe9\x8e\x058\xc1\xa4\x07YS\x0f\x8d8\x00\x00\xb7zp\xf8"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:05:8E:E9")
+    bindkey = "7475a4a77584401780ffc3ee62dd353c"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Motion Sensor 8EE9 (HS1BB(MI))",
+        devices={
+            None: SensorDeviceInfo(
+                name="Motion Sensor 8EE9",
+                manufacturer="Xiaomi",
+                model="HS1BB(MI)",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=False
+            ),
+        },
+    )
+
+
+def test_Xiaomi_HS1BB_illuminanca_and_motion():
+    """Test Xiaomi parser for HS1BB illuminance and motion."""
+    data_string = b"HY\xeb*\xc2\xfc\xe0,\xa0\xb4:\xf28\x00\x00\xa2\xd9\xf0_"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:05:8E:E9")
+    bindkey = "7475a4a77584401780ffc3ee62dd353c"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Motion Sensor 8EE9 (HS1BB(MI))",
+        devices={
+            None: SensorDeviceInfo(
+                name="Motion Sensor 8EE9",
+                manufacturer="Xiaomi",
+                model="HS1BB(MI)",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_ILLUMINANCE: SensorDescription(
+                device_key=KEY_ILLUMINANCE,
+                device_class=DeviceClass.ILLUMINANCE,
+                native_unit_of_measurement="lx",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_ILLUMINANCE: SensorValue(
+                name="Illuminance", device_key=KEY_ILLUMINANCE, native_value=228
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
+            ),
+        },
+    )
 
 
 def test_Xiaomi_DSL_C08():
