@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.14.0 (2023-01-01)
+### Feature
+* Add new xiaomi sensors ([#27](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/27)) ([`a39a5f9`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/a39a5f9c22fa7e497891bbaa147a4f756c922afa))
+
 ## v0.13.0 (2023-01-01)
 ### Feature
 * Add door opening and motion sensors ([#26](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/26)) ([`3e0babd`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/3e0babdde9a69aabd470506f908be55673708671))
