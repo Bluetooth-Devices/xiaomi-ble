@@ -776,8 +776,8 @@ def obj2000(
     return {}
 
 
-# The following data objects are device specific. For now only
-# added for LYWSD02MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI)
+# The following data objects are device specific. For now only added for
+# LYWSD02MMC, MJWSD05MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI), K9BB
 # https://miot-spec.org/miot-spec-v2/instances?status=all
 def obj4803(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
@@ -977,15 +977,44 @@ def obj4e0c(
     result: dict[str, Any] = {}
 
     click = xobj[0]
-
-    if click == 1:
-        result["two_btn_switch_left"] = "toggle"
-    elif click == 2:
-        result["two_btn_switch_right"] = "toggle"
-    elif click == 3:
-        result["two_btn_switch_left"] = "toggle"
-        result["two_btn_switch_right"] = "toggle"
-
+    if device_type == "XMWXKG01YL":
+        if click == 1:
+            result = {
+                "two btn switch left": "toggle",
+                "button switch": "single press",
+            }
+        elif click == 2:
+            result = {
+                "two btn switch right": "toggle",
+                "button switch": "single press",
+            }
+        elif click == 3:
+            result = {
+                "two btn switch left": "toggle",
+                "two btn switch right": "toggle",
+                "button switch": "single press",
+            }
+    elif device_type == "K9BB-1BTN":
+        if click == 1:
+            result = {
+                "one btn switch": "toggle",
+                "button switch": "single press",
+            }
+        elif click == 8:
+            result = {
+                "one btn switch": "toggle",
+                "button switch": "long press",
+            }
+        elif click == 15:
+            result = {
+                "one btn switch": "toggle",
+                "button switch": "double press",
+            }
+    elif device_type == "XMWXKG01LM":
+        result = {
+            "one btn switch": "toggle",
+            "button switch": "single press",
+        }
     return result
 
 
@@ -993,48 +1022,71 @@ def obj4e0d(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Double Click"""
+    result: dict[str, Any] = {}
+
     click = xobj[0]
-    btn_switch_press_type: str | None = "double press"
-    two_btn_switch_left = None
-    two_btn_switch_right = None
-    if click == 1:
-        two_btn_switch_left = "toggle"
-    elif click == 2:
-        two_btn_switch_right = "toggle"
-    elif click == 3:
-        two_btn_switch_left = "toggle"
-        two_btn_switch_right = "toggle"
-    else:
-        btn_switch_press_type = None
-    return {
-        "two btn switch left": two_btn_switch_left,
-        "two btn switch right": two_btn_switch_right,
-        "button switch": btn_switch_press_type,
-    }
+    if device_type == "XMWXKG01YL":
+        if click == 1:
+            result = {
+                "two btn switch left": "toggle",
+                "button switch": "double press",
+            }
+        elif click == 2:
+            result = {
+                "two btn switch right": "toggle",
+                "button switch": "double press",
+            }
+        elif click == 3:
+            result = {
+                "two btn switch left": "toggle",
+                "two btn switch right": "toggle",
+                "button switch": "double press",
+            }
+    elif device_type == "XMWXKG01LM":
+        result = {
+            "one btn switch": "toggle",
+            "button switch": "double press",
+        }
+    return result
 
 
 def obj4e0e(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Long Press"""
+    result: dict[str, Any] = {}
+
     click = xobj[0]
-    btn_switch_press_type: str | None = "long press"
-    two_btn_switch_left = None
-    two_btn_switch_right = None
-    if click == 1:
-        two_btn_switch_left = "toggle"
-    elif click == 2:
-        two_btn_switch_right = "toggle"
-    elif click == 3:
-        two_btn_switch_left = "toggle"
-        two_btn_switch_right = "toggle"
-    else:
-        btn_switch_press_type = None
-    return {
-        "two btn switch left": two_btn_switch_left,
-        "two btn switch right": two_btn_switch_right,
-        "button switch": btn_switch_press_type,
-    }
+    if device_type == "XMWXKG01YL":
+        if click == 1:
+            result = {
+                "two btn switch left": "toggle",
+                "button switch": "long press",
+            }
+        elif click == 2:
+            result = {
+                "two btn switch right": "toggle",
+                "button switch": "long press",
+            }
+        elif click == 3:
+            result = {
+                "two btn switch left": "toggle",
+                "two btn switch right": "toggle",
+                "button switch": "long press",
+            }
+    elif device_type == "XMWXKG01LM":
+        result = {
+            "one btn switch": "toggle",
+            "button switch": "long press",
+        }
+    return result
+
+
+def obj4e1c(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Device reset"""
+    return {"device reset": True}
 
 
 # Dataobject dictionary
@@ -1081,6 +1133,7 @@ xiaomi_dataobject_dict = {
     0x4C03: obj4c03,
     0x4C08: obj4c08,
     0x4C14: obj4c14,
+    0x4E1C: obj4e1c,
     0x4E0C: obj4e0c,
     0x4E0D: obj4e0d,
     0x4E0E: obj4e0e,
