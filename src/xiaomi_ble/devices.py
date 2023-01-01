@@ -118,7 +118,7 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         model="MJYD02YL",
     ),
     0x04E9: DeviceEntry(
-        name="Smart Door Lock",
+        name="Door Lock",
         model="MJZNMSQ01YD",
     ),
     0x00DB: DeviceEntry(
@@ -166,8 +166,16 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         model="XMWXKG01LM",
     ),
     0x098C: DeviceEntry(
-        name="Push Pull Lock",
+        name="Door Lock",
         model="XMZNMST02YD",
+    ),
+    0x0784: DeviceEntry(
+        name="Door Lock",
+        model="XMZNMS04LM",
+    ),
+    0x0E39: DeviceEntry(
+        name="Door Lock",
+        model="XMZNMS08LM",
     ),
     0x07BF: DeviceEntry(
         name="Wireless Switch",
@@ -216,9 +224,5 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
     0x0DE7: DeviceEntry(
         name="Odor Eliminator",
         model="SU001-T",
-    ),
-    0x0784: DeviceEntry(
-        name="Smart Door Lock",
-        model="XMZNMS04LM",
     ),
 }
