@@ -137,10 +137,11 @@ def obj0003(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Motion"""
-    # MUE4094RT does not send motion clear.
-    device.update_predefined_binary_sensor(
-        BinarySensorDeviceClass.MOTION, bool(xobj[0])
-    )
+    # Not implemented yet. 0x0003 is used by MUE4094RT
+    # MUE4094 does not send motion clear, so needs a motion timer to reset motion.
+    # device.update_predefined_binary_sensor(
+    #     BinarySensorDeviceClass.MOTION, bool(xobj[0])
+    # )
     return {}
 
 

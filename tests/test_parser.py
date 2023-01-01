@@ -1031,6 +1031,7 @@ def test_Xiaomi_MJYD02YL():
 
 def test_Xiaomi_MUE4094RT():
     """Test Xiaomi parser for MUE4094RT."""
+    # Motion sensor hasn't been implemented yet, as it needs a motion reset timer.
     data_string = b"@0\xdd\x03$\x03\x00\x01\x01"
     advertisement = bytes_to_service_info(data_string, address="DE:70:E8:B2:39:0C")
 
@@ -1060,17 +1061,17 @@ def test_Xiaomi_MUE4094RT():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
-        binary_entity_descriptions={
-            KEY_BINARY_MOTION: BinarySensorDescription(
-                device_key=KEY_BINARY_MOTION,
-                device_class=BinarySensorDeviceClass.MOTION,
-            ),
-        },
-        binary_entity_values={
-            KEY_BINARY_MOTION: BinarySensorValue(
-                device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
-            ),
-        },
+        # binary_entity_descriptions={
+        #     KEY_BINARY_MOTION: BinarySensorDescription(
+        #         device_key=KEY_BINARY_MOTION,
+        #         device_class=BinarySensorDeviceClass.MOTION,
+        #     ),
+        # },
+        # binary_entity_values={
+        #     KEY_BINARY_MOTION: BinarySensorValue(
+        #         device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
+        #     ),
+        # },
     )
 
 
