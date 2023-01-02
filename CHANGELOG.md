@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.14.1 (2023-01-02)
+### Fix
+* Lower bleak version requirement ([#28](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/28)) ([`c9a80ac`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/c9a80ac1f6fcc433cd9499092c759d195309c2e4))
+
 ## v0.14.0 (2023-01-01)
 ### Feature
 * Add new xiaomi sensors ([#27](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/27)) ([`a39a5f9`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/a39a5f9c22fa7e497891bbaa147a4f756c922afa))
