@@ -870,7 +870,7 @@ def obj4a01(
 def obj4a08(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
-    """Motion detected with Illuminance in lux"""problem
+    """Motion detected with Illuminance in lux"""
     (illum,) = struct.unpack("f", xobj)
     device.update_predefined_binary_sensor(BinarySensorDeviceClass.MOTION, True)
     device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
