@@ -18,17 +18,21 @@ from sensor_state_data import (
 )
 
 from xiaomi_ble.const import SERVICE_HHCCJCY10
-from xiaomi_ble.parser import EncryptionScheme, XiaomiBluetoothDeviceData
+from xiaomi_ble.parser import (
+    EncryptionScheme,
+    ExtendedBinarySensorDeviceClass,
+    XiaomiBluetoothDeviceData,
+)
 
 KEY_BATTERY = DeviceKey(key="battery", device_id=None)
 KEY_BINARY_DOOR = DeviceKey(key="door", device_id=None)
 KEY_BINARY_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_BINARY_OPENING = DeviceKey(key="opening", device_id=None)
-KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN = DeviceKey(key="door_left_open", device_id=None)
-KEY_BINARY_PROBLEM_DEVICE_FORCIBLY_REMOVED = DeviceKey(
+KEY_BINARY_DOOR_LEFT_OPEN = DeviceKey(key="door_left_open", device_id=None)
+KEY_BINARY_DEVICE_FORCIBLY_REMOVED = DeviceKey(
     key="device_forcibly_removed", device_id=None
 )
-KEY_BINARY_TAMPER_PRY_THE_DOOR = DeviceKey(key="pry_the_door", device_id=None)
+KEY_BINARY_PRY_THE_DOOR = DeviceKey(key="pry_the_door", device_id=None)
 KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
@@ -1616,26 +1620,26 @@ def test_Xiaomi_MS1BB_MI_obj4a12():
                 device_key=KEY_BINARY_OPENING,
                 device_class=BinarySensorDeviceClass.OPENING,
             ),
-            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorDescription(
-                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
-                device_class=BinarySensorDeviceClass.PROBLEM,
+            KEY_BINARY_DOOR_LEFT_OPEN: BinarySensorDescription(
+                device_key=KEY_BINARY_DOOR_LEFT_OPEN,
+                device_class=ExtendedBinarySensorDeviceClass.DOOR_LEFT_OPEN,
             ),
-            KEY_BINARY_PROBLEM_DEVICE_FORCIBLY_REMOVED: BinarySensorDescription(
-                device_key=KEY_BINARY_PROBLEM_DEVICE_FORCIBLY_REMOVED,
-                device_class=BinarySensorDeviceClass.PROBLEM,
+            KEY_BINARY_DEVICE_FORCIBLY_REMOVED: BinarySensorDescription(
+                device_key=KEY_BINARY_DEVICE_FORCIBLY_REMOVED,
+                device_class=ExtendedBinarySensorDeviceClass.DEVICE_FORCIBLY_REMOVED,
             ),
         },
         binary_entity_values={
             KEY_BINARY_OPENING: BinarySensorValue(
                 device_key=KEY_BINARY_OPENING, name="Opening", native_value=False
             ),
-            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorValue(
-                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
+            KEY_BINARY_DOOR_LEFT_OPEN: BinarySensorValue(
+                device_key=KEY_BINARY_DOOR_LEFT_OPEN,
                 name="Door left open",
                 native_value=False,
             ),
-            KEY_BINARY_PROBLEM_DEVICE_FORCIBLY_REMOVED: BinarySensorValue(
-                device_key=KEY_BINARY_PROBLEM_DEVICE_FORCIBLY_REMOVED,
+            KEY_BINARY_DEVICE_FORCIBLY_REMOVED: BinarySensorValue(
+                device_key=KEY_BINARY_DEVICE_FORCIBLY_REMOVED,
                 name="Device forcibly removed",
                 native_value=False,
             ),
@@ -1721,26 +1725,26 @@ def test_Xiaomi_XMZNMS08LM():
                 device_key=KEY_BINARY_DOOR,
                 device_class=BinarySensorDeviceClass.DOOR,
             ),
-            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorDescription(
-                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
-                device_class=BinarySensorDeviceClass.PROBLEM,
+            KEY_BINARY_DOOR_LEFT_OPEN: BinarySensorDescription(
+                device_key=KEY_BINARY_DOOR_LEFT_OPEN,
+                device_class=ExtendedBinarySensorDeviceClass.DOOR_LEFT_OPEN,
             ),
-            KEY_BINARY_TAMPER_PRY_THE_DOOR: BinarySensorDescription(
-                device_key=KEY_BINARY_TAMPER_PRY_THE_DOOR,
-                device_class=BinarySensorDeviceClass.TAMPER,
+            KEY_BINARY_PRY_THE_DOOR: BinarySensorDescription(
+                device_key=KEY_BINARY_PRY_THE_DOOR,
+                device_class=ExtendedBinarySensorDeviceClass.PRY_THE_DOOR,
             ),
         },
         binary_entity_values={
             KEY_BINARY_DOOR: BinarySensorValue(
                 device_key=KEY_BINARY_DOOR, name="Door", native_value=False
             ),
-            KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN: BinarySensorValue(
-                device_key=KEY_BINARY_PROBLEM_DOOR_LEFT_OPEN,
+            KEY_BINARY_DOOR_LEFT_OPEN: BinarySensorValue(
+                device_key=KEY_BINARY_DOOR_LEFT_OPEN,
                 name="Door left open",
                 native_value=False,
             ),
-            KEY_BINARY_TAMPER_PRY_THE_DOOR: BinarySensorValue(
-                device_key=KEY_BINARY_TAMPER_PRY_THE_DOOR,
+            KEY_BINARY_PRY_THE_DOOR: BinarySensorValue(
+                device_key=KEY_BINARY_PRY_THE_DOOR,
                 name="Pry the door",
                 native_value=False,
             ),
