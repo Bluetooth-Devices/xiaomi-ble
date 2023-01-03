@@ -21,6 +21,7 @@ from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import (
+    BaseDeviceClass,
     BinarySensorDeviceClass,
     SensorLibrary,
     SensorUpdate,
@@ -50,7 +51,7 @@ class EncryptionScheme(Enum):
     MIBEACON_4_5 = "mibeacon_4_5"
 
 
-class XiaomiBinarySensorDeviceClass(BinarySensorDeviceClass):
+class XiaomiBinarySensorDeviceClass(BinarySensorDeviceClass, BaseDeviceClass):
     """Device class for Xiaomi binary sensors."""
 
     # On means door left open, Off means door closed
