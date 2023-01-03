@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.14.3 (2023-01-03)
+### Fix
+* Assign unique keys to device class ([#30](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/30)) ([`09a9fbb`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/09a9fbb0a088357ac585805bd1bb0db5def9c75c))
+
 ## v0.14.2 (2023-01-03)
 ### Fix
 * Extend binary sensor enums ([#29](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/29)) ([`4563a9b`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/4563a9bdf86bc1cd40dd86a141437bf20de1f7d6))
