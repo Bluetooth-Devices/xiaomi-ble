@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.14.2 (2023-01-03)
+### Fix
+* Extend binary sensor enums ([#29](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/29)) ([`4563a9b`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/4563a9bdf86bc1cd40dd86a141437bf20de1f7d6))
+
 ## v0.14.1 (2023-01-02)
 ### Fix
 * Lower bleak version requirement ([#28](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/28)) ([`c9a80ac`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/c9a80ac1f6fcc433cd9499092c759d195309c2e4))
