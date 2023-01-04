@@ -35,6 +35,7 @@ from .const import (
     TIMEOUT_1DAY,
 )
 from .devices import DEVICE_TYPES
+from .events import EventDeviceKeys
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -157,11 +158,13 @@ def obj0003(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Motion"""
-    # Not implemented yet. 0x0003 is used by MUE4094RT
-    # MUE4094 does not send motion clear, so needs a motion timer to reset motion.
-    # device.update_predefined_binary_sensor(
-    #     BinarySensorDeviceClass.MOTION, bool(xobj[0])
-    # )
+    # 0x0003 is only used by MUE4094RT, which does not send motion clear.
+    # This object is therefore added as event (motion detected).
+    device.fire_event(
+        key=EventDeviceKeys.MOTION,
+        event_type="motion_detected",
+        event_properties=None,
+    )
     return {}
 
 
