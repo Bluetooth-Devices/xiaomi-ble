@@ -10,6 +10,7 @@ from sensor_state_data import (
     BinarySensorValue,
     DeviceClass,
     DeviceKey,
+    Event,
     SensorDescription,
     SensorDeviceInfo,
     SensorUpdate,
@@ -34,6 +35,7 @@ KEY_BINARY_DEVICE_FORCIBLY_REMOVED = DeviceKey(
 )
 KEY_BINARY_PRY_THE_DOOR = DeviceKey(key="pry_the_door", device_id=None)
 KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
+KEY_EVENT_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
 KEY_MOISTURE = DeviceKey(key="moisture", device_id=None)
@@ -68,7 +70,7 @@ def bytes_to_service_info(
     )
 
 
-def test_blank_advertisemnts_then_encrypted():
+def test_blank_advertisements_then_encrypted():
     """Test that we can reject empty payloads."""
     device = XiaomiBluetoothDeviceData()
 
@@ -91,7 +93,7 @@ def test_blank_advertisemnts_then_encrypted():
     assert device.pending is False
 
 
-def test_blank_advertisemnts_then_unencrypted():
+def test_blank_advertisements_then_unencrypted():
     """Test that we can reject empty payloads."""
 
     # NOTE: THIS IS SYNTHETIC TEST DATA - i took a known unecrypted device and flipped
@@ -117,7 +119,7 @@ def test_blank_advertisemnts_then_unencrypted():
     assert device.pending is False
 
 
-def test_blank_advertisemnts_then_encrypted_last_service_info():
+def test_blank_advertisements_then_encrypted_last_service_info():
     """Test that we can capture valid service info records"""
     device = XiaomiBluetoothDeviceData()
 
@@ -137,7 +139,7 @@ def test_blank_advertisemnts_then_encrypted_last_service_info():
     assert device.last_service_info == advertisement
 
 
-def test_blank_advertisemnts_then_unencrypted_last_service_info():
+def test_blank_advertisements_then_unencrypted_last_service_info():
     """Test that we can capture valid service info records."""
 
     # NOTE: THIS IS SYNTHETIC TEST DATA - i took a known unecrypted device and flipped
@@ -1035,7 +1037,7 @@ def test_Xiaomi_MJYD02YL():
 
 def test_Xiaomi_MUE4094RT():
     """Test Xiaomi parser for MUE4094RT."""
-    # Motion sensor hasn't been implemented yet, as it needs a motion reset timer.
+    # MUE4094RT only sends motion detected as an event.
     data_string = b"@0\xdd\x03$\x03\x00\x01\x01"
     advertisement = bytes_to_service_info(data_string, address="DE:70:E8:B2:39:0C")
 
@@ -1065,17 +1067,14 @@ def test_Xiaomi_MUE4094RT():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
-        # binary_entity_descriptions={
-        #     KEY_BINARY_MOTION: BinarySensorDescription(
-        #         device_key=KEY_BINARY_MOTION,
-        #         device_class=BinarySensorDeviceClass.MOTION,
-        #     ),
-        # },
-        # binary_entity_values={
-        #     KEY_BINARY_MOTION: BinarySensorValue(
-        #         device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
-        #     ),
-        # },
+        events={
+            KEY_EVENT_MOTION: Event(
+                device_key=KEY_EVENT_MOTION,
+                name="Motion",
+                event_type="motion_detected",
+                event_properties=None,
+            ),
+        },
     )
 
 
