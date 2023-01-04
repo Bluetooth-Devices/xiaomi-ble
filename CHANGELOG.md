@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.15.0 (2023-01-04)
+### Feature
+* Motion events ([#31](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/31)) ([`2a52c1e`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/2a52c1eaafa02b7f00c649cebad0a3d304e5d15d))
+
 ## v0.14.3 (2023-01-03)
 ### Fix
 * Assign unique keys to device class ([#30](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/30)) ([`09a9fbb`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/09a9fbb0a088357ac585805bd1bb0db5def9c75c))
