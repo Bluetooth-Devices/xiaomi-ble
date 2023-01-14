@@ -28,6 +28,7 @@ from xiaomi_ble.parser import (
 KEY_BATTERY = DeviceKey(key="battery", device_id=None)
 KEY_BINARY_DOOR = DeviceKey(key="door", device_id=None)
 KEY_BINARY_MOTION = DeviceKey(key="motion", device_id=None)
+KEY_BINARY_LIGHT = DeviceKey(key="light", device_id=None)
 KEY_BINARY_OPENING = DeviceKey(key="opening", device_id=None)
 KEY_BINARY_DOOR_LEFT_OPEN = DeviceKey(key="door_left_open", device_id=None)
 KEY_BINARY_DEVICE_FORCIBLY_REMOVED = DeviceKey(
@@ -1896,6 +1897,105 @@ def test_Xiaomi_HS1BB_illuminanca_and_motion():
 
 def test_Xiaomi_DSL_C08():
     """Test Xiaomi parser for DSL-C08."""
+
+
+def test_Xiaomi_RTCGQ02LM_light_and_motion():
+    """Test Xiaomi parser for RTCGQ02LM."""
+    data_string = b"XY\x8d\n\x8cw\x8e <\xc2\x18Z'6(\xec2\x06\x00\x00\xc4&@\x15"
+    advertisement = bytes_to_service_info(data_string, address="18:C2:3C:20:8E:77")
+    bindkey = "4960bb9f8711b4ffd7df1756d11427ae"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Motion Sensor 8E77 (RTCGQ02LM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Motion Sensor 8E77",
+                manufacturer="Xiaomi",
+                model="RTCGQ02LM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
+            ),
+            KEY_BINARY_LIGHT: BinarySensorDescription(
+                device_key=KEY_BINARY_LIGHT,
+                device_class=BinarySensorDeviceClass.LIGHT,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
+            ),
+            KEY_BINARY_LIGHT: BinarySensorValue(
+                device_key=KEY_BINARY_LIGHT, name="Light", native_value=True
+            ),
+        },
+    )
+
+
+def test_Xiaomi_RTCGQ02LM_timeout_motion():
+    """Test Xiaomi parser for RTCGQ02LM."""
+    data_string = b"HY\x8d\n\x92ySu\x0f\xed\x0f\x99\x06\x00\x00\\\xad,)"
+    advertisement = bytes_to_service_info(data_string, address="18:C2:3C:20:8E:77")
+    bindkey = "4960bb9f8711b4ffd7df1756d11427ae"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Motion Sensor 8E77 (RTCGQ02LM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Motion Sensor 8E77",
+                manufacturer="Xiaomi",
+                model="RTCGQ02LM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=False
+            ),
+        },
+    )
 
 
 def test_can_create():
