@@ -781,6 +781,15 @@ def obj100e(
     return {}
 
 
+def obj101b(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Timeout no movement"""
+    # https://iot.mi.com/new/doc/accesses/direct-access/embedded-development/ble/object-definition#%E9%80%9A%E7%94%A8%E5%B1%9E%E6%80%A7
+    device.update_predefined_binary_sensor(BinarySensorDeviceClass.MOTION, False)
+    return {}
+
+
 def obj2000(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1142,6 +1151,7 @@ xiaomi_dataobject_dict = {
     0x100A: obj100a,
     0x100D: obj100d,
     0x100E: obj100e,
+    0x101B: obj101b,
     0x2000: obj2000,
     0x4803: obj4803,
     0x4804: obj4804,
