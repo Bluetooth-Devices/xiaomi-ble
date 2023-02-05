@@ -33,7 +33,7 @@ home-assistant-bluetooth = ">=1.9.2"
 sensor-state-data = ">=2.13.0"
 bluetooth-sensor-state-data = ">=1.6.0"
 pycryptodomex = ">=3.16.0"
-bleak-retry-connector = ">=2.13.1"
+bleak-retry-connector = ">=2.13.0"
 bluetooth-data-tools = ">=0.3.1"
 bleak = ">=0.19.5"
 
