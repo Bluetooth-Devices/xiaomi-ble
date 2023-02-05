@@ -19,7 +19,7 @@ from sensor_state_data import (
 
 from .parser import XiaomiBluetoothDeviceData
 
-__version__ = "0.15.1"
+__version__ = "0.15.0"
 
 __all__ = [
     "XiaomiBluetoothDeviceData",
