@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.16.2 (2023-02-07)
+### Fix
+* Add sleepy devices ([#40](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/40)) ([`70137b4`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/70137b4addd9d67617de4d64464872f2a146928d))
+
 ## v0.16.1 (2023-02-05)
 ### Fix
 * Relax bleak-retry-connector ([#38](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/38)) ([`59abc8b`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/59abc8be1ea3e0a6c3c94353f54e5d131c155a11))
