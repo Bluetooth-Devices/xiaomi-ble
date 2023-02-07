@@ -226,3 +226,6 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         model="SU001-T",
     ),
 }
+
+
+SLEEPY_DEVICE_MODELS = {"CGH1", "MCCGQ02HL"}
