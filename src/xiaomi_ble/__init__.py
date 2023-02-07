@@ -17,11 +17,14 @@ from sensor_state_data import (
     Units,
 )
 
-from .parser import XiaomiBluetoothDeviceData
+from .devices import SLEEPY_DEVICE_MODELS
+from .parser import EncryptionScheme, XiaomiBluetoothDeviceData
 
 __version__ = "0.16.1"
 
 __all__ = [
+    "SLEEPY_DEVICE_MODELS",
+    "EncryptionScheme",
     "XiaomiBluetoothDeviceData",
     "SensorDescription",
     "SensorDeviceInfo",
