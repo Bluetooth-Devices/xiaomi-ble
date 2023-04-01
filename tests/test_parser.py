@@ -1135,6 +1135,50 @@ def test_Xiaomi_MMC_T201_1():
     )
 
 
+def test_Xiaomi_MMC_W505():
+    """Test Xiaomi parser for MMC-W505."""
+    data_string = b'p"\x91\x03\x0f\xdb\xabS\x18$\xd0\t\n\x00\x02u\r\x07'
+    advertisement = bytes_to_service_info(data_string, address="D0:24:18:53:AB:DB")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Body Thermometer ABDB (MMC-W505)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Body Thermometer ABDB",
+                manufacturer="Xiaomi",
+                model="MMC-W505",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V2)",
+            )
+        },
+        entity_descriptions={
+            KEY_TEMPERATURE: SensorDescription(
+                device_key=KEY_TEMPERATURE,
+                device_class=DeviceClass.TEMPERATURE,
+                native_unit_of_measurement="°C",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature",
+                device_key=KEY_TEMPERATURE,
+                native_value=34.45,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
 def test_Xiaomi_M1S_T500():
     """Test Xiaomi parser for M1S-T500."""
     data_string = b"q0\x89\x047\x11[\x17Cq\xe6\t\x10\x00\x02\x00\x03"

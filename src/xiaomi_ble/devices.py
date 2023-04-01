@@ -93,6 +93,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Temperature/Humidity Sensor",
         model="LYWSD02MMC",
     ),
+    0x2542: DeviceEntry(
+        name="Temperature/Humidity Sensor",
+        model="LYWSD02MMC",
+    ),
     0x055B: DeviceEntry(
         name="Temperature/Humidity Sensor",
         model="LYWSD03MMC",
@@ -124,6 +128,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
     0x00DB: DeviceEntry(
         name="Baby Thermometer",
         model="MMC-T201-1",
+    ),
+    0x0391: DeviceEntry(
+        name="Body Thermometer",
+        model="MMC-W505",
     ),
     0x03DD: DeviceEntry(
         name="Nightlight",
@@ -228,4 +236,4 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
 }
 
 
-SLEEPY_DEVICE_MODELS = {"CGH1", "JTYJGD03MI", "MCCGQ02HL", "RTCGQ02LM"}
+SLEEPY_DEVICE_MODELS = {"CGH1", "JTYJGD03MI", "MCCGQ02HL", "RTCGQ02LM", "MMC-W505"}
