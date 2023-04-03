@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.16.4 (2023-02-17)
+### Fix
+* Add jtyjgd03mi to sleepy devices ([#42](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/42)) ([`bcf72a2`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/bcf72a21f95ba932f361b203bee9dc804776c15b))
+
 ## v0.16.3 (2023-02-09)
 ### Fix
 * Add rtcgq02lm to sleepy devices ([#41](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/41)) ([`899e084`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/899e0845211d1ab796a67379c0d99393828c02df))
