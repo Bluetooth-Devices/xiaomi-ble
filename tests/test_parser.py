@@ -523,6 +523,92 @@ def test_Xiaomi_LYWSD02MMC():
     )
 
 
+def test_Xiaomi_LYWSD02MMC_v2_temperature():
+    """Test Xiaomi parser for LYWSD02MMC updated version temperature."""
+    bindkey = "19b1c678ab0a8bc3dc77765f059188d4"
+    data_string = b'HXB%) -\x8czv\xb7V\xa8*\x00x\xb8"N'
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:0E:FD:78")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Temperature/Humidity Sensor FD78 (LYWSD02MMC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temperature/Humidity Sensor FD78",
+                manufacturer="Xiaomi",
+                model="LYWSD02MMC",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_TEMPERATURE: SensorDescription(
+                device_key=KEY_TEMPERATURE,
+                device_class=DeviceClass.TEMPERATURE,
+                native_unit_of_measurement="°C",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=26.10
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
+def test_Xiaomi_LYWSD02MMC_v2_humidity():
+    """Test Xiaomi parser for LYWSD02MMC updated version humidity."""
+    bindkey = "19b1c678ab0a8bc3dc77765f059188d4"
+    data_string = b"XXB%\x88x\xfd\x0e8\xc1\xa4\x05\xf6S\x8a\xa7*\x00b\xb1\xa9f"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:0E:FD:78")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Temperature/Humidity Sensor FD78 (LYWSD02MMC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temperature/Humidity Sensor FD78",
+                manufacturer="Xiaomi",
+                model="LYWSD02MMC",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_HUMIDITY: SensorDescription(
+                device_key=KEY_HUMIDITY,
+                device_class=DeviceClass.HUMIDITY,
+                native_unit_of_measurement="%",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_HUMIDITY: SensorValue(
+                name="Humidity", device_key=KEY_HUMIDITY, native_value=38
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
 def test_Xiaomi_LYWSD03MMC_encrypted():
     """Test Xiaomi parser for LYWSD03MMC with encryption."""
     data_string = (

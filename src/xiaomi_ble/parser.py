@@ -977,7 +977,9 @@ def obj4c01(
     """Temperature"""
     if len(xobj) == 4:
         temp = FLOAT_STRUCT.unpack(xobj)[0]
-        device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp)
+        device.update_predefined_sensor(
+            SensorLibrary.TEMPERATURE__CELSIUS, round(temp, 2)
+        )
     return {}
 
 
