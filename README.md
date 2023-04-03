@@ -34,7 +34,7 @@ Manage Xiaomi BLE devices
 
 ## Installation
 
-Install this via pip (or your favourite package manager):
+Install this via pip (or your favourite package manager).
 
 `pip install xiaomi-ble`
 
