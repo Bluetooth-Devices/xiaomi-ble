@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.17.0 (2023-04-03)
+### Feature
+* Add updated lywsd02mmc device type and mmc w505 body temperature sensor ([`23f85e2`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/23f85e29e887e042fe2eeea83b15ca2e1beeea08))
+
 ## v0.16.4 (2023-02-17)
 ### Fix
 * Add jtyjgd03mi to sleepy devices ([#42](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/42)) ([`bcf72a2`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/bcf72a21f95ba932f361b203bee9dc804776c15b))
