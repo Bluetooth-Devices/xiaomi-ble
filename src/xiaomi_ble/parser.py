@@ -325,6 +325,19 @@ def obj0010(
             return {"toothbrush": 0, "score": xobj[1]}
 
 
+def obj000a(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Body Temperature"""
+    if len(xobj) == 2:
+        (temp,) = T_STRUCT.unpack(xobj)
+        if temp:
+            device.update_predefined_sensor(
+                SensorLibrary.TEMPERATURE__CELSIUS, temp / 100
+            )
+    return {}
+
+
 def obj000b(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -964,7 +977,9 @@ def obj4c01(
     """Temperature"""
     if len(xobj) == 4:
         temp = FLOAT_STRUCT.unpack(xobj)[0]
-        device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp)
+        device.update_predefined_sensor(
+            SensorLibrary.TEMPERATURE__CELSIUS, round(temp, 2)
+        )
     return {}
 
 
@@ -1131,6 +1146,7 @@ xiaomi_dataobject_dict = {
     0x0007: obj0007,
     0x0008: obj0008,
     0x0010: obj0010,
+    0x000A: obj000a,
     0x000B: obj000b,
     0x000F: obj000f,
     0x1001: obj1001,
