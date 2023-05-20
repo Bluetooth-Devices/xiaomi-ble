@@ -297,6 +297,7 @@ def test_Xiaomi_LYWSDCGQ(caplog):
     device = XiaomiBluetoothDeviceData()
     assert device.supported(advertisement)
     assert not device.bindkey_verified
+    assert not device.sleepy_device
     assert device.update(advertisement) == SensorUpdate(
         title="Temperature/Humidity Sensor 9321 (LYWSDCGQ)",
         devices={
@@ -2038,6 +2039,7 @@ def test_Xiaomi_RTCGQ02LM_light_and_motion():
     device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
     assert device.supported(advertisement)
     assert device.bindkey_verified
+    assert device.sleepy_device
     assert device.update(advertisement) == SensorUpdate(
         title="Motion Sensor 8E77 (RTCGQ02LM)",
         devices={
