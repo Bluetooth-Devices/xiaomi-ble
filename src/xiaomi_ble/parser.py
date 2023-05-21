@@ -34,14 +34,13 @@ from .const import (
     SERVICE_MIBEACON,
     TIMEOUT_1DAY,
 )
-from .devices import DEVICE_TYPES
+from .devices import DEVICE_TYPES, SLEEPY_DEVICE_MODELS
 from .events import EventDeviceKeys
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class EncryptionScheme(Enum):
-
     # No encryption is needed to use this device
     NONE = "none"
 
@@ -1240,6 +1239,10 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # value with a new bindkey.
         self.last_service_info: BluetoothServiceInfo | None = None
 
+        # If this is True, the device is not sending advertisements
+        # in a regular interval
+        self.sleepy_device = False
+
     def supported(self, data: BluetoothServiceInfo) -> bool:
         if not super().supported(data):
             return False
@@ -1380,6 +1383,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
         self.device_id = device_id
         self.device_type = device_type
+
+        # set to True if the device is not sending regular BLE advertisements
+        self.sleepy_device = device_type in SLEEPY_DEVICE_MODELS
 
         packet_id = data[4]
 
