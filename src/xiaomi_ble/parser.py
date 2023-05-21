@@ -1385,8 +1385,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.device_type = device_type
 
         # set to True if the device is not sending regular BLE advertisements
-        if device_type in SLEEPY_DEVICE_MODELS:
-            self.sleepy_device = True
+        self.sleepy_device = device_type in SLEEPY_DEVICE_MODELS
 
         packet_id = data[4]
 
