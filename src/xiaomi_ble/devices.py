@@ -54,7 +54,7 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         model="JQJCY01YM",
     ),
     0x0997: DeviceEntry(
-        name="Thermometer",
+        name="Smoke Detector",
         model="JTYJGD03MI",
     ),
     0x1568: DeviceEntry(
