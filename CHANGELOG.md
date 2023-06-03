@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.17.2 (2023-06-03)
+### Fix
+* Jtyjgd03mmi is now detected as smoke sensor ([#46](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/46)) ([`9e06702`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/9e0670252ebe9802fdf5eaec030f23813090da02))
+
 ## v0.17.1 (2023-05-21)
 ### Fix
 * Add sleepy_device property ([#44](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/44)) ([`fac1009`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/fac1009acdd4a31daa9e50eb6fffea6d0bff1702))
