@@ -769,10 +769,10 @@ def test_Xiaomi_JTYJGD03MI_smoke():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Thermometer 9CBC (JTYJGD03MI)",
+        title="Smoke Detector 9CBC (JTYJGD03MI)",
         devices={
             None: SensorDeviceInfo(
-                name="Thermometer 9CBC",
+                name="Smoke Detector 9CBC",
                 manufacturer="Xiaomi",
                 model="JTYJGD03MI",
                 hw_version=None,
@@ -817,10 +817,10 @@ def test_Xiaomi_JTYJGD03MI_press():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Thermometer 9CBC (JTYJGD03MI)",
+        title="Smoke Detector 9CBC (JTYJGD03MI)",
         devices={
             None: SensorDeviceInfo(
-                name="Thermometer 9CBC",
+                name="Smoke Detector 9CBC",
                 manufacturer="Xiaomi",
                 model="JTYJGD03MI",
                 hw_version=None,
