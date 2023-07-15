@@ -1520,7 +1520,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.device_id = uuid16
         self.set_title(f"Mi Body Composition Scale 2 ({identifier})")
         self.set_device_name(f"Mi Body Composition Scale 2 ({identifier})")
-        self.set_device_type("XMTZC05HM")
+        self.set_device_type("XMTZC02HM/XMTZC05HM/NUN4049CN")
         self.set_device_manufacturer("Anhui Huami Information Technology Co., Ltd")
         self.pending = False
         self.sleepy_device = True
