@@ -19,6 +19,8 @@ from bleak_retry_connector import establish_connection
 from bluetooth_data_tools import short_address
 from bluetooth_sensor_state_data import BluetoothData
 from Cryptodome.Cipher import AES
+from cryptography.exceptions import InvalidTag
+from cryptography.hazmat.primitives.ciphers.aead import AESCCM
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import (
     BaseDeviceClass,
@@ -1210,7 +1212,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
     def __init__(self, bindkey: bytes | None = None) -> None:
         super().__init__()
-        self.bindkey = bindkey
+        self.set_bindkey(bindkey)
 
         # Data that we know how to parse but don't yet map to the SensorData model.
         self.unhandled: dict[str, Any] = {}
@@ -1242,6 +1244,19 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # If this is True, the device is not sending advertisements
         # in a regular interval
         self.sleepy_device = False
+
+    def set_bindkey(self, bindkey: bytes | None) -> None:
+        """Set the bindkey."""
+        self.bindkey = bindkey
+        if bindkey:
+            if len(bindkey) == 12:
+                # add 4 bytes to MiBeacon v2/v3 bindkey
+                bindkey = b"".join(
+                    [bindkey[0:6], bytes.fromhex("8d3d3c97"), bindkey[6:]]
+                )
+            self.cipher: AESCCM | None = AESCCM(bindkey, tag_length=4)
+        else:
+            self.cipher = None
 
     def supported(self, data: BluetoothServiceInfo) -> bool:
         if not super().supported(data):
@@ -1525,20 +1540,22 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             return None
 
         nonce = b"".join([xiaomi_mac[::-1], data[2:5], data[-7:-4]])
-        aad = b"\x11"
-        token = data[-4:]
-        cipherpayload = data[i:-7]
-        cipher = AES.new(self.bindkey, AES.MODE_CCM, nonce=nonce, mac_len=4)
-        cipher.update(aad)
+        associated_data = b"\x11"
+        mic = data[-4:]
+        encrypted_payload = data[i:-7]
 
+        assert self.cipher is not None  # nosec
+        # derypt the data
         try:
-            decrypted_payload = cipher.decrypt_and_verify(cipherpayload, token)
-        except ValueError as error:
+            decrypted_payload = self.cipher.decrypt(
+                nonce, encrypted_payload + mic, associated_data
+            )
+        except InvalidTag as error:
             self.bindkey_verified = False
             _LOGGER.warning("Decryption failed: %s", error)
-            _LOGGER.debug("token: %s", token.hex())
+            _LOGGER.debug("mic: %s", mic.hex())
             _LOGGER.debug("nonce: %s", nonce.hex())
-            _LOGGER.debug("cipherpayload: %s", cipherpayload.hex())
+            _LOGGER.debug("encrypted payload: %s", encrypted_payload.hex())
             return None
         if decrypted_payload is None:
             self.bindkey_verified = False
@@ -1569,21 +1586,26 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             _LOGGER.error("Encryption key should be 12 bytes (24 characters) long")
             return None
 
-        key = b"".join([self.bindkey[0:6], bytes.fromhex("8d3d3c97"), self.bindkey[6:]])
-
         nonce = b"".join([data[0:5], data[-4:-1], xiaomi_mac[::-1][:-1]])
-        aad = b"\x11"
-        cipherpayload = data[i:-4]
-        cipher = AES.new(key, AES.MODE_CCM, nonce=nonce, mac_len=4)
-        cipher.update(aad)
+        associated_data = b"\x11"
+        encrypted_payload = data[i:-4]
+        # next two lines can be deleted after switching to cryptography
+        cipher = AES.new(self.key, AES.MODE_CCM, nonce=nonce, mac_len=4)
+        cipher.update(associated_data)
 
+        # change cipher to self.cipher for cryptography
+        assert cipher is not None  # nosec
+        # decrypt the data
         try:
-            decrypted_payload = cipher.decrypt(cipherpayload)
+            decrypted_payload = cipher.decrypt(encrypted_payload)
+            # cipher.decrypt(
+            #     nonce, encrypted_payload, associated_data
+            # )
         except ValueError as error:
             self.bindkey_verified = False
             _LOGGER.warning("Decryption failed: %s", error)
             _LOGGER.debug("nonce: %s", nonce.hex())
-            _LOGGER.debug("cipherpayload: %s", cipherpayload.hex())
+            _LOGGER.debug("encrypted payload: %s", encrypted_payload.hex())
             return None
         if decrypted_payload is None:
             self.bindkey_verified = False
