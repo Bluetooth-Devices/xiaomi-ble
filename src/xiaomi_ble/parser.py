@@ -1247,7 +1247,6 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
     def set_bindkey(self, bindkey: bytes | None) -> None:
         """Set the bindkey."""
-        self.bindkey = bindkey
         if bindkey:
             if len(bindkey) == 12:
                 # add 4 bytes to MiBeacon v2/v3 bindkey
@@ -1257,6 +1256,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             self.cipher: AESCCM | None = AESCCM(bindkey, tag_length=4)
         else:
             self.cipher = None
+        self.bindkey = bindkey
 
     def supported(self, data: BluetoothServiceInfo) -> bool:
         if not super().supported(data):
@@ -1581,7 +1581,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             _LOGGER.debug("Encryption key not set and adv is encrypted")
             return None
 
-        if len(self.bindkey) != 12:
+        if len(self.bindkey) != 16:
             self.bindkey_verified = False
             _LOGGER.error("Encryption key should be 12 bytes (24 characters) long")
             return None
@@ -1590,7 +1590,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         associated_data = b"\x11"
         encrypted_payload = data[i:-4]
         # next two lines can be deleted after switching to cryptography
-        cipher = AES.new(self.key, AES.MODE_CCM, nonce=nonce, mac_len=4)
+        cipher = AES.new(self.bindkey, AES.MODE_CCM, nonce=nonce, mac_len=4)
         cipher.update(associated_data)
 
         # change cipher to self.cipher for cryptography
