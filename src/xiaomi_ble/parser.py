@@ -32,7 +32,7 @@ from .const import (
     CHARACTERISTIC_BATTERY,
     SERVICE_HHCCJCY10,
     SERVICE_MIBEACON,
-    SERVICE_SCALE,
+    SERVICE_SCALE2,
     TIMEOUT_1DAY,
 )
 from .devices import DEVICE_TYPES, SLEEPY_DEVICE_MODELS
@@ -1273,7 +1273,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             elif uuid == SERVICE_HHCCJCY10:
                 if self._parse_hhcc(service_info, data):
                     self.last_service_info = service_info
-            elif uuid == SERVICE_SCALE:
+            elif uuid == SERVICE_SCALE2:
                 if self._parse_scale(service_info, data):
                     self.last_service_info = service_info
 
@@ -1527,11 +1527,11 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
         control_bytes = data[:2]
         # skip bytes containing date and time
-        impedance = int.from_bytes(data[9:11], byteorder='little')
-        weight = int.from_bytes(data[11:13], byteorder='little')
+        impedance = int.from_bytes(data[9:11], byteorder="little")
+        weight = float(int.from_bytes(data[11:13], byteorder="little"))
 
         # Decode control bytes
-        control_flags = ''.join([bin(byte)[2:].zfill(8) for byte in control_bytes])
+        control_flags = "".join([bin(byte)[2:].zfill(8) for byte in control_bytes])
 
         weight_in_pounds = bool(int(control_flags[7]))
         weight_in_catty = bool(int(control_flags[9]))
@@ -1544,12 +1544,16 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         else:
             weight /= 100
 
-        weight_type = SensorLibrary.MASS__MASS_KILOGRAMS if weight_in_kilograms else SensorLibrary.MASS__MASS_POUNDS
+        weight_type = (
+            SensorLibrary.MASS__MASS_KILOGRAMS
+            if weight_in_kilograms
+            else SensorLibrary.MASS__MASS_POUNDS
+        )
 
         self.update_predefined_sensor(
             weight_type,
             weight,
-            key="weight non-stabilized",
+            key="weight_non-stabilized",
             name="Weight Non-stabilized",
         )
 
@@ -1557,7 +1561,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             self.update_predefined_sensor(
                 weight_type,
                 weight,
-                key="weight stabilized",
+                key="weight_stabilized",
                 name="Weight Stabilized",
             )
 
