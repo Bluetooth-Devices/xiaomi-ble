@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.18.0 (2023-07-16)
+
+### Feature
+
+* Add support for mi body composition scale 2 ([#47](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/47)) ([`3755aed`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/3755aede1da4e4a11c5534ef1b731a33f6f2b39c))
+
 ## v0.17.2 (2023-06-03)
 ### Fix
 * Jtyjgd03mmi is now detected as smoke sensor ([#46](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/46)) ([`9e06702`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/9e0670252ebe9802fdf5eaec030f23813090da02))
