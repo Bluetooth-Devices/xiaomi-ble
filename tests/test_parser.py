@@ -39,13 +39,13 @@ KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
 KEY_EVENT_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
+KEY_IMPEDANCE = DeviceKey(key="impedance", device_id=None)
+KEY_MASS_NON_STABILIZED = DeviceKey(key="mass_non_stabilized", device_id=None)
+KEY_MASS_STABILIZED = DeviceKey(key="mass_stabilized", device_id=None)
 KEY_MOISTURE = DeviceKey(key="moisture", device_id=None)
 KEY_SIGNAL_STRENGTH = DeviceKey(key="signal_strength", device_id=None)
 KEY_SMOKE = DeviceKey(key="smoke", device_id=None)
 KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
-KEY_WEIGHT_NON_STABILIZED = DeviceKey(key="weight_non-stabilized", device_id=None)
-KEY_WEIGHT_STABILIZED = DeviceKey(key="weight_stabilized", device_id=None)
-KEY_IMPEDANCE = DeviceKey(key="impedance", device_id=None)
 
 
 @pytest.fixture(autouse=True)
@@ -1079,19 +1079,20 @@ def test_Xiaomi_Scale2():
             )
         },
         entity_descriptions={
-            KEY_WEIGHT_NON_STABILIZED: SensorDescription(
-                device_key=KEY_WEIGHT_NON_STABILIZED,
-                device_class=DeviceClass.MASS,
+            KEY_MASS_NON_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_NON_STABILIZED,
+                device_class=DeviceClass.MASS_NON_STABILIZED,
                 native_unit_of_measurement=Units.MASS_KILOGRAMS,
             ),
-            KEY_WEIGHT_STABILIZED: SensorDescription(
-                device_key=KEY_WEIGHT_STABILIZED,
-                device_class=DeviceClass.MASS,
+            KEY_MASS_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_STABILIZED,
+                device_class=DeviceClass.MASS_STABILIZED,
                 native_unit_of_measurement=Units.MASS_KILOGRAMS,
             ),
             KEY_IMPEDANCE: SensorDescription(
                 device_key=KEY_IMPEDANCE,
-                native_unit_of_measurement=Units.PERCENTAGE,
+                device_class=DeviceClass.IMPEDANCE,
+                native_unit_of_measurement=Units.OHM,
             ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
@@ -1100,18 +1101,69 @@ def test_Xiaomi_Scale2():
             ),
         },
         entity_values={
-            KEY_WEIGHT_NON_STABILIZED: SensorValue(
-                name="Weight Non-stabilized",
-                device_key=KEY_WEIGHT_NON_STABILIZED,
+            KEY_MASS_NON_STABILIZED: SensorValue(
+                name="Mass Non Stabilized",
+                device_key=KEY_MASS_NON_STABILIZED,
                 native_value=58.85,
             ),
-            KEY_WEIGHT_STABILIZED: SensorValue(
-                name="Weight Stabilized",
-                device_key=KEY_WEIGHT_STABILIZED,
+            KEY_MASS_STABILIZED: SensorValue(
+                name="Mass Stabilized",
+                device_key=KEY_MASS_STABILIZED,
                 native_value=58.85,
             ),
             KEY_IMPEDANCE: SensorValue(
                 name="Impedance", device_key=KEY_IMPEDANCE, native_value=543
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
+def test_Xiaomi_Scale2_non_stabilized():
+    """Test Xiaomi parser for Mi Body Composition Scale 2 (non stabilized)"""
+    data_string = b"\x02\x04\xb2\x07\x01\x01\x12\x10\x1a\x00\x00\xa8R"
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.update(
+        BluetoothServiceInfo(
+            name="MIBFS",
+            address="50:FB:19:1B:B5:DC",
+            rssi=-60,
+            manufacturer_data={},
+            service_data={SERVICE_SCALE2: data_string},
+            service_uuids=[SERVICE_SCALE2],
+            source="",
+        )
+    ) == SensorUpdate(
+        title="Mi Body Composition Scale 2 (B5DC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Mi Body Composition Scale 2 (B5DC)",
+                manufacturer="Anhui Huami Information Technology Co., Ltd",
+                model="XMTZC02HM/XMTZC05HM/NUN4049CN",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_MASS_NON_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_NON_STABILIZED,
+                device_class=DeviceClass.MASS_NON_STABILIZED,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_MASS_NON_STABILIZED: SensorValue(
+                name="Mass Non Stabilized",
+                device_key=KEY_MASS_NON_STABILIZED,
+                native_value=105.8,
             ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60

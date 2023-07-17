@@ -1528,49 +1528,40 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         control_bytes = data[:2]
         # skip bytes containing date and time
         impedance = int.from_bytes(data[9:11], byteorder="little")
-        weight = float(int.from_bytes(data[11:13], byteorder="little"))
+        mass = float(int.from_bytes(data[11:13], byteorder="little"))
 
         # Decode control bytes
         control_flags = "".join([bin(byte)[2:].zfill(8) for byte in control_bytes])
 
-        weight_in_pounds = bool(int(control_flags[7]))
-        weight_in_catty = bool(int(control_flags[9]))
-        weight_stabilized = bool(int(control_flags[10]))
-        weight_in_kilograms = not weight_in_catty and not weight_in_pounds
+        mass_in_pounds = bool(int(control_flags[7]))
+        mass_in_catty = bool(int(control_flags[9]))
+        mass_stabilized = bool(int(control_flags[10]))
+        mass_in_kilograms = not mass_in_catty and not mass_in_pounds
         impedance_stabilized = bool(int(control_flags[14]))
 
-        if weight_in_kilograms:
-            weight /= 200
+        if mass_in_kilograms:
+            mass /= 200
         else:
-            weight /= 100
+            mass /= 100
 
-        weight_type = (
-            SensorLibrary.MASS__MASS_KILOGRAMS
-            if weight_in_kilograms
-            else SensorLibrary.MASS__MASS_POUNDS
+        stabilized_mass_type = (
+            SensorLibrary.MASS_STABILIZED__MASS_KILOGRAMS
+            if mass_in_kilograms
+            else SensorLibrary.MASS_STABILIZED__MASS_POUNDS
         )
 
-        self.update_predefined_sensor(
-            weight_type,
-            weight,
-            key="weight_non-stabilized",
-            name="Weight Non-stabilized",
+        non_stabilized_mass_type = (
+            SensorLibrary.MASS_NON_STABILIZED__MASS_KILOGRAMS
+            if mass_in_kilograms
+            else SensorLibrary.MASS_NON_STABILIZED__MASS_POUNDS
         )
 
-        if weight_stabilized:
-            self.update_predefined_sensor(
-                weight_type,
-                weight,
-                key="weight_stabilized",
-                name="Weight Stabilized",
-            )
+        self.update_predefined_sensor(non_stabilized_mass_type, mass)
 
-            self.update_sensor(
-                key="impedance",
-                name="Impedance",
-                native_unit_of_measurement=Units.PERCENTAGE,
-                native_value=impedance if impedance_stabilized else None,
-            )
+        if mass_stabilized:
+            self.update_predefined_sensor(stabilized_mass_type, mass)
+            if impedance_stabilized:
+                self.update_predefined_sensor(SensorLibrary.IMPEDANCE__OHM, impedance)
 
         return True
 
