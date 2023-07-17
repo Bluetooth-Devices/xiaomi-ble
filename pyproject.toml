@@ -39,7 +39,7 @@ cryptography = ">=40.0.0"
 requests = "^2.31.0"
 certifi = "^2023.5.7"
 urllib3 = "^2.0.3"
-pycryptodomex = "^3.18.0"
+pycryptodomex = ">=3.18.0"
 
 [tool.poetry.extras]
 docs = [

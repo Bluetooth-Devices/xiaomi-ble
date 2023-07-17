@@ -1249,11 +1249,12 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         """Set the bindkey."""
         if bindkey:
             if len(bindkey) == 12:
-                # add 4 bytes to MiBeacon v2/v3 bindkey
+                # MiBeacon v2/v3 bindkey (requires 4 additional (fixed) bytes)
                 bindkey = b"".join(
                     [bindkey[0:6], bytes.fromhex("8d3d3c97"), bindkey[6:]]
                 )
-            self.cipher: AESCCM | None = AESCCM(bindkey, tag_length=4)
+            elif len(bindkey) == 16:
+                self.cipher: AESCCM | None = AESCCM(bindkey, tag_length=4)
         else:
             self.cipher = None
         self.bindkey = bindkey
@@ -1545,7 +1546,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         encrypted_payload = data[i:-7]
 
         assert self.cipher is not None  # nosec
-        # derypt the data
+        # decrypt the data
         try:
             decrypted_payload = self.cipher.decrypt(
                 nonce, encrypted_payload + mic, associated_data
@@ -1587,20 +1588,17 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             return None
 
         nonce = b"".join([data[0:5], data[-4:-1], xiaomi_mac[::-1][:-1]])
-        associated_data = b"\x11"
         encrypted_payload = data[i:-4]
-        # next two lines can be deleted after switching to cryptography
+        # cryptography can't decrypt a message without authentication
+        # so we have to use Cryptodome
+        associated_data = b"\x11"
         cipher = AES.new(self.bindkey, AES.MODE_CCM, nonce=nonce, mac_len=4)
         cipher.update(associated_data)
 
-        # change cipher to self.cipher for cryptography
         assert cipher is not None  # nosec
         # decrypt the data
         try:
             decrypted_payload = cipher.decrypt(encrypted_payload)
-            # cipher.decrypt(
-            #     nonce, encrypted_payload, associated_data
-            # )
         except ValueError as error:
             self.bindkey_verified = False
             _LOGGER.warning("Decryption failed: %s", error)
