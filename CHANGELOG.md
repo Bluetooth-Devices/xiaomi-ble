@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.18.1 (2023-07-17)
+
+### Fix
+
+* Use sensor state data for scale sensors ([#50](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/50)) ([`fcfa510`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/fcfa5100dfebb9dd451afdb7395eef530c7f3abb))
+
 ## v0.18.0 (2023-07-16)
 
 ### Feature
