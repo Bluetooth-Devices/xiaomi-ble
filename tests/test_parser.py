@@ -1121,6 +1121,57 @@ def test_Xiaomi_Scale2():
     )
 
 
+def test_Xiaomi_Scale2_non_stabilized():
+    """Test Xiaomi parser for Mi Body Composition Scale 2 (non stabilized)"""
+    data_string = b"\x02\x04\xb2\x07\x01\x01\x12\x10\x1a\x00\x00\xa8R"
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.update(
+        BluetoothServiceInfo(
+            name="MIBFS",
+            address="50:FB:19:1B:B5:DC",
+            rssi=-60,
+            manufacturer_data={},
+            service_data={SERVICE_SCALE2: data_string},
+            service_uuids=[SERVICE_SCALE2],
+            source="",
+        )
+    ) == SensorUpdate(
+        title="Mi Body Composition Scale 2 (B5DC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Mi Body Composition Scale 2 (B5DC)",
+                manufacturer="Anhui Huami Information Technology Co., Ltd",
+                model="XMTZC02HM/XMTZC05HM/NUN4049CN",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_MASS_NON_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_NON_STABILIZED,
+                device_class=DeviceClass.MASS_NON_STABILIZED,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_MASS_NON_STABILIZED: SensorValue(
+                name="Mass Non Stabilized",
+                device_key=KEY_MASS_NON_STABILIZED,
+                native_value=105.8,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
 def test_Xiaomi_GCLS002():
     """Test Xiaomi parser for GCLS002 / HHCCJCY09."""
     data_string = b"q \xbc\x03\xcd>Ym\x8d|\xc4\r\x04\x10\x02<\x01"
