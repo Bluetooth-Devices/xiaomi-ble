@@ -1535,31 +1535,25 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
         mass_in_pounds = bool(int(control_flags[7]))
         mass_in_catty = bool(int(control_flags[9]))
-        mass_stabilized = bool(int(control_flags[10]))
         mass_in_kilograms = not mass_in_catty and not mass_in_pounds
+        mass_stabilized = bool(int(control_flags[10]))
         impedance_stabilized = bool(int(control_flags[14]))
 
         if mass_in_kilograms:
+            # sensor advertises kg * 200
             mass /= 200
+        elif mass_in_pounds:
+            # sensor advertises lbs * 100, conversion to kg (1 lbs = 0.45359237 kg)
+            mass *= 0.0045359237
         else:
-            mass /= 100
+            # sensor advertises catty * 100, conversion to kg (1 catty = 0.5 kg)
+            mass *= 0.005
 
-        stabilized_mass_type = (
-            SensorLibrary.MASS_STABILIZED__MASS_KILOGRAMS
-            if mass_in_kilograms
-            else SensorLibrary.MASS_STABILIZED__MASS_POUNDS
+        self.update_predefined_sensor(
+            SensorLibrary.MASS_NON_STABILIZED__MASS_KILOGRAMS, mass
         )
-
-        non_stabilized_mass_type = (
-            SensorLibrary.MASS_NON_STABILIZED__MASS_KILOGRAMS
-            if mass_in_kilograms
-            else SensorLibrary.MASS_NON_STABILIZED__MASS_POUNDS
-        )
-
-        self.update_predefined_sensor(non_stabilized_mass_type, mass)
-
         if mass_stabilized:
-            self.update_predefined_sensor(stabilized_mass_type, mass)
+            self.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, mass)
             if impedance_stabilized:
                 self.update_predefined_sensor(SensorLibrary.IMPEDANCE__OHM, impedance)
 

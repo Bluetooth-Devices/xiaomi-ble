@@ -41,7 +41,7 @@ KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
 KEY_IMPEDANCE = DeviceKey(key="impedance", device_id=None)
 KEY_MASS_NON_STABILIZED = DeviceKey(key="mass_non_stabilized", device_id=None)
-KEY_MASS_STABILIZED = DeviceKey(key="mass_stabilized", device_id=None)
+KEY_MASS = DeviceKey(key="mass", device_id=None)
 KEY_MOISTURE = DeviceKey(key="moisture", device_id=None)
 KEY_SIGNAL_STRENGTH = DeviceKey(key="signal_strength", device_id=None)
 KEY_SMOKE = DeviceKey(key="smoke", device_id=None)
@@ -1084,9 +1084,9 @@ def test_Xiaomi_Scale2():
                 device_class=DeviceClass.MASS_NON_STABILIZED,
                 native_unit_of_measurement=Units.MASS_KILOGRAMS,
             ),
-            KEY_MASS_STABILIZED: SensorDescription(
-                device_key=KEY_MASS_STABILIZED,
-                device_class=DeviceClass.MASS_STABILIZED,
+            KEY_MASS: SensorDescription(
+                device_key=KEY_MASS,
+                device_class=DeviceClass.MASS,
                 native_unit_of_measurement=Units.MASS_KILOGRAMS,
             ),
             KEY_IMPEDANCE: SensorDescription(
@@ -1106,9 +1106,9 @@ def test_Xiaomi_Scale2():
                 device_key=KEY_MASS_NON_STABILIZED,
                 native_value=58.85,
             ),
-            KEY_MASS_STABILIZED: SensorValue(
-                name="Mass Stabilized",
-                device_key=KEY_MASS_STABILIZED,
+            KEY_MASS: SensorValue(
+                name="Mass",
+                device_key=KEY_MASS,
                 native_value=58.85,
             ),
             KEY_IMPEDANCE: SensorValue(
