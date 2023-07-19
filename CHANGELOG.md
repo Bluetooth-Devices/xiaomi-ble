@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.18.2 (2023-07-19)
+
+### Fix
+
+* Use only kg for mass ([#51](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/51)) ([`93b5c9f`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/93b5c9ff0e0360b4c54d4bae603d0eb45198c8a3))
+
 ## v0.18.1 (2023-07-17)
 
 ### Fix
