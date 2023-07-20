@@ -34,6 +34,7 @@ from .const import (
     CHARACTERISTIC_BATTERY,
     SERVICE_HHCCJCY10,
     SERVICE_MIBEACON,
+    SERVICE_SCALE2,
     TIMEOUT_1DAY,
 )
 from .devices import DEVICE_TYPES, SLEEPY_DEVICE_MODELS
@@ -1288,6 +1289,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             elif uuid == SERVICE_HHCCJCY10:
                 if self._parse_hhcc(service_info, data):
                     self.last_service_info = service_info
+            elif uuid == SERVICE_SCALE2:
+                if self._parse_scale(service_info, data):
+                    self.last_service_info = service_info
 
     def _parse_hhcc(self, service_info: BluetoothServiceInfo, data: bytes) -> bool:
         """Parser for Pink version of HHCCJCY10."""
@@ -1518,6 +1522,56 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                             data.hex(),
                         )
                 payload_start = next_start
+
+        return True
+
+    def _parse_scale(self, service_info: BluetoothServiceInfo, data: bytes) -> bool:
+        if len(data) != 13:
+            return False
+
+        uuid16 = (data[3] << 8) | data[2]
+
+        identifier = short_address(service_info.address)
+
+        self.device_id = uuid16
+        self.set_title(f"Mi Body Composition Scale 2 ({identifier})")
+        self.set_device_name(f"Mi Body Composition Scale 2 ({identifier})")
+        self.set_device_type("XMTZC02HM/XMTZC05HM/NUN4049CN")
+        self.set_device_manufacturer("Anhui Huami Information Technology Co., Ltd")
+        self.pending = False
+        self.sleepy_device = True
+
+        control_bytes = data[:2]
+        # skip bytes containing date and time
+        impedance = int.from_bytes(data[9:11], byteorder="little")
+        mass = float(int.from_bytes(data[11:13], byteorder="little"))
+
+        # Decode control bytes
+        control_flags = "".join([bin(byte)[2:].zfill(8) for byte in control_bytes])
+
+        mass_in_pounds = bool(int(control_flags[7]))
+        mass_in_catty = bool(int(control_flags[9]))
+        mass_in_kilograms = not mass_in_catty and not mass_in_pounds
+        mass_stabilized = bool(int(control_flags[10]))
+        impedance_stabilized = bool(int(control_flags[14]))
+
+        if mass_in_kilograms:
+            # sensor advertises kg * 200
+            mass /= 200
+        elif mass_in_pounds:
+            # sensor advertises lbs * 100, conversion to kg (1 lbs = 0.45359237 kg)
+            mass *= 0.0045359237
+        else:
+            # sensor advertises catty * 100, conversion to kg (1 catty = 0.5 kg)
+            mass *= 0.005
+
+        self.update_predefined_sensor(
+            SensorLibrary.MASS_NON_STABILIZED__MASS_KILOGRAMS, mass
+        )
+        if mass_stabilized:
+            self.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, mass)
+            if impedance_stabilized:
+                self.update_predefined_sensor(SensorLibrary.IMPEDANCE__OHM, impedance)
 
         return True
 
