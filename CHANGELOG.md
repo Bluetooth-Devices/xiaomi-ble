@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.19.0 (2023-07-20)
+
+### Feature
+
+* Switch from pycryptodomex to cryptography for v4 and v5 ([#48](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/48)) ([`382beea`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/382beeadea23216c185428d2ada784a3e6fe6660))
+
 ## v0.18.2 (2023-07-19)
 
 ### Fix
