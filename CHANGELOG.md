@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.19.1 (2023-07-20)
+
+### Fix
+
+* Remove some dependencies ([#53](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/53)) ([`9d11d62`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/9d11d620557ec95d0bdf9112b8cf69e82031a006))
+
 ## v0.19.0 (2023-07-20)
 
 ### Feature
