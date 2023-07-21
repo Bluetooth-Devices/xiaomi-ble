@@ -1052,9 +1052,9 @@ def test_Xiaomi_HHCCJCY10():
     )
 
 
-def test_Xiaomi_Scale1():
+def test_Xiaomi_Scale1d():
     """Test Xiaomi parser for Mi Smart Scale (MiScale V1)"""
-    data_string = b"\xa2 D\xb2\x07\x01\x01\n\x1a\x15"
+    data_string = b"\x22\x9e\x43\xe5\x07\x04\x0b\x10\x13\x01"
 
     device = XiaomiBluetoothDeviceData()
     assert device.update(
@@ -1099,11 +1099,62 @@ def test_Xiaomi_Scale1():
             KEY_MASS_NON_STABILIZED: SensorValue(
                 name="Mass Non Stabilized",
                 device_key=KEY_MASS_NON_STABILIZED,
-                native_value=87.2,
+                native_value=86.55,
             ),
             KEY_MASS: SensorValue(
                 name="Mass",
                 device_key=KEY_MASS,
+                native_value=86.55,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
+def test_Xiaomi_Scale1_mass_removed():
+    """Test Xiaomi parser for Mi Smart Scale (MiScale V1) mass removed"""
+    data_string = b"\xa2 D\xb2\x07\x01\x01\n\x1a\x15"
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.update(
+        BluetoothServiceInfo(
+            name="MISCA",
+            address="50:FB:19:1B:B5:DC",
+            rssi=-60,
+            manufacturer_data={},
+            service_data={SERVICE_SCALE1: data_string},
+            service_uuids=[SERVICE_SCALE1],
+            source="",
+        )
+    ) == SensorUpdate(
+        title="Mi Smart Scale (B5DC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Mi Smart Scale (B5DC)",
+                manufacturer="Xiaomi",
+                model="XMTZC01HM/XMTZC04HM",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_MASS_NON_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_NON_STABILIZED,
+                device_class=DeviceClass.MASS_NON_STABILIZED,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_MASS_NON_STABILIZED: SensorValue(
+                name="Mass Non Stabilized",
+                device_key=KEY_MASS_NON_STABILIZED,
                 native_value=87.2,
             ),
             KEY_SIGNAL_STRENGTH: SensorValue(

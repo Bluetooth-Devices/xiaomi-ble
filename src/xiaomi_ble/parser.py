@@ -1552,7 +1552,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         mass_in_catty = bool(int(control_byte & (1 << 4)))
         mass_in_kilograms = not mass_in_catty and not mass_in_pounds
         mass_stabilized = bool(int(control_byte & (1 << 5)))
-        weight_removed = bool(int(control_byte & (1 << 7)))  # noqa: F841
+        mass_removed = bool(int(control_byte & (1 << 7)))
 
         if mass_in_kilograms:
             # sensor advertises kg * 200
@@ -1567,7 +1567,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.update_predefined_sensor(
             SensorLibrary.MASS_NON_STABILIZED__MASS_KILOGRAMS, mass
         )
-        if mass_stabilized:
+        if mass_stabilized and not mass_removed:
             self.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, mass)
 
         return True
