@@ -34,6 +34,7 @@ from .const import (
     CHARACTERISTIC_BATTERY,
     SERVICE_HHCCJCY10,
     SERVICE_MIBEACON,
+    SERVICE_SCALE1,
     SERVICE_SCALE2,
     TIMEOUT_1DAY,
 )
@@ -1289,8 +1290,11 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             elif uuid == SERVICE_HHCCJCY10:
                 if self._parse_hhcc(service_info, data):
                     self.last_service_info = service_info
+            elif uuid == SERVICE_SCALE1:
+                if self._parse_scale_v1(service_info, data):
+                    self.last_service_info = service_info
             elif uuid == SERVICE_SCALE2:
-                if self._parse_scale(service_info, data):
+                if self._parse_scale_v2(service_info, data):
                     self.last_service_info = service_info
 
     def _parse_hhcc(self, service_info: BluetoothServiceInfo, data: bytes) -> bool:
@@ -1525,7 +1529,50 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
         return True
 
-    def _parse_scale(self, service_info: BluetoothServiceInfo, data: bytes) -> bool:
+    def _parse_scale_v1(self, service_info: BluetoothServiceInfo, data: bytes) -> bool:
+        if len(data) != 10:
+            return False
+
+        uuid16 = (data[3] << 8) | data[2]
+
+        identifier = short_address(service_info.address)
+
+        self.device_id = uuid16
+        self.set_title(f"Mi Smart Scale ({identifier})")
+        self.set_device_name(f"Mi Smart Scale ({identifier})")
+        self.set_device_type("XMTZC01HM/XMTZC04HM")
+        self.set_device_manufacturer("Xiaomi")
+        self.pending = False
+        self.sleepy_device = True
+
+        control_byte = data[0]
+        mass = float(int.from_bytes(data[1:3], byteorder="little"))
+
+        mass_in_pounds = bool(int(control_byte & (1 << 0)))
+        mass_in_catty = bool(int(control_byte & (1 << 4)))
+        mass_in_kilograms = not mass_in_catty and not mass_in_pounds
+        mass_stabilized = bool(int(control_byte & (1 << 5)))
+        weight_removed = bool(int(control_byte & (1 << 7)))  # noqa: F841
+
+        if mass_in_kilograms:
+            # sensor advertises kg * 200
+            mass /= 200
+        elif mass_in_pounds:
+            # sensor advertises lbs * 100, conversion to kg (1 lbs = 0.45359237 kg)
+            mass *= 0.0045359237
+        else:
+            # sensor advertises catty * 100, conversion to kg (1 catty = 0.5 kg)
+            mass *= 0.005
+
+        self.update_predefined_sensor(
+            SensorLibrary.MASS_NON_STABILIZED__MASS_KILOGRAMS, mass
+        )
+        if mass_stabilized:
+            self.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, mass)
+
+        return True
+
+    def _parse_scale_v2(self, service_info: BluetoothServiceInfo, data: bytes) -> bool:
         if len(data) != 13:
             return False
 
@@ -1534,10 +1581,10 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         identifier = short_address(service_info.address)
 
         self.device_id = uuid16
-        self.set_title(f"Mi Body Composition Scale 2 ({identifier})")
-        self.set_device_name(f"Mi Body Composition Scale 2 ({identifier})")
+        self.set_title(f"Mi Body Composition Scale ({identifier})")
+        self.set_device_name(f"Mi Body Composition Scale ({identifier})")
         self.set_device_type("XMTZC02HM/XMTZC05HM/NUN4049CN")
-        self.set_device_manufacturer("Anhui Huami Information Technology Co., Ltd")
+        self.set_device_manufacturer("Xiaomi")
         self.pending = False
         self.sleepy_device = True
 
