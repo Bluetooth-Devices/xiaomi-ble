@@ -18,7 +18,7 @@ from sensor_state_data import (
     Units,
 )
 
-from xiaomi_ble.const import SERVICE_HHCCJCY10, SERVICE_SCALE2
+from xiaomi_ble.const import SERVICE_HHCCJCY10, SERVICE_SCALE1, SERVICE_SCALE2
 from xiaomi_ble.parser import (
     EncryptionScheme,
     ExtendedBinarySensorDeviceClass,
@@ -1052,9 +1052,172 @@ def test_Xiaomi_HHCCJCY10():
     )
 
 
+def test_Xiaomi_Scale1():
+    """Test Xiaomi parser for Mi Smart Scale (MiScale V1)"""
+    data_string = b"\x22\x9e\x43\xe5\x07\x04\x0b\x10\x13\x01"
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.update(
+        BluetoothServiceInfo(
+            name="MISCA",
+            address="50:FB:19:1B:B5:DC",
+            rssi=-60,
+            manufacturer_data={},
+            service_data={SERVICE_SCALE1: data_string},
+            service_uuids=[SERVICE_SCALE1],
+            source="",
+        )
+    ) == SensorUpdate(
+        title="Mi Smart Scale (B5DC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Mi Smart Scale (B5DC)",
+                manufacturer="Xiaomi",
+                model="XMTZC01HM/XMTZC04HM",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_MASS_NON_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_NON_STABILIZED,
+                device_class=DeviceClass.MASS_NON_STABILIZED,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_MASS: SensorDescription(
+                device_key=KEY_MASS,
+                device_class=DeviceClass.MASS,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_MASS_NON_STABILIZED: SensorValue(
+                name="Mass Non Stabilized",
+                device_key=KEY_MASS_NON_STABILIZED,
+                native_value=86.55,
+            ),
+            KEY_MASS: SensorValue(
+                name="Mass",
+                device_key=KEY_MASS,
+                native_value=86.55,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
+def test_Xiaomi_Scale1_mass_removed():
+    """Test Xiaomi parser for Mi Smart Scale (MiScale V1) mass removed"""
+    data_string = b"\xa2 D\xb2\x07\x01\x01\n\x1a\x15"
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.update(
+        BluetoothServiceInfo(
+            name="MISCA",
+            address="50:FB:19:1B:B5:DC",
+            rssi=-60,
+            manufacturer_data={},
+            service_data={SERVICE_SCALE1: data_string},
+            service_uuids=[SERVICE_SCALE1],
+            source="",
+        )
+    ) == SensorUpdate(
+        title="Mi Smart Scale (B5DC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Mi Smart Scale (B5DC)",
+                manufacturer="Xiaomi",
+                model="XMTZC01HM/XMTZC04HM",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_MASS_NON_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_NON_STABILIZED,
+                device_class=DeviceClass.MASS_NON_STABILIZED,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_MASS_NON_STABILIZED: SensorValue(
+                name="Mass Non Stabilized",
+                device_key=KEY_MASS_NON_STABILIZED,
+                native_value=87.2,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
+def test_Xiaomi_Scale1_non_stabilized():
+    """Test Xiaomi parser for Mi Smart Scale (MiScale V1) non stabilized"""
+    data_string = b"\x82\x14\x00\xe5\x07\x04\x0b\x10\x17\x08"
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.update(
+        BluetoothServiceInfo(
+            name="MISCA",
+            address="50:FB:19:1B:B5:DC",
+            rssi=-60,
+            manufacturer_data={},
+            service_data={SERVICE_SCALE1: data_string},
+            service_uuids=[SERVICE_SCALE1],
+            source="",
+        )
+    ) == SensorUpdate(
+        title="Mi Smart Scale (B5DC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Mi Smart Scale (B5DC)",
+                manufacturer="Xiaomi",
+                model="XMTZC01HM/XMTZC04HM",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_MASS_NON_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_NON_STABILIZED,
+                device_class=DeviceClass.MASS_NON_STABILIZED,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_MASS_NON_STABILIZED: SensorValue(
+                name="Mass Non Stabilized",
+                device_key=KEY_MASS_NON_STABILIZED,
+                native_value=0.1,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
 def test_Xiaomi_Scale2():
-    """Test Xiaomi parser for Mi Body Composition Scale 2"""
-    data_string = b"\x02\xa6\xe7\x07\x07\x07\x0b\x1f\x1d\x1f\x02\xfa-"
+    """Test Xiaomi parser for Mi Body Composition Scale (MiScale V2)"""
+    data_string = b"\x02&\xb2\x07\x05\x04\x0f\x02\x01\xac\x01\x86B"
 
     device = XiaomiBluetoothDeviceData()
     assert device.update(
@@ -1068,11 +1231,11 @@ def test_Xiaomi_Scale2():
             source="",
         )
     ) == SensorUpdate(
-        title="Mi Body Composition Scale 2 (B5DC)",
+        title="Mi Body Composition Scale (B5DC)",
         devices={
             None: SensorDeviceInfo(
-                name="Mi Body Composition Scale 2 (B5DC)",
-                manufacturer="Anhui Huami Information Technology Co., Ltd",
+                name="Mi Body Composition Scale (B5DC)",
+                manufacturer="Xiaomi",
                 model="XMTZC02HM/XMTZC05HM/NUN4049CN",
                 hw_version=None,
                 sw_version=None,
@@ -1104,15 +1267,15 @@ def test_Xiaomi_Scale2():
             KEY_MASS_NON_STABILIZED: SensorValue(
                 name="Mass Non Stabilized",
                 device_key=KEY_MASS_NON_STABILIZED,
-                native_value=58.85,
+                native_value=85.15,
             ),
             KEY_MASS: SensorValue(
                 name="Mass",
                 device_key=KEY_MASS,
-                native_value=58.85,
+                native_value=85.15,
             ),
             KEY_IMPEDANCE: SensorValue(
-                name="Impedance", device_key=KEY_IMPEDANCE, native_value=543
+                name="Impedance", device_key=KEY_IMPEDANCE, native_value=428
             ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
@@ -1122,7 +1285,7 @@ def test_Xiaomi_Scale2():
 
 
 def test_Xiaomi_Scale2_non_stabilized():
-    """Test Xiaomi parser for Mi Body Composition Scale 2 (non stabilized)"""
+    """Test Xiaomi parser for Mi Body Composition Scale (MiScale v2) (non stabilized)"""
     data_string = b"\x02\x04\xb2\x07\x01\x01\x12\x10\x1a\x00\x00\xa8R"
 
     device = XiaomiBluetoothDeviceData()
@@ -1137,11 +1300,11 @@ def test_Xiaomi_Scale2_non_stabilized():
             source="",
         )
     ) == SensorUpdate(
-        title="Mi Body Composition Scale 2 (B5DC)",
+        title="Mi Body Composition Scale (B5DC)",
         devices={
             None: SensorDeviceInfo(
-                name="Mi Body Composition Scale 2 (B5DC)",
-                manufacturer="Anhui Huami Information Technology Co., Ltd",
+                name="Mi Body Composition Scale (B5DC)",
+                manufacturer="Xiaomi",
                 model="XMTZC02HM/XMTZC05HM/NUN4049CN",
                 hw_version=None,
                 sw_version=None,
