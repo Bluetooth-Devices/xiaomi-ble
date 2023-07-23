@@ -1052,7 +1052,7 @@ def test_Xiaomi_HHCCJCY10():
     )
 
 
-def test_Xiaomi_Scale1d():
+def test_Xiaomi_Scale1():
     """Test Xiaomi parser for Mi Smart Scale (MiScale V1)"""
     data_string = b"\x22\x9e\x43\xe5\x07\x04\x0b\x10\x13\x01"
 
@@ -1217,7 +1217,7 @@ def test_Xiaomi_Scale1_non_stabilized():
 
 def test_Xiaomi_Scale2():
     """Test Xiaomi parser for Mi Body Composition Scale (MiScale V2)"""
-    data_string = b"\x02\xa6\xe7\x07\x07\x07\x0b\x1f\x1d\x1f\x02\xfa-"
+    data_string = b"\x02&\xb2\x07\x05\x04\x0f\x02\x01\xac\x01\x86B"
 
     device = XiaomiBluetoothDeviceData()
     assert device.update(
@@ -1267,15 +1267,15 @@ def test_Xiaomi_Scale2():
             KEY_MASS_NON_STABILIZED: SensorValue(
                 name="Mass Non Stabilized",
                 device_key=KEY_MASS_NON_STABILIZED,
-                native_value=58.85,
+                native_value=85.15,
             ),
             KEY_MASS: SensorValue(
                 name="Mass",
                 device_key=KEY_MASS,
-                native_value=58.85,
+                native_value=85.15,
             ),
             KEY_IMPEDANCE: SensorValue(
-                name="Impedance", device_key=KEY_IMPEDANCE, native_value=543
+                name="Impedance", device_key=KEY_IMPEDANCE, native_value=428
             ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
