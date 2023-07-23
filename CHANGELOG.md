@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.20.0 (2023-07-23)
+
+### Feature
+
+* Add mi scale v1 ([#54](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/54)) ([`57dc01a`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/57dc01a0f665af945540f7d01356030ce065b96a))
+
 ## v0.19.1 (2023-07-20)
 
 ### Fix
