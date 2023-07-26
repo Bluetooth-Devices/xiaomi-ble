@@ -1584,6 +1584,7 @@ def test_Xiaomi_M1S_T500():
             KEY_COUNTER: SensorDescription(
                 device_key=KEY_COUNTER,
                 device_class=ExtendedSensorDeviceClass.COUNTER,
+                native_unit_of_measurement="s",
             ),
         },
         entity_values={

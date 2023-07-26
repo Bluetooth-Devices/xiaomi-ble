@@ -350,7 +350,7 @@ def obj0010(
         device.update_sensor(
             key=ExtendedSensorDeviceClass.COUNTER,
             name="Counter",
-            native_unit_of_measurement=None,
+            native_unit_of_measurement=Units.TIME_SECONDS,
             device_class=ExtendedSensorDeviceClass.COUNTER,
             native_value=xobj[1],
         )
