@@ -73,6 +73,9 @@ class ExtendedBinarySensorDeviceClass(BaseDeviceClass):
     # On means door pried, Off means door not pried
     PRY_THE_DOOR = "pry_the_door"
 
+    # On means toothbrush On, Off means toothbrush Off
+    TOOTHBRUSH = "toothbrush"
+
 
 def to_mac(addr: bytes) -> str:
     """Return formatted MAC address"""
@@ -317,15 +320,27 @@ def obj0010(
 ) -> dict[str, Any]:
     """Toothbrush"""
     if xobj[0] == 0:
-        if len(xobj) == 1:
-            return {"toothbrush": 1}
-        else:
-            return {"toothbrush": 1, "counter": xobj[1]}
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            native_value=True,  # Toothbrush On
+            device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            name="Toothbrush",
+        )
     else:
-        if len(xobj) == 1:
-            return {"toothbrush": 0}
-        else:
-            return {"toothbrush": 0, "score": xobj[1]}
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            native_value=False,  # Toothbrush Off
+            device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            name="Toothbrush",
+        )
+    if len(xobj) > 1:
+        device.update_sensor(
+            key="counter",
+            name="Counter",
+            native_unit_of_measurement=None,
+            native_value=xobj[1],
+        )
+    return {}
 
 
 def obj000a(
@@ -826,6 +841,44 @@ def obj2000(
     return {}
 
 
+def obj3003(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Brushing"""
+    result = {}
+    start_obj = xobj[0]
+    if start_obj == 0:
+        # Start of brushing
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            native_value=True,  # Toothbrush On
+            device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            name="Toothbrush",
+        )
+        # Start time has not been implemented
+        start_time = struct.unpack("<L", xobj[1:5])[0]
+        result["start time"] = datetime.datetime.utcfromtimestamp(start_time)
+    elif start_obj == 1:
+        # End of brushing
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            native_value=False,  # Toothbrush Off
+            device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            name="Toothbrush",
+        )
+        # End time has not been implemented
+        end_time = struct.unpack("<L", xobj[1:5])[0]
+        result["end time"] = datetime.datetime.utcfromtimestamp(end_time)
+    if len(xobj) == 6:
+        device.update_sensor(
+            key="score",
+            name="Score",
+            native_unit_of_measurement=None,
+            native_value=xobj[5],
+        )
+    return result
+
+
 # The following data objects are device specific. For now only added for
 # LYWSD02MMC, MJWSD05MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI), K9BB
 # https://miot-spec.org/miot-spec-v2/instances?status=all
@@ -1172,6 +1225,7 @@ xiaomi_dataobject_dict = {
     0x100E: obj100e,
     0x101B: obj101b,
     0x2000: obj2000,
+    0x3003: obj3003,
     0x4803: obj4803,
     0x4804: obj4804,
     0x4805: obj4805,

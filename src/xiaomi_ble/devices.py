@@ -141,6 +141,14 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Smart Toothbrush",
         model="M1S-T500",
     ),
+    0x0806: DeviceEntry(
+        name="Smart Toothbrush",
+        model="T700",
+    ),
+    0x1790: DeviceEntry(
+        name="Smart Toothbrush",
+        model="T700",
+    ),
     0x0A8D: DeviceEntry(
         name="Motion Sensor",
         model="RTCGQ02LM",
