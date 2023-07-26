@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.21.1 (2023-07-26)
+
+### Fix
+
+* Add unit of measurement to counter ([#56](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/56)) ([`22956f8`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/22956f87269859e9ca94fb96c55a9a90fe45a4ac))
+
 ## v0.21.0 (2023-07-26)
 
 ### Feature
