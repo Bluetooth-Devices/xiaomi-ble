@@ -22,6 +22,7 @@ from xiaomi_ble.const import SERVICE_HHCCJCY10, SERVICE_SCALE1, SERVICE_SCALE2
 from xiaomi_ble.parser import (
     EncryptionScheme,
     ExtendedBinarySensorDeviceClass,
+    ExtendedSensorDeviceClass,
     XiaomiBluetoothDeviceData,
 )
 
@@ -35,7 +36,9 @@ KEY_BINARY_DEVICE_FORCIBLY_REMOVED = DeviceKey(
     key="device_forcibly_removed", device_id=None
 )
 KEY_BINARY_PRY_THE_DOOR = DeviceKey(key="pry_the_door", device_id=None)
+KEY_BINARY_TOOTHBRUSH = DeviceKey(key="toothbrush", device_id=None)
 KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
+KEY_COUNTER = DeviceKey(key="counter", device_id=None)
 KEY_EVENT_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
@@ -43,6 +46,7 @@ KEY_IMPEDANCE = DeviceKey(key="impedance", device_id=None)
 KEY_MASS_NON_STABILIZED = DeviceKey(key="mass_non_stabilized", device_id=None)
 KEY_MASS = DeviceKey(key="mass", device_id=None)
 KEY_MOISTURE = DeviceKey(key="moisture", device_id=None)
+KEY_SCORE = DeviceKey(key="score", device_id=None)
 KEY_SIGNAL_STRENGTH = DeviceKey(key="signal_strength", device_id=None)
 KEY_SMOKE = DeviceKey(key="smoke", device_id=None)
 KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
@@ -1577,18 +1581,84 @@ def test_Xiaomi_M1S_T500():
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
+            KEY_COUNTER: SensorDescription(
+                device_key=KEY_COUNTER,
+                device_class=ExtendedSensorDeviceClass.COUNTER,
+            ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
+            KEY_COUNTER: SensorValue(
+                name="Counter", device_key=KEY_COUNTER, native_value=3
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_TOOTHBRUSH: BinarySensorDescription(
+                device_key=KEY_BINARY_TOOTHBRUSH,
+                device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_TOOTHBRUSH: BinarySensorValue(
+                device_key=KEY_BINARY_TOOTHBRUSH, name="Toothbrush", native_value=True
+            ),
         },
     )
 
-    assert device.unhandled == {
-        "toothbrush": 1,
-        "counter": 3,
-    }
+
+def test_Xiaomi_T700():
+    """Test Xiaomi parser for T700."""
+    bindkey = "1330b99cded13258acc391627e9771f7"
+    data_string = (
+        b"\x48\x58\x06\x08\xc9H\x0e\xf1\x12\x81\x07\x973\xfc\x14\x00\x00VD\xdbA"
+    )
+    advertisement = bytes_to_service_info(data_string, address="ED:DE:34:3F:48:0C")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Smart Toothbrush 480C (T700)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Smart Toothbrush 480C",
+                manufacturer="Xiaomi",
+                model="T700",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+            KEY_SCORE: SensorDescription(
+                device_key=KEY_SCORE,
+                device_class=ExtendedSensorDeviceClass.SCORE,
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+            KEY_SCORE: SensorValue(name="Score", device_key=KEY_SCORE, native_value=83),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_TOOTHBRUSH: BinarySensorDescription(
+                device_key=KEY_BINARY_TOOTHBRUSH,
+                device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_TOOTHBRUSH: BinarySensorValue(
+                device_key=KEY_BINARY_TOOTHBRUSH, name="Toothbrush", native_value=False
+            ),
+        },
+    )
 
 
 def test_Xiaomi_ZNMS16LM_fingerprint():

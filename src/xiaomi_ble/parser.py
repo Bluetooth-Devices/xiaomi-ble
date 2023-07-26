@@ -73,6 +73,22 @@ class ExtendedBinarySensorDeviceClass(BaseDeviceClass):
     # On means door pried, Off means door not pried
     PRY_THE_DOOR = "pry_the_door"
 
+    # On means toothbrush On, Off means toothbrush Off
+    TOOTHBRUSH = "toothbrush"
+
+
+class ExtendedSensorDeviceClass(BaseDeviceClass):
+    """Device class for additional sensors (compared to sensor-state-data)."""
+
+    # Consumable
+    CONSUMABLE = "consumable"
+
+    # Toothbrush counter
+    COUNTER = "counter"
+
+    # Toothbrush score
+    SCORE = "score"
+
 
 def to_mac(addr: bytes) -> str:
     """Return formatted MAC address"""
@@ -317,15 +333,28 @@ def obj0010(
 ) -> dict[str, Any]:
     """Toothbrush"""
     if xobj[0] == 0:
-        if len(xobj) == 1:
-            return {"toothbrush": 1}
-        else:
-            return {"toothbrush": 1, "counter": xobj[1]}
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            native_value=True,  # Toothbrush On
+            device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            name="Toothbrush",
+        )
     else:
-        if len(xobj) == 1:
-            return {"toothbrush": 0}
-        else:
-            return {"toothbrush": 0, "score": xobj[1]}
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            native_value=False,  # Toothbrush Off
+            device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            name="Toothbrush",
+        )
+    if len(xobj) > 1:
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.COUNTER,
+            name="Counter",
+            native_unit_of_measurement=None,
+            device_class=ExtendedSensorDeviceClass.COUNTER,
+            native_value=xobj[1],
+        )
+    return {}
 
 
 def obj000a(
@@ -671,9 +700,10 @@ def obj1013(
 ) -> dict[str, Any]:
     """Consumable (in percent)"""
     device.update_sensor(
-        key="consumable",
+        key=ExtendedSensorDeviceClass.CONSUMABLE,
         name="Consumable",
         native_unit_of_measurement=Units.PERCENTAGE,
+        device_class=ExtendedSensorDeviceClass.CONSUMABLE,
         native_value=xobj[0],
     )
     return {}
@@ -824,6 +854,45 @@ def obj2000(
         device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, bat)
 
     return {}
+
+
+def obj3003(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Brushing"""
+    result = {}
+    start_obj = xobj[0]
+    if start_obj == 0:
+        # Start of brushing
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            native_value=True,  # Toothbrush On
+            device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            name="Toothbrush",
+        )
+        # Start time has not been implemented
+        start_time = struct.unpack("<L", xobj[1:5])[0]
+        result["start time"] = datetime.datetime.utcfromtimestamp(start_time)
+    elif start_obj == 1:
+        # End of brushing
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            native_value=False,  # Toothbrush Off
+            device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            name="Toothbrush",
+        )
+        # End time has not been implemented
+        end_time = struct.unpack("<L", xobj[1:5])[0]
+        result["end time"] = datetime.datetime.utcfromtimestamp(end_time)
+    if len(xobj) == 6:
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.SCORE,
+            name="Score",
+            native_unit_of_measurement=None,
+            device_class=ExtendedSensorDeviceClass.SCORE,
+            native_value=xobj[5],
+        )
+    return result
 
 
 # The following data objects are device specific. For now only added for
@@ -1172,6 +1241,7 @@ xiaomi_dataobject_dict = {
     0x100E: obj100e,
     0x101B: obj101b,
     0x2000: obj2000,
+    0x3003: obj3003,
     0x4803: obj4803,
     0x4804: obj4804,
     0x4805: obj4805,
