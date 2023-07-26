@@ -21,6 +21,7 @@ from sensor_state_data import (
 from xiaomi_ble.const import SERVICE_HHCCJCY10, SERVICE_SCALE1, SERVICE_SCALE2
 from xiaomi_ble.parser import (
     EncryptionScheme,
+    ExtendedSensorDeviceClass,
     ExtendedBinarySensorDeviceClass,
     XiaomiBluetoothDeviceData,
 )
@@ -1582,6 +1583,7 @@ def test_Xiaomi_M1S_T500():
             ),
             KEY_COUNTER: SensorDescription(
                 device_key=KEY_COUNTER,
+                device_class=ExtendedSensorDeviceClass.COUNTER,
             ),
         },
         entity_values={
@@ -1636,6 +1638,7 @@ def test_Xiaomi_T700():
             ),
             KEY_SCORE: SensorDescription(
                 device_key=KEY_SCORE,
+                device_class=ExtendedSensorDeviceClass.SCORE,
             ),
         },
         entity_values={

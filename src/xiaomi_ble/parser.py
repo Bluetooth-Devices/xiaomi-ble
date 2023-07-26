@@ -77,6 +77,19 @@ class ExtendedBinarySensorDeviceClass(BaseDeviceClass):
     TOOTHBRUSH = "toothbrush"
 
 
+class ExtendedSensorDeviceClass(BaseDeviceClass):
+    """Device class for additional sensors (compared to sensor-state-data)."""
+
+    # Consumable
+    CONSUMABLE = "consumable"
+
+    # Toothbrush counter
+    COUNTER = "counter"
+
+    # Toothbrush score
+    SCORE = "score"
+
+
 def to_mac(addr: bytes) -> str:
     """Return formatted MAC address"""
     return ":".join(f"{i:02X}" for i in addr)
@@ -335,9 +348,10 @@ def obj0010(
         )
     if len(xobj) > 1:
         device.update_sensor(
-            key="counter",
+            key=ExtendedSensorDeviceClass.COUNTER,
             name="Counter",
             native_unit_of_measurement=None,
+            device_class=ExtendedSensorDeviceClass.COUNTER,
             native_value=xobj[1],
         )
     return {}
@@ -686,9 +700,10 @@ def obj1013(
 ) -> dict[str, Any]:
     """Consumable (in percent)"""
     device.update_sensor(
-        key="consumable",
+        key=ExtendedSensorDeviceClass.CONSUMABLE,
         name="Consumable",
         native_unit_of_measurement=Units.PERCENTAGE,
+        device_class=ExtendedSensorDeviceClass.CONSUMABLE,
         native_value=xobj[0],
     )
     return {}
@@ -871,9 +886,10 @@ def obj3003(
         result["end time"] = datetime.datetime.utcfromtimestamp(end_time)
     if len(xobj) == 6:
         device.update_sensor(
-            key="score",
+            key=ExtendedSensorDeviceClass.SCORE,
             name="Score",
             native_unit_of_measurement=None,
+            device_class=ExtendedSensorDeviceClass.SCORE,
             native_value=xobj[5],
         )
     return result
