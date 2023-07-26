@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.21.0 (2023-07-26)
+
+### Feature
+
+* Add support for toothbrushes ([#55](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/55)) ([`b3534f9`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/b3534f9daeef535372ffd5746d6662b1869f084e))
+
 ## v0.20.0 (2023-07-23)
 
 ### Feature
