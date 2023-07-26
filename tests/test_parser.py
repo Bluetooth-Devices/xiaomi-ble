@@ -21,8 +21,8 @@ from sensor_state_data import (
 from xiaomi_ble.const import SERVICE_HHCCJCY10, SERVICE_SCALE1, SERVICE_SCALE2
 from xiaomi_ble.parser import (
     EncryptionScheme,
-    ExtendedSensorDeviceClass,
     ExtendedBinarySensorDeviceClass,
+    ExtendedSensorDeviceClass,
     XiaomiBluetoothDeviceData,
 )
 
