@@ -310,9 +310,13 @@ def obj0008(
     value = xobj[0] ^ 1
     return_data.update({"armed away": value})
     if len(xobj) == 5:
-        timestamp = datetime.datetime.utcfromtimestamp(
-            int.from_bytes(xobj[1:], "little")
-        ).isoformat()
+        timestamp = (
+            datetime.datetime.fromtimestamp(
+                int.from_bytes(xobj[1:], "little"), tz=datetime.timezone.utc
+            )
+            .replace(tzinfo=None)
+            .isoformat()
+        )
         return_data.update({"timestamp": timestamp})
     # Lift up door handle outside the door sends this event from DSL-C08.
     if device_type == "DSL-C08":
@@ -379,9 +383,13 @@ def obj000b(
         method_int = xobj[0] >> 4
         key_id = int.from_bytes(xobj[1:5], "little")
 
-        timestamp = datetime.datetime.utcfromtimestamp(
-            int.from_bytes(xobj[5:], "little")
-        ).isoformat()
+        timestamp = (
+            datetime.datetime.fromtimestamp(
+                int.from_bytes(xobj[5:], "little"), tz=datetime.timezone.utc
+            )
+            .replace(tzinfo=None)
+            .isoformat()
+        )
 
         # all keys except Bluetooth have only 65536 values
         error = BLE_LOCK_ERROR.get(key_id)
@@ -872,7 +880,9 @@ def obj3003(
         )
         # Start time has not been implemented
         start_time = struct.unpack("<L", xobj[1:5])[0]
-        result["start time"] = datetime.datetime.utcfromtimestamp(start_time)
+        result["start time"] = datetime.datetime.fromtimestamp(
+            start_time, tz=datetime.timezone.utc
+        ).replace(tzinfo=None)
     elif start_obj == 1:
         # End of brushing
         device.update_binary_sensor(
@@ -883,7 +893,9 @@ def obj3003(
         )
         # End time has not been implemented
         end_time = struct.unpack("<L", xobj[1:5])[0]
-        result["end time"] = datetime.datetime.utcfromtimestamp(end_time)
+        result["end time"] = datetime.datetime.fromtimestamp(
+            end_time, tz=datetime.timezone.utc
+        ).replace(tzinfo=None)
     if len(xobj) == 6:
         device.update_sensor(
             key=ExtendedSensorDeviceClass.SCORE,
