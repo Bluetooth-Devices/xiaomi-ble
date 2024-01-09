@@ -98,13 +98,13 @@ def test_blank_advertisements_then_encrypted():
     device.update(advertisement)
 
     assert device.encryption_scheme == EncryptionScheme.MIBEACON_4_5
-    assert device.pending is False
+    assert device.pending is False  # type: ignore
 
 
 def test_blank_advertisements_then_unencrypted():
     """Test that we can reject empty payloads."""
 
-    # NOTE: THIS IS SYNTHETIC TEST DATA - i took a known unecrypted device and flipped
+    # NOTE: THIS IS SYNTHETIC TEST DATA - i took a known unencrypted device and flipped
     # frctrl_object_include, then truncated it to not include the data payload
 
     device = XiaomiBluetoothDeviceData()
@@ -150,7 +150,7 @@ def test_blank_advertisements_then_encrypted_last_service_info():
 def test_blank_advertisements_then_unencrypted_last_service_info():
     """Test that we can capture valid service info records."""
 
-    # NOTE: THIS IS SYNTHETIC TEST DATA - i took a known unecrypted device and flipped
+    # NOTE: THIS IS SYNTHETIC TEST DATA - i took a known unencrypted device and flipped
     # frctrl_object_include, then truncated it to not include the data payload
 
     device = XiaomiBluetoothDeviceData()
@@ -1391,6 +1391,57 @@ def test_Xiaomi_WX08ZM():
 
 def test_Xiaomi_MCCGQ02HL():
     """Test Xiaomi parser for MCCGQ02HL."""
+    data_string = b"XX\x8b\t\xa3\xae!\x81\xec\xaa\xe4\x0e,U<\x04\x00\x00\xd2\x8aP\x0c"
+    advertisement = bytes_to_service_info(data_string, address="E4:AA:EC:81:21:AE")
+    bindkey = "017e52d2684779298709b117c0a75a7b"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Door/Window Sensor 21AE (MCCGQ02HL)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door/Window Sensor 21AE",
+                manufacturer="Xiaomi",
+                model="MCCGQ02HL",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_OPENING: BinarySensorDescription(
+                device_key=KEY_BINARY_OPENING,
+                device_class=BinarySensorDeviceClass.OPENING,
+            ),
+            KEY_BINARY_DOOR_LEFT_OPEN: BinarySensorDescription(
+                device_key=KEY_BINARY_DOOR_LEFT_OPEN,
+                device_class=ExtendedBinarySensorDeviceClass.DOOR_LEFT_OPEN,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OPENING: BinarySensorValue(
+                device_key=KEY_BINARY_OPENING, name="Opening", native_value=True
+            ),
+            KEY_BINARY_DOOR_LEFT_OPEN: BinarySensorValue(
+                device_key=KEY_BINARY_DOOR_LEFT_OPEN,
+                name="Door left open",
+                native_value=True,
+            ),
+        },
+    )
 
 
 def test_Xiaomi_CGH1():
