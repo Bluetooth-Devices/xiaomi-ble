@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.21.2 (2024-01-11)
+
+### Fix
+
+* Bump pycryptodomex ([#61](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/61)) ([`8bcefae`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/8bcefaed9b8aa106cf37321793e147287779d4da))
+
 ## v0.21.1 (2023-07-26)
 
 ### Fix
