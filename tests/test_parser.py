@@ -39,6 +39,7 @@ KEY_BINARY_PRY_THE_DOOR = DeviceKey(key="pry_the_door", device_id=None)
 KEY_BINARY_TOOTHBRUSH = DeviceKey(key="toothbrush", device_id=None)
 KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
 KEY_COUNTER = DeviceKey(key="counter", device_id=None)
+KEY_EVENT_BUTTON = DeviceKey(key="button", device_id=None)
 KEY_EVENT_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
@@ -846,9 +847,15 @@ def test_Xiaomi_JTYJGD03MI_press():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
     )
-
-    assert device.unhandled == {"button": "single press"}
 
 
 def test_Xiaomi_HHCCJCY01():
@@ -1838,8 +1845,8 @@ def test_Xiaomi_YLYK01YL():
 
     assert device.unhandled == {
         "remote": "on",
-        "button": "single press",
-        "remote single press": 1,
+        "button": "press",
+        "remote press": 1,
     }
 
 
@@ -1889,7 +1896,7 @@ def test_Xiaomi_YLKG07YL_press():
         },
     )
 
-    assert device.unhandled == {"dimmer": 1, "button": "short press"}
+    assert device.unhandled == {"dimmer": 1, "button": "short_press"}
 
 
 def test_Xiaomi_YLKG07YL_rotate():
@@ -2220,7 +2227,7 @@ def test_Xiaomi_MS1BB_MI_obj4a13():
         },
     )
 
-    assert device.unhandled == {"button": "toggle"}
+    assert device.unhandled == {"button": "press"}
 
 
 def test_Xiaomi_XMWXKG01YL():
