@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.23.0 (2024-01-27)
+
+### Feature
+
+* Add button devices with multiple buttons ([#63](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/63)) ([`740679c`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/740679ce362d4201c816655e997f8223021fa7a1))
+
 ## v0.22.0 (2024-01-27)
 
 ### Feature
