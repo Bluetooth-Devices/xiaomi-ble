@@ -2225,13 +2225,58 @@ def test_Xiaomi_MS1BB_MI_obj4a13():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
     )
-
-    assert device.unhandled == {"button": "press"}
 
 
 def test_Xiaomi_XMWXKG01YL():
     """Test Xiaomi parser for XMWXKG01YL."""
+    data_string = b"XYI\x19Os\x12\x87\x83\xed\xdc\x0b48\n\x02\x00\x00\x8dI\xae("
+    advertisement = bytes_to_service_info(data_string, address="DC:ED:83:87:12:73")
+    bindkey = "b93eb3787eabda352edd94b667f5d5a9"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Button 1273 (XMWXKG01YL)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Button 1273",
+                manufacturer="Xiaomi",
+                model="XMWXKG01YL",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            DeviceKey(key="button", device_id=2): Event(
+                device_key=DeviceKey(key="button", device_id=2),
+                name="Button Right",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
 
 
 def test_Xiaomi_XMZNMS08LM():
