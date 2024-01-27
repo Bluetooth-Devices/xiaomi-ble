@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.22.0 (2024-01-27)
+
+### Feature
+
+* Add events for single button devices ([#62](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/62)) ([`2110db9`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/2110db95c2670bfeda24ed7c0d0bf87bf559d45e))
+
 ## v0.21.2 (2024-01-11)
 
 ### Fix
