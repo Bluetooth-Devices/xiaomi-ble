@@ -472,9 +472,9 @@ def obj1001(
             fan_remote_command = "fan toggle"
             ven_fan_remote_command = "swing"
             bathroom_remote_command = "stop"
-            one_btn_switch = "toggle"
-            two_btn_switch_left = "toggle"
-            three_btn_switch_left = "toggle"
+            one_btn_switch = "press"
+            two_btn_switch_left = "press"
+            three_btn_switch_left = "press"
             cube_direction = "right"
             remote_binary = 1
         elif button_type == 1:
@@ -482,8 +482,8 @@ def obj1001(
             fan_remote_command = "light toggle"
             ven_fan_remote_command = "power toggle"
             bathroom_remote_command = "air exchange"
-            two_btn_switch_right = "toggle"
-            three_btn_switch_middle = "toggle"
+            two_btn_switch_right = "press"
+            three_btn_switch_middle = "press"
             cube_direction = "left"
             remote_binary = 0
         elif button_type == 2:
@@ -491,64 +491,64 @@ def obj1001(
             fan_remote_command = "wind speed"
             ven_fan_remote_command = "timer 60 minutes"
             bathroom_remote_command = "fan"
-            two_btn_switch_left = "toggle"
-            two_btn_switch_right = "toggle"
-            three_btn_switch_right = "toggle"
+            two_btn_switch_left = "press"
+            two_btn_switch_right = "press"
+            three_btn_switch_right = "press"
             remote_binary = None
         elif button_type == 3:
             remote_command = "+"
             fan_remote_command = "color temperature"
             ven_fan_remote_command = "strong wind speed"
             bathroom_remote_command = "speed +"
-            three_btn_switch_left = "toggle"
-            three_btn_switch_middle = "toggle"
+            three_btn_switch_left = "press"
+            three_btn_switch_middle = "press"
             remote_binary = 1
         elif button_type == 4:
             remote_command = "m"
             fan_remote_command = "wind mode"
             ven_fan_remote_command = "timer 30 minutes"
             bathroom_remote_command = "speed -"
-            three_btn_switch_middle = "toggle"
-            three_btn_switch_right = "toggle"
+            three_btn_switch_middle = "press"
+            three_btn_switch_right = "press"
             remote_binary = None
         elif button_type == 5:
             remote_command = "-"
             fan_remote_command = "brightness"
             ven_fan_remote_command = "low wind speed"
             bathroom_remote_command = "dry"
-            three_btn_switch_left = "toggle"
-            three_btn_switch_right = "toggle"
+            three_btn_switch_left = "press"
+            three_btn_switch_right = "press"
             remote_binary = 1
         elif button_type == 6:
             bathroom_remote_command = "light toggle"
-            three_btn_switch_left = "toggle"
-            three_btn_switch_middle = "toggle"
-            three_btn_switch_right = "toggle"
+            three_btn_switch_left = "press"
+            three_btn_switch_middle = "press"
+            three_btn_switch_right = "press"
         elif button_type == 7:
             bathroom_remote_command = "swing"
         elif button_type == 8:
             bathroom_remote_command = "heat"
 
         # press type and dimmer
-        button_press_type = "no press"
-        btn_switch_press_type = "no press"
+        button_press_type = "no_press"
+        btn_switch_press_type = "no_press"
         dimmer = None
 
         if press == 0:
-            button_press_type = "single press"
-            btn_switch_press_type = "single press"
+            button_press_type = "press"
+            btn_switch_press_type = "press"
         elif press == 1:
-            button_press_type = "double press"
-            btn_switch_press_type = "long press"
+            button_press_type = "double_press"
+            btn_switch_press_type = "long_press"
         elif press == 2:
-            button_press_type = "long press"
-            btn_switch_press_type = "double press"
+            button_press_type = "long_press"
+            btn_switch_press_type = "double_press"
         elif press == 3:
             if button_type == 0:
-                button_press_type = "short press"
+                button_press_type = "short_press"
                 dimmer = value
             if button_type == 1:
-                button_press_type = "long press"
+                button_press_type = "long_press"
                 dimmer = value
         elif press == 4:
             if button_type == 0:
@@ -565,22 +565,29 @@ def obj1001(
                 button_press_type = "rotate left (pressed)"
                 dimmer = 256 - button_type
         elif press == 5:
-            button_press_type = "short press"
+            button_press_type = "short_press"
         elif press == 6:
-            button_press_type = "long press"
+            button_press_type = "long_press"
 
         # return device specific output
         result: dict[str, Any] = {}
         if device_type in ["RTCGQ02LM", "YLAI003", "JTYJGD03MI", "SJWS01LM"]:
-            result["button"] = button_press_type
+            # RTCGQ02LM, JTYJGD03MI, SJWS01LM: press
+            # YLAI003: press, double_press or long_press
+            device.fire_event(
+                key=EventDeviceKeys.BUTTON,
+                event_type=button_press_type,
+                event_properties=None,
+            )
+            result = {}
         elif device_type == "XMMF01JQD":
             result["button"] = cube_direction
         elif device_type == "YLYK01YL":
             result["remote"] = remote_command
             result["button"] = button_press_type
             if remote_binary is not None:
-                if button_press_type == "single press":
-                    result["remote single press"] = remote_binary
+                if button_press_type == "press":
+                    result["remote press"] = remote_binary
                 else:
                     result["remote long press"] = remote_binary
         elif device_type == "YLYK01YL-FANRC":
@@ -1034,9 +1041,9 @@ def obj4a13(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Button"""
-    click = xobj[0]
-    if click == 1:
-        return {"button": "toggle"}
+    press = xobj[0]
+    if press == 1:
+        return {"button": "press"}
     return {}
 
 
@@ -1106,80 +1113,90 @@ def obj4c14(
 def obj4e0c(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
-    """Click"""
+    """Button press"""
     result: dict[str, Any] = {}
 
-    click = xobj[0]
+    press = xobj[0]
     if device_type == "XMWXKG01YL":
-        if click == 1:
+        if press == 1:
             result = {
                 "two btn switch left": "toggle",
                 "button switch": "single press",
             }
-        elif click == 2:
+        elif press == 2:
             result = {
                 "two btn switch right": "toggle",
                 "button switch": "single press",
             }
-        elif click == 3:
+        elif press == 3:
             result = {
                 "two btn switch left": "toggle",
                 "two btn switch right": "toggle",
                 "button switch": "single press",
             }
     elif device_type == "K9BB-1BTN":
-        if click == 1:
-            result = {
-                "one btn switch": "toggle",
-                "button switch": "single press",
-            }
-        elif click == 8:
-            result = {
-                "one btn switch": "toggle",
-                "button switch": "long press",
-            }
-        elif click == 15:
-            result = {
-                "one btn switch": "toggle",
-                "button switch": "double press",
-            }
+        if press == 1:
+            device.fire_event(
+                key=EventDeviceKeys.BUTTON,
+                event_type="press",
+                event_properties=None,
+            )
+            result = {}
+        elif press == 8:
+            device.fire_event(
+                key=EventDeviceKeys.BUTTON,
+                event_type="long_press",
+                event_properties=None,
+            )
+            result = {}
+        elif press == 15:
+            device.fire_event(
+                key=EventDeviceKeys.BUTTON,
+                event_type="double_press",
+                event_properties=None,
+            )
+            result = {}
     elif device_type == "XMWXKG01LM":
-        result = {
-            "one btn switch": "toggle",
-            "button switch": "single press",
-        }
+        device.fire_event(
+            key=EventDeviceKeys.BUTTON,
+            event_type="press",
+            event_properties=None,
+        )
+        result = {}
     return result
 
 
 def obj4e0d(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
-    """Double Click"""
+    """Double Press"""
     result: dict[str, Any] = {}
 
-    click = xobj[0]
+    press = xobj[0]
     if device_type == "XMWXKG01YL":
-        if click == 1:
+        if press == 1:
             result = {
                 "two btn switch left": "toggle",
                 "button switch": "double press",
             }
-        elif click == 2:
+        elif press == 2:
             result = {
                 "two btn switch right": "toggle",
                 "button switch": "double press",
             }
-        elif click == 3:
+        elif press == 3:
             result = {
                 "two btn switch left": "toggle",
                 "two btn switch right": "toggle",
                 "button switch": "double press",
             }
     elif device_type == "XMWXKG01LM":
-        result = {
-            "one btn switch": "toggle",
-            "button switch": "double press",
-        }
+        device.fire_event(
+            key=EventDeviceKeys.BUTTON,
+            event_type="double_press",
+            event_properties=None,
+        )
+        result = {}
     return result
 
 
@@ -1189,29 +1206,31 @@ def obj4e0e(
     """Long Press"""
     result: dict[str, Any] = {}
 
-    click = xobj[0]
+    press = xobj[0]
     if device_type == "XMWXKG01YL":
-        if click == 1:
+        if press == 1:
             result = {
                 "two btn switch left": "toggle",
                 "button switch": "long press",
             }
-        elif click == 2:
+        elif press == 2:
             result = {
                 "two btn switch right": "toggle",
                 "button switch": "long press",
             }
-        elif click == 3:
+        elif press == 3:
             result = {
                 "two btn switch left": "toggle",
                 "two btn switch right": "toggle",
                 "button switch": "long press",
             }
     elif device_type == "XMWXKG01LM":
-        result = {
-            "one btn switch": "toggle",
-            "button switch": "long press",
-        }
+        device.fire_event(
+            key=EventDeviceKeys.BUTTON,
+            event_type="long_press",
+            event_properties=None,
+        )
+        result = {}
     return result
 
 
