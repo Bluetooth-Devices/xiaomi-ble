@@ -174,7 +174,7 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         model="XMWSDJ04MMC",
     ),
     0x1949: DeviceEntry(
-        name="Button",
+        name="Switch (double button)",
         model="XMWXKG01YL",
     ),
     0x2387: DeviceEntry(

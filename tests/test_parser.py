@@ -2237,7 +2237,7 @@ def test_Xiaomi_MS1BB_MI_obj4a13():
 
 
 def test_Xiaomi_XMWXKG01YL():
-    """Test Xiaomi parser for XMWXKG01YL."""
+    """Test Xiaomi parser for XMWXKG01YL Switch (double button)."""
     data_string = b"XYI\x19Os\x12\x87\x83\xed\xdc\x0b48\n\x02\x00\x00\x8dI\xae("
     advertisement = bytes_to_service_info(data_string, address="DC:ED:83:87:12:73")
     bindkey = "b93eb3787eabda352edd94b667f5d5a9"
@@ -2246,10 +2246,10 @@ def test_Xiaomi_XMWXKG01YL():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Button 1273 (XMWXKG01YL)",
+        title="Switch (double button) 1273 (XMWXKG01YL)",
         devices={
             None: SensorDeviceInfo(
-                name="Button 1273",
+                name="Switch (double button) 1273",
                 manufacturer="Xiaomi",
                 model="XMWXKG01YL",
                 hw_version=None,
@@ -2269,8 +2269,8 @@ def test_Xiaomi_XMWXKG01YL():
             ),
         },
         events={
-            DeviceKey(key="button", device_id=2): Event(
-                device_key=DeviceKey(key="button", device_id=2),
+            DeviceKey(key="button_right", device_id=None): Event(
+                device_key=DeviceKey(key="button_right", device_id=None),
                 name="Button Right",
                 event_type="press",
                 event_properties=None,

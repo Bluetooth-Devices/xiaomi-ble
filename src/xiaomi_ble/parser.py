@@ -531,7 +531,7 @@ def obj1001(
 
         # press type and dimmer
         button_press_type = "no_press"
-        btn_switch_press_type = "no_press"
+        btn_switch_press_type = None
         dimmer = None
 
         if press == 0:
@@ -612,53 +612,44 @@ def obj1001(
                 )
                 result = {}
         elif device_type == "K9B-2BTN":
-            # result can be press, double_press, long_press or no_press
+            # result can be press, double_press or long_press
             # device can send button press of multiple buttons in one message
             if two_btn_switch_left:
                 device.fire_event(
-                    key=EventDeviceKeys.BUTTON,
+                    key=f"{str(EventDeviceKeys.BUTTON)}_left",
                     event_type=btn_switch_press_type,
                     event_properties=None,
-                    name="Button Left",
-                    device_id=1,
                 )
             if two_btn_switch_right:
                 device.fire_event(
-                    key=EventDeviceKeys.BUTTON,
+                    key=f"{str(EventDeviceKeys.BUTTON)}_right",
                     event_type=btn_switch_press_type,
                     event_properties=None,
-                    name="Button Right",
-                    device_id=2,
                 )
             result = {}
         elif device_type == "K9B-3BTN":
-            # result can be press, double_press, long_press or no_press
+            # result can be press, double_press or long_press
             # device can send button press of multiple buttons in one message
             if three_btn_switch_left:
                 device.fire_event(
-                    key=EventDeviceKeys.BUTTON,
+                    key=f"{str(EventDeviceKeys.BUTTON)}_left",
                     event_type=btn_switch_press_type,
                     event_properties=None,
-                    name="Button Left",
-                    device_id=1,
                 )
             if three_btn_switch_middle:
                 device.fire_event(
-                    key=EventDeviceKeys.BUTTON,
+                    key=f"{str(EventDeviceKeys.BUTTON)}_middle",
                     event_type=btn_switch_press_type,
                     event_properties=None,
-                    name="Button Middle",
-                    device_id=2,
                 )
+                result = {}
             if three_btn_switch_right:
                 device.fire_event(
-                    key=EventDeviceKeys.BUTTON,
+                    key=f"{str(EventDeviceKeys.BUTTON)}_right",
                     event_type=btn_switch_press_type,
                     event_properties=None,
-                    name="Button Right",
-                    device_id=3,
                 )
-            result = {}
+                result = {}
         return result
 
     else:
@@ -1161,36 +1152,28 @@ def obj4e0c(
         if press == 1:
             # left button
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_left",
                 event_type="press",
                 event_properties=None,
-                name="Button Left",
-                device_id=1,
             )
         elif press == 2:
             # right button
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_right",
                 event_type="press",
                 event_properties=None,
-                name="Button Right",
-                device_id=2,
             )
         elif press == 3:
             # both left and right button
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_left",
                 event_type="press",
                 event_properties=None,
-                name="Button Left",
-                device_id=1,
             )
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_right",
                 event_type="press",
                 event_properties=None,
-                name="Button Right",
-                device_id=2,
             )
     elif device_type == "K9BB-1BTN":
         if press == 1:
@@ -1229,36 +1212,28 @@ def obj4e0d(
         if press == 1:
             # left button
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_left",
                 event_type="double_press",
                 event_properties=None,
-                name="Button Left",
-                device_id=1,
             )
         elif press == 2:
             # right button
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_right",
                 event_type="double_press",
                 event_properties=None,
-                name="Button Right",
-                device_id=2,
             )
         elif press == 3:
             # both left and right button
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_left",
                 event_type="double_press",
                 event_properties=None,
-                name="Button Left",
-                device_id=1,
             )
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_right",
                 event_type="double_press",
                 event_properties=None,
-                name="Button Right",
-                device_id=2,
             )
     elif device_type == "XMWXKG01LM":
         device.fire_event(
@@ -1278,36 +1253,28 @@ def obj4e0e(
         if press == 1:
             # left button
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_left",
                 event_type="long_press",
                 event_properties=None,
-                name="Button Left",
-                device_id=1,
             )
         elif press == 2:
             # right button
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_right",
                 event_type="long_press",
                 event_properties=None,
-                name="Button Right",
-                device_id=2,
             )
         elif press == 3:
             # both left and right button
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_left",
                 event_type="long_press",
                 event_properties=None,
-                name="Button Left",
-                device_id=1,
             )
             device.fire_event(
-                key=EventDeviceKeys.BUTTON,
+                key=f"{str(EventDeviceKeys.BUTTON)}_right",
                 event_type="long_press",
                 event_properties=None,
-                name="Button Right",
-                device_id=2,
             )
     elif device_type == "XMWXKG01LM":
         device.fire_event(
