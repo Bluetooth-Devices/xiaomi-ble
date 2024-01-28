@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.23.1 (2024-01-28)
+
+### Fix
+
+* Use postfix id for double buttons ([#64](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/64)) ([`6469a6d`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/6469a6dc2319549d5ee915135738573436c959da))
+
 ## v0.23.0 (2024-01-27)
 
 ### Feature
