@@ -1841,13 +1841,15 @@ def test_Xiaomi_YLYK01YL():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        events={
+            DeviceKey(key="button_on", device_id=None): Event(
+                device_key=DeviceKey(key="button_on", device_id=None),
+                name="Button On",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
     )
-
-    assert device.unhandled == {
-        "remote": "on",
-        "button": "press",
-        "remote press": 1,
-    }
 
 
 def test_Xiaomi_YLYK01YL_FANCL():
@@ -1896,7 +1898,7 @@ def test_Xiaomi_YLKG07YL_press():
         },
     )
 
-    assert device.unhandled == {"dimmer": 1, "button": "short_press"}
+    assert device.unhandled == {"dimmer": 1, "button": "press"}
 
 
 def test_Xiaomi_YLKG07YL_rotate():
@@ -1933,7 +1935,7 @@ def test_Xiaomi_YLKG07YL_rotate():
         },
     )
 
-    assert device.unhandled == {"dimmer": 1, "button": "rotate left"}
+    assert device.unhandled == {"dimmer": 1, "button": "rotate_left"}
 
 
 def test_Xiaomi_K9B():
