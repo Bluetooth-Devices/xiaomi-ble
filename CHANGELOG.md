@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.24.0 (2024-01-31)
+
+### Feature
+
+* Add remote buttons ([#65](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/65)) ([`380a803`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/380a80301e126150e87bb67e47c30c93dd28c0ff))
+
 ## v0.23.1 (2024-01-28)
 
 ### Fix
