@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.24.1 (2024-02-01)
+
+### Fix
+
+* Postfix plus and min ([#66](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/66)) ([`d8caf82`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/d8caf825ea08bda7101c13f15d50db053c667e3c))
+
 ## v0.24.0 (2024-01-31)
 
 ### Feature
