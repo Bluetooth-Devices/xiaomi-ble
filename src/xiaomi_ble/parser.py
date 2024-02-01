@@ -492,21 +492,21 @@ def obj1001(
             two_btn_switch_right = True
             three_btn_switch_right = True
         elif button_type == 3:
-            remote_command = "+"
+            remote_command = "plus"
             fan_remote_command = "color_temperature"
             ven_fan_remote_command = "increase_wind_speed"
-            bathroom_remote_command = "speed_+"
+            bathroom_remote_command = "increase_speed"
             three_btn_switch_left = True
             three_btn_switch_middle = True
         elif button_type == 4:
             remote_command = "M"
             fan_remote_command = "wind_mode"
             ven_fan_remote_command = "timer_30_minutes"
-            bathroom_remote_command = "speed_-"
+            bathroom_remote_command = "decrease_speed"
             three_btn_switch_middle = True
             three_btn_switch_right = True
         elif button_type == 5:
-            remote_command = "-"
+            remote_command = "min"
             fan_remote_command = "brightness"
             ven_fan_remote_command = "decrease_wind_speed"
             bathroom_remote_command = "dry"
@@ -578,6 +578,14 @@ def obj1001(
         elif device_type == "YLYK01YL":
             # Buttons: on, off, brightness, +, -, M
             # Press types: press and long_press
+            if remote_command == "on":
+                device.update_predefined_binary_sensor(
+                    BinarySensorDeviceClass.POWER, True
+                )
+            elif remote_command == "off":
+                device.update_predefined_binary_sensor(
+                    BinarySensorDeviceClass.POWER, False
+                )
             device.fire_event(
                 key=f"{str(EventDeviceKeys.BUTTON)}_{remote_command}",
                 event_type=button_press_type,
