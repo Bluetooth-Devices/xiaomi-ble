@@ -47,6 +47,7 @@ KEY_IMPEDANCE = DeviceKey(key="impedance", device_id=None)
 KEY_MASS_NON_STABILIZED = DeviceKey(key="mass_non_stabilized", device_id=None)
 KEY_MASS = DeviceKey(key="mass", device_id=None)
 KEY_MOISTURE = DeviceKey(key="moisture", device_id=None)
+KEY_POWER = DeviceKey(key="power", device_id=None)
 KEY_SCORE = DeviceKey(key="score", device_id=None)
 KEY_SIGNAL_STRENGTH = DeviceKey(key="signal_strength", device_id=None)
 KEY_SMOKE = DeviceKey(key="smoke", device_id=None)
@@ -1839,6 +1840,17 @@ def test_Xiaomi_YLYK01YL():
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_POWER: BinarySensorDescription(
+                device_key=KEY_POWER,
+                device_class=BinarySensorDeviceClass.POWER,
+            ),
+        },
+        binary_entity_values={
+            KEY_POWER: BinarySensorValue(
+                name="Power", device_key=KEY_POWER, native_value=True
             ),
         },
         events={
