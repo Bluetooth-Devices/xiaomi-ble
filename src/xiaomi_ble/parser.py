@@ -582,7 +582,7 @@ def obj1001(
     elif device_type == "XMMF01JQD":
         # cube_rotation: rotate_left or rotate_right
         device.fire_event(
-            key=EventDeviceKeys.RUBIKS_CUBE,
+            key=EventDeviceKeys.CUBE,
             event_type=cube_rotation,
             event_properties=None,
         )
