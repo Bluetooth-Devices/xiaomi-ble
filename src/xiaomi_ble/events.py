@@ -16,5 +16,5 @@ class EventDeviceKeys(StrEnum):
     # Motion
     MOTION = "motion"
 
-    # Rocker switch
-    SWITCH = "switch"
+    # Rubiks Cube
+    RUBIKS_CUBE = "rubiks_cube"

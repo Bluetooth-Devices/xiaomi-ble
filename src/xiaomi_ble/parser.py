@@ -450,234 +450,256 @@ def obj1001(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """button"""
-    if len(xobj) == 3:
-        (button_type, value, press) = BUTTON_STRUCT.unpack(xobj)
+    if len(xobj) != 3:
+        return {}
 
-        # remote command and remote binary
-        remote_command = None
-        fan_remote_command = None
-        ven_fan_remote_command = None
-        bathroom_remote_command = None
-        one_btn_switch = False
-        two_btn_switch_left = False
-        two_btn_switch_right = False
-        three_btn_switch_left = False
-        three_btn_switch_middle = False
-        three_btn_switch_right = False
-        cube_direction = None
+    (button_type, value, press_type) = BUTTON_STRUCT.unpack(xobj)
 
+    # button_type represents the pressed button or rubiks cube rotation direction
+    remote_command = None
+    fan_remote_command = None
+    ven_fan_remote_command = None
+    bathroom_remote_command = None
+    cube_rotation = None
+
+    one_btn_switch = False
+    two_btn_switch_left = False
+    two_btn_switch_right = False
+    three_btn_switch_left = False
+    three_btn_switch_middle = False
+    three_btn_switch_right = False
+
+    if button_type == 0:
+        remote_command = "on"
+        fan_remote_command = "fan"
+        ven_fan_remote_command = "swing"
+        bathroom_remote_command = "stop"
+        one_btn_switch = True
+        two_btn_switch_left = True
+        three_btn_switch_left = True
+        cube_rotation = "rotate_right"
+    elif button_type == 1:
+        remote_command = "off"
+        fan_remote_command = "light"
+        ven_fan_remote_command = "power"
+        bathroom_remote_command = "air_exchange"
+        two_btn_switch_right = True
+        three_btn_switch_middle = True
+        cube_rotation = "rotate_left"
+    elif button_type == 2:
+        remote_command = "brightness"
+        fan_remote_command = "wind_speed"
+        ven_fan_remote_command = "timer_60_minutes"
+        bathroom_remote_command = "fan"
+        two_btn_switch_left = True
+        two_btn_switch_right = True
+        three_btn_switch_right = True
+    elif button_type == 3:
+        remote_command = "plus"
+        fan_remote_command = "color_temperature"
+        ven_fan_remote_command = "increase_wind_speed"
+        bathroom_remote_command = "increase_speed"
+        three_btn_switch_left = True
+        three_btn_switch_middle = True
+    elif button_type == 4:
+        remote_command = "M"
+        fan_remote_command = "wind_mode"
+        ven_fan_remote_command = "timer_30_minutes"
+        bathroom_remote_command = "decrease_speed"
+        three_btn_switch_middle = True
+        three_btn_switch_right = True
+    elif button_type == 5:
+        remote_command = "min"
+        fan_remote_command = "brightness"
+        ven_fan_remote_command = "decrease_wind_speed"
+        bathroom_remote_command = "dry"
+        three_btn_switch_left = True
+        three_btn_switch_right = True
+    elif button_type == 6:
+        bathroom_remote_command = "light"
+        three_btn_switch_left = True
+        three_btn_switch_middle = True
+        three_btn_switch_right = True
+    elif button_type == 7:
+        bathroom_remote_command = "swing"
+    elif button_type == 8:
+        bathroom_remote_command = "heat"
+
+    # press_type represents the type of press or rotate
+    # for dimmers, buton_type is used to represent the type of press
+    # for dimmers, value or button_type is used to represent the direction and number
+    # of steps, number of presses or duration of long press
+    button_press_type = "no_press"
+    btn_switch_press_type = None
+    number_of_presses = None
+    duration_of_press = None
+    steps = None
+
+    if press_type == 0:
+        button_press_type = "press"
+        btn_switch_press_type = "press"
+    elif press_type == 1:
+        button_press_type = "double_press"
+        btn_switch_press_type = "long_press"
+    elif press_type == 2:
+        button_press_type = "long_press"
+        btn_switch_press_type = "double_press"
+    elif press_type == 3:
         if button_type == 0:
-            remote_command = "on"
-            fan_remote_command = "fan"
-            ven_fan_remote_command = "swing"
-            bathroom_remote_command = "stop"
-            one_btn_switch = True
-            two_btn_switch_left = True
-            three_btn_switch_left = True
-            cube_direction = "right"
-        elif button_type == 1:
-            remote_command = "off"
-            fan_remote_command = "light"
-            ven_fan_remote_command = "power"
-            bathroom_remote_command = "air_exchange"
-            two_btn_switch_right = True
-            three_btn_switch_middle = True
-            cube_direction = "left"
-        elif button_type == 2:
-            remote_command = "brightness"
-            fan_remote_command = "wind_speed"
-            ven_fan_remote_command = "timer_60_minutes"
-            bathroom_remote_command = "fan"
-            two_btn_switch_left = True
-            two_btn_switch_right = True
-            three_btn_switch_right = True
-        elif button_type == 3:
-            remote_command = "plus"
-            fan_remote_command = "color_temperature"
-            ven_fan_remote_command = "increase_wind_speed"
-            bathroom_remote_command = "increase_speed"
-            three_btn_switch_left = True
-            three_btn_switch_middle = True
-        elif button_type == 4:
-            remote_command = "M"
-            fan_remote_command = "wind_mode"
-            ven_fan_remote_command = "timer_30_minutes"
-            bathroom_remote_command = "decrease_speed"
-            three_btn_switch_middle = True
-            three_btn_switch_right = True
-        elif button_type == 5:
-            remote_command = "min"
-            fan_remote_command = "brightness"
-            ven_fan_remote_command = "decrease_wind_speed"
-            bathroom_remote_command = "dry"
-            three_btn_switch_left = True
-            three_btn_switch_right = True
-        elif button_type == 6:
-            bathroom_remote_command = "light"
-            three_btn_switch_left = True
-            three_btn_switch_middle = True
-            three_btn_switch_right = True
-        elif button_type == 7:
-            bathroom_remote_command = "swing"
-        elif button_type == 8:
-            bathroom_remote_command = "heat"
-
-        # press type and dimmer
-        button_press_type = "no_press"
-        btn_switch_press_type = None
-        dimmer = None
-
-        if press == 0:
             button_press_type = "press"
-            btn_switch_press_type = "press"
-        elif press == 1:
-            button_press_type = "double_press"
-            btn_switch_press_type = "long_press"
-        elif press == 2:
+            number_of_presses = value
+        if button_type == 1:
             button_press_type = "long_press"
-            btn_switch_press_type = "double_press"
-        elif press == 3:
-            if button_type == 0:
-                button_press_type = "press"
-                dimmer = value
-            if button_type == 1:
-                button_press_type = "long_press"
-                dimmer = value
-        elif press == 4:
-            if button_type == 0:
-                if value <= 127:
-                    button_press_type = "rotate_right"
-                    dimmer = value
-                else:
-                    button_press_type = "rotate_left"
-                    dimmer = 256 - value
-            elif button_type <= 127:
-                button_press_type = "rotate_right_(pressed)"
-                dimmer = button_type
+            duration_of_press = value
+    elif press_type == 4:
+        if button_type == 0:
+            if value <= 127:
+                button_press_type = "rotate_right"
+                steps = value
             else:
-                button_press_type = "rotate_left_(pressed)"
-                dimmer = 256 - button_type
-        elif press == 5:
-            button_press_type = "press"
-        elif press == 6:
-            button_press_type = "long_press"
+                button_press_type = "rotate_left"
+                steps = 256 - value
+        elif button_type <= 127:
+            button_press_type = "rotate_right_pressed"
+            steps = button_type
+        else:
+            button_press_type = "rotate_left_pressed"
+            steps = 256 - button_type
+    elif press_type == 5:
+        button_press_type = "press"
+    elif press_type == 6:
+        button_press_type = "long_press"
 
-        # return device specific output
-        result: dict[str, Any] = {}
-        if device_type in ["RTCGQ02LM", "YLAI003", "JTYJGD03MI", "SJWS01LM"]:
-            # RTCGQ02LM, JTYJGD03MI, SJWS01LM: press
-            # YLAI003: press, double_press or long_press
+    # return device specific output
+    if device_type in ["RTCGQ02LM", "YLAI003", "JTYJGD03MI", "SJWS01LM"]:
+        # RTCGQ02LM, JTYJGD03MI, SJWS01LM: press
+        # YLAI003: press, double_press or long_press
+        device.fire_event(
+            key=EventDeviceKeys.BUTTON,
+            event_type=button_press_type,
+            event_properties=None,
+        )
+    elif device_type == "XMMF01JQD":
+        # cube_rotation: rotate_left or rotate_right
+        device.fire_event(
+            key=EventDeviceKeys.RUBIKS_CUBE,
+            event_type=cube_rotation,
+            event_properties=None,
+        )
+    elif device_type == "YLYK01YL":
+        # Buttons: on, off, brightness, plus, min, M
+        # Press types: press and long_press
+        if remote_command == "on":
+            device.update_predefined_binary_sensor(BinarySensorDeviceClass.POWER, True)
+        elif remote_command == "off":
+            device.update_predefined_binary_sensor(BinarySensorDeviceClass.POWER, False)
+        device.fire_event(
+            key=f"{str(EventDeviceKeys.BUTTON)}_{remote_command}",
+            event_type=button_press_type,
+            event_properties=None,
+        )
+    elif device_type == "YLYK01YL-FANRC":
+        # Buttons: fan, light, wind_speed, wind_mode, brightness, color_temperature
+        # Press types: press and long_press
+        device.fire_event(
+            key=f"{str(EventDeviceKeys.BUTTON)}_{fan_remote_command}",
+            event_type=button_press_type,
+            event_properties=None,
+        )
+    elif device_type == "YLYK01YL-VENFAN":
+        # Buttons: swing, power, timer_30_minutes, timer_60_minutes,
+        # increase_wind_speed, decrease_wind_speed
+        # Press types: press and long_press
+        device.fire_event(
+            key=f"{str(EventDeviceKeys.BUTTON)}_{ven_fan_remote_command}",
+            event_type=button_press_type,
+            event_properties=None,
+        )
+    elif device_type == "YLYB01YL-BHFRC":
+        # Buttons: heat, air_exchange, dry, fan, swing, decrease_speed, increase_speed,
+        # stop or light
+        # Press types: press and long_press
+        device.fire_event(
+            key=f"{str(EventDeviceKeys.BUTTON)}_{bathroom_remote_command}",
+            event_type=button_press_type,
+            event_properties=None,
+        )
+    elif device_type == "YLKG07YL/YLKG08YL":
+        # Dimmer reports: press, long_press, rotate_left, rotate_right,
+        # rotate_left_pressed  or rotate_right_pressed
+        if button_press_type == "press":
+            # it also reports how many times you pressed the dimmer.
+            device.fire_event(
+                key=EventDeviceKeys.DIMMER,
+                event_type=button_press_type,
+                event_properties={"number_of_presses", number_of_presses},
+            )
+        if button_press_type == "long_press":
+            # it also reports the duration (in seconds) you pressed the dimmer
+            device.fire_event(
+                key=EventDeviceKeys.DIMMER,
+                event_type=button_press_type,
+                event_properties={"duration", duration_of_press},
+            )
+        if button_press_type in [
+            "rotate_right",
+            "rotate_left",
+            "rotate_right_pressed",
+            "rotate_left_pressed",
+        ]:
+            # it reports how far you rotate, measured in number of `steps`.
+            device.fire_event(
+                key=EventDeviceKeys.DIMMER,
+                event_type=button_press_type,
+                event_properties={"steps", steps},
+            )
+    elif device_type == "K9B-1BTN":
+        # Press types: press, double_press, long_press
+        if one_btn_switch:
             device.fire_event(
                 key=EventDeviceKeys.BUTTON,
-                event_type=button_press_type,
+                event_type=btn_switch_press_type,
                 event_properties=None,
             )
-            result = {}
-        elif device_type == "XMMF01JQD":
-            result["button"] = cube_direction
-        elif device_type == "YLYK01YL":
-            # Buttons: on, off, brightness, +, -, M
-            # Press types: press and long_press
-            if remote_command == "on":
-                device.update_predefined_binary_sensor(
-                    BinarySensorDeviceClass.POWER, True
-                )
-            elif remote_command == "off":
-                device.update_predefined_binary_sensor(
-                    BinarySensorDeviceClass.POWER, False
-                )
+    elif device_type == "K9B-2BTN":
+        # Buttons: left and/or right
+        # Press types: press, double_press, long_press
+        # device can send button press of multiple buttons in one message
+        if two_btn_switch_left:
             device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_{remote_command}",
-                event_type=button_press_type,
+                key=f"{str(EventDeviceKeys.BUTTON)}_left",
+                event_type=btn_switch_press_type,
                 event_properties=None,
             )
-            result = {}
-        elif device_type == "YLYK01YL-FANRC":
-            # Buttons: fan, light, wind_speed, wind_mode, brightness, color_temperature
-            # Press types: press and long_press
+        if two_btn_switch_right:
             device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_{fan_remote_command}",
-                event_type=button_press_type,
+                key=f"{str(EventDeviceKeys.BUTTON)}_right",
+                event_type=btn_switch_press_type,
                 event_properties=None,
             )
-            result = {}
-        elif device_type == "YLYK01YL-VENFAN":
-            # Buttons: swing, power, timer_30_minutes, timer_60_minutes,
-            # increase_wind_speed, decrease_wind_speed
-            # Press types: press and long_press
+    elif device_type == "K9B-3BTN":
+        # Buttons: left, middle and/or right
+        # result can be press, double_press or long_press
+        # device can send button press of multiple buttons in one message
+        if three_btn_switch_left:
             device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_{ven_fan_remote_command}",
-                event_type=button_press_type,
+                key=f"{str(EventDeviceKeys.BUTTON)}_left",
+                event_type=btn_switch_press_type,
                 event_properties=None,
             )
-            result = {}
-        elif device_type == "YLYB01YL-BHFRC":
-            # Buttons: heat, air_exchange, dry, fan, swing, speed_-, speed_+,
-            # stop or light
-            # Press types: press and long_press
+        if three_btn_switch_middle:
             device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_{bathroom_remote_command}",
-                event_type=button_press_type,
+                key=f"{str(EventDeviceKeys.BUTTON)}_middle",
+                event_type=btn_switch_press_type,
                 event_properties=None,
             )
-            result = {}
-        elif device_type == "YLKG07YL/YLKG08YL":
-            result["dimmer"] = dimmer
-            result["button"] = button_press_type
-        elif device_type == "K9B-1BTN":
-            # Press types: press, double_press, long_press
-            if one_btn_switch:
-                device.fire_event(
-                    key=EventDeviceKeys.BUTTON,
-                    event_type=btn_switch_press_type,
-                    event_properties=None,
-                )
-                result = {}
-        elif device_type == "K9B-2BTN":
-            # Buttons: left and/or right
-            # Press types: press, double_press, long_press
-            # device can send button press of multiple buttons in one message
-            if two_btn_switch_left:
-                device.fire_event(
-                    key=f"{str(EventDeviceKeys.BUTTON)}_left",
-                    event_type=btn_switch_press_type,
-                    event_properties=None,
-                )
-            if two_btn_switch_right:
-                device.fire_event(
-                    key=f"{str(EventDeviceKeys.BUTTON)}_right",
-                    event_type=btn_switch_press_type,
-                    event_properties=None,
-                )
-            result = {}
-        elif device_type == "K9B-3BTN":
-            # Buttons: left, middle and/or right
-            # result can be press, double_press or long_press
-            # device can send button press of multiple buttons in one message
-            if three_btn_switch_left:
-                device.fire_event(
-                    key=f"{str(EventDeviceKeys.BUTTON)}_left",
-                    event_type=btn_switch_press_type,
-                    event_properties=None,
-                )
-            if three_btn_switch_middle:
-                device.fire_event(
-                    key=f"{str(EventDeviceKeys.BUTTON)}_middle",
-                    event_type=btn_switch_press_type,
-                    event_properties=None,
-                )
-                result = {}
-            if three_btn_switch_right:
-                device.fire_event(
-                    key=f"{str(EventDeviceKeys.BUTTON)}_right",
-                    event_type=btn_switch_press_type,
-                    event_properties=None,
-                )
-                result = {}
-        return result
-
-    else:
-        return {}
+        if three_btn_switch_right:
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_right",
+                event_type=btn_switch_press_type,
+                event_properties=None,
+            )
+    return {}
 
 
 def obj1004(
