@@ -40,7 +40,9 @@ KEY_BINARY_TOOTHBRUSH = DeviceKey(key="toothbrush", device_id=None)
 KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
 KEY_COUNTER = DeviceKey(key="counter", device_id=None)
 KEY_EVENT_BUTTON = DeviceKey(key="button", device_id=None)
+KEY_EVENT_DIMMER = DeviceKey(key="dimmer", device_id=None)
 KEY_EVENT_MOTION = DeviceKey(key="motion", device_id=None)
+KEY_EVENT_RUBIKS_CUBE = DeviceKey(key="rubiks_cube", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
 KEY_IMPEDANCE = DeviceKey(key="impedance", device_id=None)
@@ -738,8 +740,15 @@ def test_Xiaomi_XMMF01JQD():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        events={
+            KEY_EVENT_RUBIKS_CUBE: Event(
+                device_key=KEY_EVENT_RUBIKS_CUBE,
+                name="Rubiks Cube",
+                event_type="rotate_left",
+                event_properties=None,
+            ),
+        },
     )
-    assert device.unhandled == {"button": "left"}
 
 
 def test_Xiaomi_CGC1():
@@ -1908,9 +1917,15 @@ def test_Xiaomi_YLKG07YL_press():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        events={
+            KEY_EVENT_DIMMER: Event(
+                device_key=KEY_EVENT_DIMMER,
+                name="Dimmer",
+                event_type="press",
+                event_properties={"number_of_presses", 1},
+            ),
+        },
     )
-
-    assert device.unhandled == {"dimmer": 1, "button": "press"}
 
 
 def test_Xiaomi_YLKG07YL_rotate():
@@ -1945,9 +1960,15 @@ def test_Xiaomi_YLKG07YL_rotate():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        events={
+            KEY_EVENT_DIMMER: Event(
+                device_key=KEY_EVENT_DIMMER,
+                name="Dimmer",
+                event_type="rotate_left",
+                event_properties={"steps", 1},
+            ),
+        },
     )
-
-    assert device.unhandled == {"dimmer": 1, "button": "rotate_left"}
 
 
 def test_Xiaomi_K9B():
