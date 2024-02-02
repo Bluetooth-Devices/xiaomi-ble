@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.25.0 (2024-02-02)
+
+### Feature
+
+* Add dimmer and rubiks cube events ([#67](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/67)) ([`33db2b0`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/33db2b09d360a9e2f010ac2ad2ec5d199e65cf3f))
+
 ## v0.24.1 (2024-02-01)
 
 ### Fix
