@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.25.2 (2024-02-02)
+
+### Fix
+
+* Proper event_properties formatting ([#69](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/69)) ([`86bced3`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/86bced38755551014d1273c69c6b80b79e3eb05a))
+
 ## v0.25.1 (2024-02-02)
 
 ### Fix
