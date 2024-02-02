@@ -100,6 +100,15 @@ def to_unformatted_mac(addr: str) -> str:
     return "".join(f"{i:02X}" for i in addr[:])
 
 
+def parse_event_properties(
+    event_property: str | None, value: int
+) -> dict[str, int | None] | None:
+    """Convert event property and data to event properties."""
+    if event_property:
+        return {event_property: value}
+    return None
+
+
 # Structured objects for data conversions
 TH_STRUCT = struct.Struct("<hH")
 H_STRUCT = struct.Struct("<H")
@@ -531,9 +540,7 @@ def obj1001(
     # of steps, number of presses or duration of long press
     button_press_type = "no_press"
     btn_switch_press_type = None
-    number_of_presses = None
-    duration_of_press = None
-    steps = None
+    dimmer_value: int = 0
 
     if press_type == 0:
         button_press_type = "press"
@@ -547,24 +554,24 @@ def obj1001(
     elif press_type == 3:
         if button_type == 0:
             button_press_type = "press"
-            number_of_presses = value
+            dimmer_value = value
         if button_type == 1:
             button_press_type = "long_press"
-            duration_of_press = value
+            dimmer_value = value
     elif press_type == 4:
         if button_type == 0:
             if value <= 127:
                 button_press_type = "rotate_right"
-                steps = value
+                dimmer_value = value
             else:
                 button_press_type = "rotate_left"
-                steps = 256 - value
+                dimmer_value = 256 - value
         elif button_type <= 127:
             button_press_type = "rotate_right_pressed"
-            steps = button_type
+            dimmer_value = button_type
         else:
             button_press_type = "rotate_left_pressed"
-            steps = 256 - button_type
+            dimmer_value = 256 - button_type
     elif press_type == 5:
         button_press_type = "press"
     elif press_type == 6:
@@ -629,30 +636,28 @@ def obj1001(
         # rotate_left_pressed  or rotate_right_pressed
         if button_press_type == "press":
             # it also reports how many times you pressed the dimmer.
-            device.fire_event(
-                key=EventDeviceKeys.DIMMER,
-                event_type=button_press_type,
-                event_properties={"number_of_presses", number_of_presses},
-            )
-        if button_press_type == "long_press":
+            event_property = "number_of_presses"
+        elif button_press_type == "long_press":
             # it also reports the duration (in seconds) you pressed the dimmer
-            device.fire_event(
-                key=EventDeviceKeys.DIMMER,
-                event_type=button_press_type,
-                event_properties={"duration", duration_of_press},
-            )
-        if button_press_type in [
+            event_property = "duration"
+        elif button_press_type in [
             "rotate_right",
             "rotate_left",
             "rotate_right_pressed",
             "rotate_left_pressed",
         ]:
             # it reports how far you rotate, measured in number of `steps`.
-            device.fire_event(
-                key=EventDeviceKeys.DIMMER,
-                event_type=button_press_type,
-                event_properties={"steps", steps},
-            )
+            event_property = "steps"
+        else:
+            event_property = None
+        event_properties = parse_event_properties(
+            event_property=event_property, value=dimmer_value
+        )
+        device.fire_event(
+            key=EventDeviceKeys.DIMMER,
+            event_type=button_press_type,
+            event_properties=event_properties,
+        )
     elif device_type == "K9B-1BTN":
         # Press types: press, double_press, long_press
         if one_btn_switch:
