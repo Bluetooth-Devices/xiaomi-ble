@@ -16,5 +16,5 @@ class EventDeviceKeys(StrEnum):
     # Motion
     MOTION = "motion"
 
-    # Rubiks Cube
-    RUBIKS_CUBE = "rubiks_cube"
+    # Cube
+    CUBE = "cube"

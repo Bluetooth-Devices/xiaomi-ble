@@ -42,7 +42,7 @@ KEY_COUNTER = DeviceKey(key="counter", device_id=None)
 KEY_EVENT_BUTTON = DeviceKey(key="button", device_id=None)
 KEY_EVENT_DIMMER = DeviceKey(key="dimmer", device_id=None)
 KEY_EVENT_MOTION = DeviceKey(key="motion", device_id=None)
-KEY_EVENT_RUBIKS_CUBE = DeviceKey(key="rubiks_cube", device_id=None)
+KEY_EVENT_CUBE = DeviceKey(key="cube", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
 KEY_IMPEDANCE = DeviceKey(key="impedance", device_id=None)
@@ -741,9 +741,9 @@ def test_Xiaomi_XMMF01JQD():
             ),
         },
         events={
-            KEY_EVENT_RUBIKS_CUBE: Event(
-                device_key=KEY_EVENT_RUBIKS_CUBE,
-                name="Rubiks Cube",
+            KEY_EVENT_CUBE: Event(
+                device_key=KEY_EVENT_CUBE,
+                name="Cube",
                 event_type="rotate_left",
                 event_properties=None,
             ),
