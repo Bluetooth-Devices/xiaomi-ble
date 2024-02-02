@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.25.1 (2024-02-02)
+
+### Fix
+
+* Rename rubiks_cube to cube ([#68](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/68)) ([`65c7b3d`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/65c7b3d830bf9256ea60b8d8a15236a49b6ddd65))
+
 ## v0.25.0 (2024-02-02)
 
 ### Feature
