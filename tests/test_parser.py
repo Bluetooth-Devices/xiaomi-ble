@@ -1922,7 +1922,7 @@ def test_Xiaomi_YLKG07YL_press():
                 device_key=KEY_EVENT_DIMMER,
                 name="Dimmer",
                 event_type="press",
-                event_properties={"number_of_presses", 1},
+                event_properties={'number_of_presses': 1},
             ),
         },
     )
@@ -1965,7 +1965,7 @@ def test_Xiaomi_YLKG07YL_rotate():
                 device_key=KEY_EVENT_DIMMER,
                 name="Dimmer",
                 event_type="rotate_left",
-                event_properties={"steps", 1},
+                event_properties={'steps': 1},
             ),
         },
     )
