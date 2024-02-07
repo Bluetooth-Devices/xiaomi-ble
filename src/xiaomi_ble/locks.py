@@ -4,6 +4,7 @@ from enum import Enum
 
 class BleLockMethod(Enum):
     """Methods for opening and closing locks."""
+
     BLUETOOTH = "bluetooth"
     PASSWORD = "password"
     BIOMETRICS = "biometrics"
