@@ -6,12 +6,12 @@ class BleLockMethod(Enum):
     """Methods for opening and closing locks."""
 
     BLUETOOTH = "bluetooth"
-    PASSWORD = "password"
+    PASSWORD = "password"  # nosec bandit B105
     BIOMETRICS = "biometrics"
     KEYS = "keys"
     TURNTABLE = "turntable"
     NFC = "nfc"
-    ONE_TIME_PASSWORD = "one_time_password"
+    ONE_TIME_PASSWORD = "one_time_password"  # nosec bandit B105
     TWO_STEP_VERIFICATION = "two_step_verification"
     HOMEKIT = "homekit"
     COERCION = "coercion"
