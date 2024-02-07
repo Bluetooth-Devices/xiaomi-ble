@@ -28,8 +28,10 @@ from xiaomi_ble.parser import (
 
 KEY_BATTERY = DeviceKey(key="battery", device_id=None)
 KEY_BINARY_DOOR = DeviceKey(key="door", device_id=None)
+KEY_BINARY_FINGERPRINT = DeviceKey(key="fingerprint", device_id=None)
 KEY_BINARY_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_BINARY_LIGHT = DeviceKey(key="light", device_id=None)
+KEY_BINARY_LOCK = DeviceKey(key="lock", device_id=None)
 KEY_BINARY_OPENING = DeviceKey(key="opening", device_id=None)
 KEY_BINARY_DOOR_LEFT_OPEN = DeviceKey(key="door_left_open", device_id=None)
 KEY_BINARY_DEVICE_FORCIBLY_REMOVED = DeviceKey(
@@ -46,6 +48,8 @@ KEY_EVENT_CUBE = DeviceKey(key="cube", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
 KEY_IMPEDANCE = DeviceKey(key="impedance", device_id=None)
+KEY_KEY_ID = DeviceKey(key="key_id", device_id=None)
+KEY_LOCK_METHOD = DeviceKey(key="lock_method", device_id=None)
 KEY_MASS_NON_STABILIZED = DeviceKey(key="mass_non_stabilized", device_id=None)
 KEY_MASS = DeviceKey(key="mass", device_id=None)
 KEY_MOISTURE = DeviceKey(key="moisture", device_id=None)
@@ -1757,19 +1761,39 @@ def test_Xiaomi_ZNMS16LM_fingerprint():
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
+            KEY_KEY_ID: SensorDescription(
+                device_key=KEY_KEY_ID,
+                device_class=ExtendedSensorDeviceClass.KEY_ID,
+            ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
+            KEY_KEY_ID: SensorValue(
+                name="Key id", device_key=KEY_KEY_ID, native_value="unknown operator"
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_FINGERPRINT: BinarySensorDescription(
+                device_key=KEY_BINARY_FINGERPRINT,
+                device_class=ExtendedBinarySensorDeviceClass.FINGERPRINT,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_FINGERPRINT: BinarySensorValue(
+                device_key=KEY_BINARY_FINGERPRINT, name="Fingerprint", native_value=True
+            ),
+        },
+        events={
+            DeviceKey(key="lock", device_id=None): Event(
+                device_key=DeviceKey(key="lock", device_id=None),
+                name="Lock",
+                event_type="match successful",
+                event_properties=None,
+            ),
         },
     )
-
-    assert device.unhandled == {
-        "fingerprint": 1,
-        "result": "match successful",
-        "key id": "unknown operator",
-    }
 
 
 def test_Xiaomi_ZNMS16LM_lock():
@@ -1780,6 +1804,7 @@ def test_Xiaomi_ZNMS16LM_lock():
     device = XiaomiBluetoothDeviceData()
     assert device.supported(advertisement)
     assert not device.bindkey_verified
+
     assert device.update(advertisement) == SensorUpdate(
         title="Door Lock 8A91 (ZNMS16LM)",
         devices={
@@ -1797,23 +1822,186 @@ def test_Xiaomi_ZNMS16LM_lock():
                 device_class=DeviceClass.SIGNAL_STRENGTH,
                 native_unit_of_measurement="dBm",
             ),
+            KEY_LOCK_METHOD: SensorDescription(
+                device_key=KEY_LOCK_METHOD,
+                device_class=ExtendedSensorDeviceClass.LOCK_METHOD,
+            ),
+            KEY_KEY_ID: SensorDescription(
+                device_key=KEY_KEY_ID,
+                device_class=ExtendedSensorDeviceClass.KEY_ID,
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+            KEY_LOCK_METHOD: SensorValue(
+                name="Lock method",
+                device_key=KEY_LOCK_METHOD,
+                native_value="biometrics",
+            ),
+            KEY_KEY_ID: SensorValue(
+                name="Key id", device_key=KEY_KEY_ID, native_value=2
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_LOCK: BinarySensorDescription(
+                device_key=KEY_BINARY_LOCK,
+                device_class=BinarySensorDeviceClass.LOCK,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_LOCK: BinarySensorValue(
+                device_key=KEY_BINARY_LOCK, name="Lock", native_value=True
+            ),
+        },
+        events={
+            DeviceKey(key="lock", device_id=None): Event(
+                device_key=DeviceKey(key="lock", device_id=None),
+                name="Lock",
+                event_type="unlock outside the door",
+                event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_Lockin_SV40_lock():
+    """Test Xiaomi parser for Locking SV40."""
+    bindkey = "54d84797cb77f9538b224b305c877d1e"
+    data_string = (
+        b"\x48\x55\xc2\x11\x16\x50\x68\xb6\xfe\x3c\x87"
+        b"\x80\x95\xc8\xa5\x83\x4f\x00\x00\x00\x46\x32\x21\xc6"
+    )
+    advertisement = bytes_to_service_info(data_string, address="98:0C:33:A3:04:3D")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Door Lock 043D (Lockin-SV40)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door Lock 043D",
+                manufacturer="Xiaomi",
+                model="Lockin-SV40",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+            KEY_LOCK_METHOD: SensorDescription(
+                device_key=KEY_LOCK_METHOD,
+                device_class=ExtendedSensorDeviceClass.LOCK_METHOD,
+            ),
+            KEY_KEY_ID: SensorDescription(
+                device_key=KEY_KEY_ID,
+                device_class=ExtendedSensorDeviceClass.KEY_ID,
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+            KEY_LOCK_METHOD: SensorValue(
+                name="Lock method", device_key=KEY_LOCK_METHOD, native_value="automatic"
+            ),
+            KEY_KEY_ID: SensorValue(
+                name="Key id", device_key=KEY_KEY_ID, native_value=0
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_LOCK: BinarySensorDescription(
+                device_key=KEY_BINARY_LOCK,
+                device_class=BinarySensorDeviceClass.LOCK,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_LOCK: BinarySensorValue(
+                device_key=KEY_BINARY_LOCK, name="Lock", native_value=True
+            ),
+        },
+        events={
+            DeviceKey(key="lock", device_id=None): Event(
+                device_key=DeviceKey(key="lock", device_id=None),
+                name="Lock",
+                event_type="unlock inside the door",
+                event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_Lockin_SV40_door():
+    """Test Xiaomi parser for Locking SV40."""
+    bindkey = "54d84797cb77f9538b224b305c877d1e"
+    data_string = (
+        b"\x48\x55\xc2\x11\x14\x4e\x28\x70\x32"
+        b"\x76\xfc\xcd\x3d\x00\x00\x00\x80\xe7\x22\x80"
+    )
+    advertisement = bytes_to_service_info(data_string, address="98:0C:33:A3:04:3D")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Door Lock 043D (Lockin-SV40)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door Lock 043D",
+                manufacturer="Xiaomi",
+                model="Lockin-SV40",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_BINARY_DOOR: BinarySensorDescription(
+                device_key=KEY_BINARY_DOOR,
+                device_class=BinarySensorDeviceClass.DOOR,
+            ),
+            KEY_BINARY_DOOR_LEFT_OPEN: BinarySensorDescription(
+                device_key=KEY_BINARY_DOOR_LEFT_OPEN,
+                device_class=ExtendedBinarySensorDeviceClass.DOOR_LEFT_OPEN,
+            ),
+            KEY_BINARY_PRY_THE_DOOR: BinarySensorDescription(
+                device_key=KEY_BINARY_PRY_THE_DOOR,
+                device_class=ExtendedBinarySensorDeviceClass.PRY_THE_DOOR,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_DOOR: BinarySensorValue(
+                device_key=KEY_BINARY_DOOR, name="Door", native_value=False
+            ),
+            KEY_BINARY_DOOR_LEFT_OPEN: BinarySensorValue(
+                device_key=KEY_BINARY_DOOR_LEFT_OPEN,
+                name="Door left open",
+                native_value=False,
+            ),
+            KEY_BINARY_PRY_THE_DOOR: BinarySensorValue(
+                device_key=KEY_BINARY_PRY_THE_DOOR,
+                name="Pry the door",
+                native_value=False,
+            ),
+        },
     )
-
-    assert device.unhandled == {
-        "lock": 1,
-        "action": "unlock outside the door",
-        "method": "biometrics",
-        "error": None,
-        "key id": "0x2",
-        "timestamp": "2021-09-01T09:14:36",
-        "locktype": "lock",
-    }
 
 
 def test_Xiaomi_YLAI003():
@@ -2314,7 +2502,7 @@ def test_Xiaomi_XMWXKG01YL():
     )
 
 
-def test_Xiaomi_XMZNMS08LM():
+def test_Xiaomi_XMZNMS08LM_door():
     """Test Xiaomi parser for XMZNMS08LM."""
     bindkey = "2c3795afa33019a8afdc17ba99e6f217"
     data_string = b"HU9\x0e3\x9cq\xc0$\x1f\xff\xee\x80S\x00\x00\x02\xb4\xc59"
@@ -2373,6 +2561,77 @@ def test_Xiaomi_XMZNMS08LM():
                 device_key=KEY_BINARY_PRY_THE_DOOR,
                 name="Pry the door",
                 native_value=False,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_XMZNMS08LM_lock():
+    """Test Xiaomi parser for XMZNMS08LM."""
+    bindkey = "2c3795afa33019a8afdc17ba99e6f217"
+    data_string = (
+        b"\x48\x55\x39\x0E\x2F\xDF\x9D\x3F\xDD\x9A\x66\x37"
+        b"\x13\x15\x29\xF8\x7B\x53\x00\x00\xBC\xC3\x40\x21"
+    )
+    advertisement = bytes_to_service_info(data_string, address="EE:89:73:44:BE:98")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Door Lock BE98 (XMZNMS08LM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door Lock BE98",
+                manufacturer="Xiaomi",
+                model="XMZNMS08LM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+            KEY_LOCK_METHOD: SensorDescription(
+                device_key=KEY_LOCK_METHOD,
+                device_class=ExtendedSensorDeviceClass.LOCK_METHOD,
+            ),
+            KEY_KEY_ID: SensorDescription(
+                device_key=KEY_KEY_ID,
+                device_class=ExtendedSensorDeviceClass.KEY_ID,
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+            KEY_LOCK_METHOD: SensorValue(
+                name="Lock method", device_key=KEY_LOCK_METHOD, native_value="manual"
+            ),
+            KEY_KEY_ID: SensorValue(
+                name="Key id", device_key=KEY_KEY_ID, native_value=0
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_LOCK: BinarySensorDescription(
+                device_key=KEY_BINARY_LOCK,
+                device_class=BinarySensorDeviceClass.LOCK,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_LOCK: BinarySensorValue(
+                device_key=KEY_BINARY_LOCK, name="Lock", native_value=True
+            ),
+        },
+        events={
+            DeviceKey(key="lock", device_id=None): Event(
+                device_key=DeviceKey(key="lock", device_id=None),
+                name="Lock",
+                event_type="unlock inside the door",
+                event_properties=None,
             ),
         },
     )

@@ -10,7 +10,6 @@ import logging
 import math
 import struct
 import sys
-from enum import Enum
 from typing import Any
 
 from bleak import BleakClient
@@ -23,7 +22,6 @@ from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import AESCCM
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import (
-    BaseDeviceClass,
     BinarySensorDeviceClass,
     SensorLibrary,
     SensorUpdate,
@@ -37,57 +35,15 @@ from .const import (
     SERVICE_SCALE1,
     SERVICE_SCALE2,
     TIMEOUT_1DAY,
+    EncryptionScheme,
+    ExtendedBinarySensorDeviceClass,
+    ExtendedSensorDeviceClass,
 )
 from .devices import DEVICE_TYPES, SLEEPY_DEVICE_MODELS
 from .events import EventDeviceKeys
+from .locks import BLE_LOCK_ACTION, BLE_LOCK_ERROR, BLE_LOCK_METHOD, BleLockMethod
 
 _LOGGER = logging.getLogger(__name__)
-
-
-class EncryptionScheme(Enum):
-    # No encryption is needed to use this device
-    NONE = "none"
-
-    # 12 byte encryption key expected
-    MIBEACON_LEGACY = "mibeacon_legacy"
-
-    # 16 byte encryption key expected
-    MIBEACON_4_5 = "mibeacon_4_5"
-
-
-class ExtendedBinarySensorDeviceClass(BaseDeviceClass):
-    """Device class for additional binary sensors (compared to sensor-state-data)."""
-
-    # On means door left open, Off means door closed
-    DEVICE_FORCIBLY_REMOVED = "device_forcibly_removed"
-
-    # On means door left open, Off means door closed
-    DOOR_LEFT_OPEN = "door_left_open"
-
-    # On means door stuck, Off means clear
-    DOOR_STUCK = "door_stuck"
-
-    # On means door someone knocking on the door, Off means no knocking
-    KNOCK_ON_THE_DOOR = "knock_on_the_door"
-
-    # On means door pried, Off means door not pried
-    PRY_THE_DOOR = "pry_the_door"
-
-    # On means toothbrush On, Off means toothbrush Off
-    TOOTHBRUSH = "toothbrush"
-
-
-class ExtendedSensorDeviceClass(BaseDeviceClass):
-    """Device class for additional sensors (compared to sensor-state-data)."""
-
-    # Consumable
-    CONSUMABLE = "consumable"
-
-    # Toothbrush counter
-    COUNTER = "counter"
-
-    # Toothbrush score
-    SCORE = "score"
 
 
 def to_mac(addr: bytes) -> str:
@@ -122,62 +78,6 @@ M_STRUCT = struct.Struct("<L")
 P_STRUCT = struct.Struct("<H")
 BUTTON_STRUCT = struct.Struct("<BBB")
 FLOAT_STRUCT = struct.Struct("<f")
-
-# Definition of lock messages
-BLE_LOCK_ERROR = {
-    0xC0DE0000: "frequent unlocking with incorrect password",
-    0xC0DE0001: "frequent unlocking with wrong fingerprints",
-    0xC0DE0002: "operation timeout (password input timeout)",
-    0xC0DE0003: "lock picking",
-    0xC0DE0004: "reset button is pressed",
-    0xC0DE0005: "the wrong key is frequently unlocked",
-    0xC0DE0006: "foreign body in the keyhole",
-    0xC0DE0007: "the key has not been taken out",
-    0xC0DE0008: "error NFC frequently unlocks",
-    0xC0DE0009: "timeout is not locked as required",
-    0xC0DE000A: "failure to unlock frequently in multiple ways",
-    0xC0DE000B: "unlocking the face frequently fails",
-    0xC0DE000C: "failure to unlock the vein frequently",
-    0xC0DE000D: "hijacking alarm",
-    0xC0DE000E: "unlock inside the door after arming",
-    0xC0DE000F: "palmprints frequently fail to unlock",
-    0xC0DE0010: "the safe was moved",
-    0xC0DE1000: "the battery level is less than 10%",
-    0xC0DE1001: "the battery is less than 5%",
-    0xC0DE1002: "the fingerprint sensor is abnormal",
-    0xC0DE1003: "the accessory battery is low",
-    0xC0DE1004: "mechanical failure",
-    0xC0DE1005: "the lock sensor is faulty",
-}
-
-BLE_LOCK_ACTION: dict[int, tuple[int, str, str]] = {
-    0b0000: (1, "lock", "unlock outside the door"),
-    0b0001: (0, "lock", "lock"),
-    0b0010: (0, "antilock", "turn on anti-lock"),
-    0b0011: (1, "antilock", "turn off anti-lock"),
-    0b0100: (1, "lock", "unlock inside the door"),
-    0b0101: (0, "lock", "lock inside the door"),
-    0b0110: (0, "childlock", "turn on child lock"),
-    0b0111: (1, "childlock", "turn off child lock"),
-    0b1000: (0, "lock", "lock outside the door"),
-    0b1111: (1, "lock", "abnormal"),
-}
-
-BLE_LOCK_METHOD = {
-    0b0000: "bluetooth",
-    0b0001: "password",
-    0b0010: "biometrics",
-    0b0011: "key",
-    0b0100: "turntable",
-    0b0101: "nfc",
-    0b0110: "one-time password",
-    0b0111: "two-step verification",
-    0b1001: "Homekit",
-    0b1000: "coercion",
-    0b1010: "manual",
-    0b1011: "automatic",
-    0b1111: "abnormal",
-}
 
 
 # Advertisement conversion of measurement data
@@ -226,15 +126,31 @@ def obj0006(
         else:
             result = None
 
-        fingerprint = 1 if match_byte == 0x00 else 0
+        fingerprint = True if match_byte == 0x00 else False
 
-        return {
-            "fingerprint": fingerprint,
-            "result": result,
-            "key id": key_id,
-        }
-    else:
-        return {}
+        # Update fingerprint binary sensor
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.FINGERPRINT,
+            native_value=fingerprint,
+            device_class=ExtendedBinarySensorDeviceClass.FINGERPRINT,
+            name="Fingerprint",
+        )
+        # Update key_id sensor
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.KEY_ID,
+            name="Key id",
+            device_class=ExtendedSensorDeviceClass.KEY_ID,
+            native_value=key_id,
+            native_unit_of_measurement=None,
+        )
+        # Fire Lock action event
+        if result:
+            device.fire_event(
+                key=EventDeviceKeys.LOCK,
+                event_type=result,
+                event_properties=None,
+            )
+    return {}
 
 
 def obj0007(
@@ -315,30 +231,33 @@ def obj0008(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """armed away"""
-    return_data: dict[str, Any] = {}
     value = xobj[0] ^ 1
-    return_data.update({"armed away": value})
-    if len(xobj) == 5:
-        timestamp = (
-            datetime.datetime.fromtimestamp(
-                int.from_bytes(xobj[1:], "little"), tz=datetime.timezone.utc
-            )
-            .replace(tzinfo=None)
-            .isoformat()
-        )
-        return_data.update({"timestamp": timestamp})
+    device.update_binary_sensor(
+        key=ExtendedBinarySensorDeviceClass.ARMED,
+        native_value=bool(value),  # Armed away
+        device_class=ExtendedBinarySensorDeviceClass.ARMED,
+        name="Armed",
+    )
     # Lift up door handle outside the door sends this event from DSL-C08.
     if device_type == "DSL-C08":
-        return {
-            "lock": value,
-            "locktype": "lock",
-            "action": "lock outside the door",
-            "method": "manual",
-            "error": None,
-            "key id": None,
-            "timestamp": None,
-        }
-    return return_data
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.LOCK, bool(value)
+        )
+        # Fire Lock action event
+        device.fire_event(
+            key=EventDeviceKeys.LOCK,
+            event_type="lock outside the door",
+            event_properties=None,
+        )
+        # # Update method sensor
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.LOCK_METHOD,
+            name="Lock method",
+            device_class=ExtendedSensorDeviceClass.LOCK_METHOD,
+            native_value="manual",
+            native_unit_of_measurement=None,
+        )
+    return {}
 
 
 def obj0010(
@@ -388,52 +307,94 @@ def obj000b(
 ) -> dict[str, Any]:
     """Lock"""
     if len(xobj) == 9:
-        action_int = xobj[0] & 0x0F
-        method_int = xobj[0] >> 4
+        lock_action_int = xobj[0] & 0x0F
+        lock_method_int = xobj[0] >> 4
         key_id = int.from_bytes(xobj[1:5], "little")
 
-        timestamp = (
-            datetime.datetime.fromtimestamp(
-                int.from_bytes(xobj[5:], "little"), tz=datetime.timezone.utc
-            )
-            .replace(tzinfo=None)
-            .isoformat()
-        )
+        # Lock action (event) and lock method (sensor)
+        if (
+            lock_action_int not in BLE_LOCK_ACTION
+            or lock_method_int not in BLE_LOCK_METHOD
+        ):
+            return {}
+        lock_action = BLE_LOCK_ACTION[lock_action_int][2]
+        lock_method = BLE_LOCK_METHOD[lock_method_int]
 
-        # all keys except Bluetooth have only 65536 values
+        if device_type == "DSL-C08":
+            # Biometric unlock then disarm
+            if lock_method == BleLockMethod.PASSWORD:
+                if 5000 <= key_id < 6000:
+                    lock_method = BleLockMethod.ONE_TIME_PASSWORD
+
+        # Some specific key_ids represent an error
         error = BLE_LOCK_ERROR.get(key_id)
-        if error is None and method_int > 0:
+
+        # All key methods except Bluetooth have only key ids upt to 65536
+        if error is None and lock_method != BleLockMethod.BLUETOOTH:
             key_id &= 0xFFFF
 
-        if action_int not in BLE_LOCK_ACTION or method_int not in BLE_LOCK_METHOD:
+        # Lock type and state
+        # Lock type can be `lock` or for ZNMS17LM `lock`, `childlock` or `antilock`
+        if device_type == "ZNMS17LM":
+            # Lock type can be `lock`, `childlock` or `antilock`
+            lock_type = BLE_LOCK_ACTION[lock_action_int][1]
+        else:
+            # Lock type can only be `lock` for other locks
+            lock_type = "lock"
+        lock_state = BLE_LOCK_ACTION[lock_action_int][0]
+
+        # Update lock state
+        if lock_type == "lock":
+            device.update_predefined_binary_sensor(
+                BinarySensorDeviceClass.LOCK, lock_state
+            )
+        elif lock_type == "childlock":
+            device.update_binary_sensor(
+                key=ExtendedBinarySensorDeviceClass.CHILDLOCK,
+                native_value=lock_state,
+                device_class=ExtendedBinarySensorDeviceClass.CHILDLOCK,
+                name="Childlock",
+            )
+        elif lock_type == "antilock":
+            device.update_binary_sensor(
+                key=ExtendedBinarySensorDeviceClass.ANTILOCK,
+                native_value=lock_state,
+                device_class=ExtendedBinarySensorDeviceClass.ANTILOCK,
+                name="Antilock",
+            )
+        else:
             return {}
 
-        lock = BLE_LOCK_ACTION[action_int][0]
-        # Decouple lock by type on some devices
-        lock_type = "lock"
-        if device_type == "ZNMS17LM":
-            lock_type = BLE_LOCK_ACTION[action_int][1]
-
-        action = BLE_LOCK_ACTION[action_int][2]
-        method = BLE_LOCK_METHOD[method_int]
-
-        # Biometric unlock then disarm
-        if device_type == "DSL-C08":
-            if method == "password":
-                if 5000 <= key_id < 6000:
-                    method = "one-time password"
-
-        return {
-            lock_type: lock,
-            "locktype": lock_type,
-            "action": action,
-            "method": method,
-            "error": error,
-            "key id": hex(key_id),
-            "timestamp": timestamp,
-        }
-    else:
-        return {}
+        # Update key_id sensor
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.KEY_ID,
+            name="Key id",
+            device_class=ExtendedSensorDeviceClass.KEY_ID,
+            native_value=key_id,
+            native_unit_of_measurement=None,
+        )
+        # Fire Lock action event: see BLE_LOCK_ACTTION
+        device.fire_event(
+            key=EventDeviceKeys.LOCK,
+            event_type=lock_action,
+            event_properties=None,
+        )
+        # # Update method sensor: see BLE_LOCK_METHOD
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.LOCK_METHOD,
+            name="Lock method",
+            device_class=ExtendedSensorDeviceClass.LOCK_METHOD,
+            native_value=lock_method.value,
+            native_unit_of_measurement=None,
+        )
+        if error:
+            # Fire event with the error: see BLE_LOCK_ERROR
+            device.fire_event(
+                key=EventDeviceKeys.ERROR,
+                event_type=error,
+                event_properties=None,
+            )
+    return {}
 
 
 def obj000f(
@@ -919,9 +880,16 @@ def obj100e(
         # Unlock by type on some devices
         if device_type == "DSL-C08":
             lock_attribute = int.from_bytes(xobj, "little")
-            lock = lock_attribute & 0x01 ^ 1
-            childlock = lock_attribute >> 3 ^ 1
-            return {"childlock": childlock, "lock": lock}
+
+            device.update_predefined_binary_sensor(
+                BinarySensorDeviceClass.LOCK, bool(lock_attribute & 0x01 ^ 1)
+            )
+            device.update_binary_sensor(
+                key=ExtendedBinarySensorDeviceClass.CHILDLOCK,
+                native_value=bool(lock_attribute >> 3 ^ 1),
+                device_class=ExtendedBinarySensorDeviceClass.CHILDLOCK,
+                name="Childlock",
+            )
     return {}
 
 
