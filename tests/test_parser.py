@@ -1789,7 +1789,7 @@ def test_Xiaomi_ZNMS16LM_fingerprint():
             DeviceKey(key="lock", device_id=None): Event(
                 device_key=DeviceKey(key="lock", device_id=None),
                 name="Lock",
-                event_type="match successful",
+                event_type="match_successful",
                 event_properties=None,
             ),
         },
@@ -1841,7 +1841,9 @@ def test_Xiaomi_ZNMS16LM_lock():
                 native_value="biometrics",
             ),
             KEY_KEY_ID: SensorValue(
-                name="Key id", device_key=KEY_KEY_ID, native_value=2
+                name="Key id",
+                device_key=KEY_KEY_ID,
+                native_value="Fingerprint key id 2",
             ),
         },
         binary_entity_descriptions={
@@ -1859,7 +1861,7 @@ def test_Xiaomi_ZNMS16LM_lock():
             DeviceKey(key="lock", device_id=None): Event(
                 device_key=DeviceKey(key="lock", device_id=None),
                 name="Lock",
-                event_type="unlock outside the door",
+                event_type="unlock_outside_the_door",
                 event_properties=None,
             ),
         },
@@ -1912,7 +1914,7 @@ def test_Xiaomi_Lockin_SV40_lock():
                 name="Lock method", device_key=KEY_LOCK_METHOD, native_value="automatic"
             ),
             KEY_KEY_ID: SensorValue(
-                name="Key id", device_key=KEY_KEY_ID, native_value=0
+                name="Key id", device_key=KEY_KEY_ID, native_value="administrator"
             ),
         },
         binary_entity_descriptions={
@@ -1930,7 +1932,7 @@ def test_Xiaomi_Lockin_SV40_lock():
             DeviceKey(key="lock", device_id=None): Event(
                 device_key=DeviceKey(key="lock", device_id=None),
                 name="Lock",
-                event_type="unlock inside the door",
+                event_type="unlock_inside_the_door",
                 event_properties=None,
             ),
         },
@@ -2612,7 +2614,7 @@ def test_Xiaomi_XMZNMS08LM_lock():
                 name="Lock method", device_key=KEY_LOCK_METHOD, native_value="manual"
             ),
             KEY_KEY_ID: SensorValue(
-                name="Key id", device_key=KEY_KEY_ID, native_value=0
+                name="Key id", device_key=KEY_KEY_ID, native_value="administrator"
             ),
         },
         binary_entity_descriptions={
@@ -2630,7 +2632,7 @@ def test_Xiaomi_XMZNMS08LM_lock():
             DeviceKey(key="lock", device_id=None): Event(
                 device_key=DeviceKey(key="lock", device_id=None),
                 name="Lock",
-                event_type="unlock inside the door",
+                event_type="unlock_inside_the_door",
                 event_properties=None,
             ),
         },

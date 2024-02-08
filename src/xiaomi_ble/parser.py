@@ -41,7 +41,7 @@ from .const import (
 )
 from .devices import DEVICE_TYPES, SLEEPY_DEVICE_MODELS
 from .events import EventDeviceKeys
-from .locks import BLE_LOCK_ACTION, BLE_LOCK_ERROR, BLE_LOCK_METHOD, BleLockMethod
+from .locks import BLE_LOCK_ACTION, BLE_LOCK_ERROR, BLE_LOCK_METHOD
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -104,25 +104,27 @@ def obj0006(
         key_id_bytes = xobj[0:4]
         match_byte = xobj[4]
         if key_id_bytes == b"\x00\x00\x00\x00":
-            key_id = "administrator"
+            key_type = "administrator"
         elif key_id_bytes == b"\xff\xff\xff\xff":
-            key_id = "unknown operator"
+            key_type = "unknown operator"
+        elif key_id_bytes == b"\xde\xad\xbe\xef":
+            key_type = "invalid operator"
         else:
-            key_id = str(int.from_bytes(key_id_bytes, "little"))
+            key_type = str(int.from_bytes(key_id_bytes, "little"))
         if match_byte == 0x00:
-            result = "match successful"
+            result = "match_successful"
         elif match_byte == 0x01:
-            result = "match failed"
+            result = "match_failed"
         elif match_byte == 0x02:
             result = "timeout"
         elif match_byte == 0x033:
-            result = "low quality (too light, fuzzy)"
+            result = "low quality_too_light_fuzzy)"
         elif match_byte == 0x04:
-            result = "insufficient area"
+            result = "insufficient_area"
         elif match_byte == 0x05:
-            result = "skin is too dry"
+            result = "skin_is_too_dry"
         elif match_byte == 0x06:
-            result = "skin is too wet"
+            result = "skin_is_too_wet"
         else:
             result = None
 
@@ -140,7 +142,7 @@ def obj0006(
             key=ExtendedSensorDeviceClass.KEY_ID,
             name="Key id",
             device_class=ExtendedSensorDeviceClass.KEY_ID,
-            native_value=key_id,
+            native_value=key_type,
             native_unit_of_measurement=None,
         )
         # Fire Lock action event
@@ -310,6 +312,7 @@ def obj000b(
         lock_action_int = xobj[0] & 0x0F
         lock_method_int = xobj[0] >> 4
         key_id = int.from_bytes(xobj[1:5], "little")
+        short_key_id = key_id & 0xFFFF
 
         # Lock action (event) and lock method (sensor)
         if (
@@ -320,18 +323,40 @@ def obj000b(
         lock_action = BLE_LOCK_ACTION[lock_action_int][2]
         lock_method = BLE_LOCK_METHOD[lock_method_int]
 
-        if device_type == "DSL-C08":
-            # Biometric unlock then disarm
-            if lock_method == BleLockMethod.PASSWORD:
-                if 5000 <= key_id < 6000:
-                    lock_method = BleLockMethod.ONE_TIME_PASSWORD
-
         # Some specific key_ids represent an error
         error = BLE_LOCK_ERROR.get(key_id)
 
-        # All key methods except Bluetooth have only key ids upt to 65536
-        if error is None and lock_method != BleLockMethod.BLUETOOTH:
-            key_id &= 0xFFFF
+        if not error:
+            if key_id == 0x00000000:
+                key_type = "administrator"
+            elif key_id == 0xFFFFFFFF:
+                key_type = "unknown operator"
+            elif key_id == 0xDEADBEEF:
+                key_type = "invalid operator"
+            elif key_id <= 0x7FFFFFF:
+                # Bluetooth (up to 2147483647)
+                key_type = f"Bluetooth key {key_id}"
+            else:
+                # All other key methods have only key ids up to 65536
+
+                if key_id <= 0x8001FFFF:
+                    key_type = f"Fingerprint key id {short_key_id}"
+                elif key_id <= 0x8002FFFF:
+                    key_type = f"Password key id {short_key_id}"
+                elif key_id <= 0x8003FFFF:
+                    key_type = f"Keys key id {short_key_id}"
+                elif key_id <= 0x8004FFFF:
+                    key_type = f"NFC key id {short_key_id}"
+                elif key_id <= 0x8005FFFF:
+                    key_type = f"Two-step verification key id {short_key_id}"
+                elif key_id <= 0x8006FFFF:
+                    key_type = f"Human face key id {short_key_id}"
+                elif key_id <= 0x8007FFFF:
+                    key_type = f"Finger veins key id {short_key_id}"
+                elif key_id <= 0x8008FFFF:
+                    key_type = f"Palm print key id {short_key_id}"
+                else:
+                    key_type = f"key id {short_key_id}"
 
         # Lock type and state
         # Lock type can be `lock` or for ZNMS17LM `lock`, `childlock` or `antilock`
@@ -370,7 +395,7 @@ def obj000b(
             key=ExtendedSensorDeviceClass.KEY_ID,
             name="Key id",
             device_class=ExtendedSensorDeviceClass.KEY_ID,
-            native_value=key_id,
+            native_value=key_type,
             native_unit_of_measurement=None,
         )
         # Fire Lock action event: see BLE_LOCK_ACTTION
