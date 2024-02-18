@@ -10,11 +10,20 @@ class EventDeviceKeys(StrEnum):
     # Button
     BUTTON = "button"
 
+    # Cube
+    CUBE = "cube"
+
     # Dimmer
     DIMMER = "dimmer"
+
+    # Error
+    ERROR = "error"
+
+    # Fingerprint
+    FINGERPRINT = "fingerprint"
 
     # Motion
     MOTION = "motion"
 
-    # Cube
-    CUBE = "cube"
+    # Lock
+    LOCK = "lock"
