@@ -145,10 +145,10 @@ def obj0006(
             native_value=key_type,
             native_unit_of_measurement=None,
         )
-        # Fire Lock action event
+        # Fire Fingerprint action event
         if result:
             device.fire_event(
-                key=EventDeviceKeys.LOCK,
+                key=EventDeviceKeys.FINGERPRINT,
                 event_type=result,
                 event_properties=None,
             )

@@ -16,8 +16,11 @@ class EventDeviceKeys(StrEnum):
     # Dimmer
     DIMMER = "dimmer"
 
-    # Lock method
+    # Error
     ERROR = "error"
+
+    # Fingerprint
+    FINGERPRINT = "fingerprint"
 
     # Motion
     MOTION = "motion"

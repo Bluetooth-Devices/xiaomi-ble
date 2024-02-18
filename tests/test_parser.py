@@ -42,9 +42,10 @@ KEY_BINARY_TOOTHBRUSH = DeviceKey(key="toothbrush", device_id=None)
 KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
 KEY_COUNTER = DeviceKey(key="counter", device_id=None)
 KEY_EVENT_BUTTON = DeviceKey(key="button", device_id=None)
-KEY_EVENT_DIMMER = DeviceKey(key="dimmer", device_id=None)
-KEY_EVENT_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_EVENT_CUBE = DeviceKey(key="cube", device_id=None)
+KEY_EVENT_DIMMER = DeviceKey(key="dimmer", device_id=None)
+KEY_EVENT_FINGERPRINT = DeviceKey(key="fingerprint", device_id=None)
+KEY_EVENT_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
 KEY_IMPEDANCE = DeviceKey(key="impedance", device_id=None)
@@ -1786,9 +1787,9 @@ def test_Xiaomi_ZNMS16LM_fingerprint():
             ),
         },
         events={
-            DeviceKey(key="lock", device_id=None): Event(
-                device_key=DeviceKey(key="lock", device_id=None),
-                name="Lock",
+            KEY_EVENT_FINGERPRINT: Event(
+                device_key=KEY_EVENT_FINGERPRINT,
+                name="Fingerprint",
                 event_type="match_successful",
                 event_properties=None,
             ),
