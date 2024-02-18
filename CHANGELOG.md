@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.26.1 (2024-02-18)
+
+### Fix
+
+* Typo in lock events ([#71](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/71)) ([`9918c70`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/9918c7004f4ed4d12045bcb486dc762064e8510f))
+
 ## v0.26.0 (2024-02-18)
 
 ### Feature
