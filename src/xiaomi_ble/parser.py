@@ -248,7 +248,7 @@ def obj0008(
         # Fire Lock action event
         device.fire_event(
             key=EventDeviceKeys.LOCK,
-            event_type="lock outside the door",
+            event_type="lock_outside_the_door",
             event_properties=None,
         )
         # # Update method sensor
