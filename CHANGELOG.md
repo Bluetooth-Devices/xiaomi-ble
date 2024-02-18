@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.26.0 (2024-02-18)
+
+### Feature
+
+* Add support for locks and fingerprint readers ([#70](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/70)) ([`2cffc70`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/2cffc70d451614a671833274947911a123a8f3b0))
+
 ## v0.25.2 (2024-02-02)
 
 ### Fix
