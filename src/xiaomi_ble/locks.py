@@ -23,7 +23,7 @@ class BleLockMethod(Enum):
 # Definition of lock messages
 BLE_LOCK_ERROR = {
     0xC0DE0000: "frequent_unlocking_with_incorrect_password",
-    0xC0DE0001: "frequent_unlocking_with wrong_fingerprints",
+    0xC0DE0001: "frequent_unlocking_with_wrong_fingerprints",
     0xC0DE0002: "operation_timeout_password_input_timeout",
     0xC0DE0003: "lock_picking",
     0xC0DE0004: "reset_button_is_pressed",
@@ -39,8 +39,8 @@ BLE_LOCK_ERROR = {
     0xC0DE000E: "unlock_inside_the_door_after_arming",
     0xC0DE000F: "palmprints_frequently_fail_to_unlock",
     0xC0DE0010: "the_safe_was_moved",
-    0xC0DE1000: "the_battery_level_is_less_than_10%",
-    0xC0DE1001: "the battery_level_is_less_than_5%",
+    0xC0DE1000: "the_battery_level_is_less_than_10_percent",
+    0xC0DE1001: "the_battery_level_is_less_than_5_percent",
     0xC0DE1002: "the_fingerprint_sensor_is_abnormal",
     0xC0DE1003: "the_accessory_battery_is_low",
     0xC0DE1004: "mechanical_failure",
