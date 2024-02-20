@@ -181,6 +181,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Button",
         model="XMWXKG01LM",
     ),
+    0x38BB: DeviceEntry(
+        name="Button",
+        model="PTX_YK1_QMIMB",
+    ),
     0x098C: DeviceEntry(
         name="Door Lock",
         model="XMZNMST02YD",

@@ -1071,6 +1071,42 @@ def obj4a08(
     return {}
 
 
+def obj4a0c(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    if device_type == "PTX_YK1_QMIMB":
+        device.fire_event(
+            key=EventDeviceKeys.BUTTON,
+            event_type="press",
+            event_properties=None,
+        )
+    return {}
+
+
+def obj4a0d(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    if device_type == "PTX_YK1_QMIMB":
+        device.fire_event(
+            key=EventDeviceKeys.BUTTON,
+            event_type="double_press",
+            event_properties=None,
+        )
+    return {}
+
+
+def obj4a0e(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    if device_type == "PTX_YK1_QMIMB":
+        device.fire_event(
+            key=EventDeviceKeys.BUTTON,
+            event_type="long_press",
+            event_properties=None,
+        )
+    return {}
+
+
 def obj4a0f(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1376,6 +1412,9 @@ xiaomi_dataobject_dict = {
     0x4818: obj4818,
     0x4A01: obj4a01,
     0x4A08: obj4a08,
+    0x4A0C: obj4a0c,
+    0x4A0D: obj4a0d,
+    0x4A0E: obj4a0e,
     0x4A0F: obj4a0f,
     0x4A12: obj4a12,
     0x4A13: obj4a13,
@@ -1713,16 +1752,15 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                     break
                 this_start = payload_start + 3
                 dobject = payload[this_start:next_start]
-                if obj_length != 0:
-                    resfunc = xiaomi_dataobject_dict.get(obj_typecode, None)
-                    if resfunc:
-                        self.unhandled.update(resfunc(dobject, self, device_type))
-                    else:
-                        _LOGGER.info(
-                            "%s, UNKNOWN dataobject in payload! Adv: %s",
-                            sinfo,
-                            data.hex(),
-                        )
+                resfunc = xiaomi_dataobject_dict.get(obj_typecode, None)
+                if resfunc:
+                    self.unhandled.update(resfunc(dobject, self, device_type))
+                else:
+                    _LOGGER.info(
+                        "%s, UNKNOWN dataobject in payload! Adv: %s",
+                        sinfo,
+                        data.hex(),
+                    )
                 payload_start = next_start
 
         return True

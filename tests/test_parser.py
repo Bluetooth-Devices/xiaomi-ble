@@ -2505,6 +2505,122 @@ def test_Xiaomi_XMWXKG01YL():
     )
 
 
+def test_Xiaomi_PTX_YK1_QMIMB():
+    """Test Xiaomi parser for PTX_YK1_QMIMB / 090615.remote.btsw1."""
+    # press
+    data_string = bytes.fromhex("5859bb380fb26a1a38c1a46756c02a0000e75ef84c")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:1A:6A:B2")
+    bindkey = "6fb3f0c214eef4f7ad78467d9aa5fc16"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Button 6AB2 (PTX_YK1_QMIMB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Button 6AB2",
+                manufacturer="Xiaomi",
+                model="PTX_YK1_QMIMB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            DeviceKey(key="button", device_id=None): Event(
+                device_key=DeviceKey(key="button", device_id=None),
+                name="Button",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
+
+    # double press
+    data_string = bytes.fromhex("5859bb3810b26a1a38c1a433ea1b2a0000bad2e4b6")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:1A:6A:B2")
+    assert device.update(advertisement) == SensorUpdate(
+        title="Button 6AB2 (PTX_YK1_QMIMB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Button 6AB2",
+                manufacturer="Xiaomi",
+                model="PTX_YK1_QMIMB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            DeviceKey(key="button", device_id=None): Event(
+                device_key=DeviceKey(key="button", device_id=None),
+                name="Button",
+                event_type="double_press",
+                event_properties=None,
+            ),
+        },
+    )
+
+    # long press
+    data_string = bytes.fromhex("5859bb3811b26a1a38c1a4efb8ee2a0000604fc66f")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:1A:6A:B2")
+    assert device.update(advertisement) == SensorUpdate(
+        title="Button 6AB2 (PTX_YK1_QMIMB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Button 6AB2",
+                manufacturer="Xiaomi",
+                model="PTX_YK1_QMIMB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            DeviceKey(key="button", device_id=None): Event(
+                device_key=DeviceKey(key="button", device_id=None),
+                name="Button",
+                event_type="long_press",
+                event_properties=None,
+            ),
+        },
+    )
+
+
 def test_Xiaomi_XMZNMS08LM_door():
     """Test Xiaomi parser for XMZNMS08LM."""
     bindkey = "2c3795afa33019a8afdc17ba99e6f217"
