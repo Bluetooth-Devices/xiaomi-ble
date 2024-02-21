@@ -718,7 +718,14 @@ def obj1006(
     """Humidity"""
     if len(xobj) == 2:
         (humi,) = H_STRUCT.unpack(xobj)
-        device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi / 10)
+        if device_type in ["LYWSD03MMC", "MHO-C401"]:                                 
+            # To handle jagged stair stepping readings from these sensors.                     
+            # https://github.com/custom-components/ble_monitor/blob/ef2e3944b9c1a635208390b8563710d0eec2a945/custom_components/ble_monitor/sensor.py#L752 
+            # https://github.com/esphome/esphome/blob/c39f6d0738d97ecc11238220b493731ec70c701c/esphome/components/xiaomi_lywsd03mmc/xiaomi_lywsd03mmc.cpp#L44C14-L44C99 
+            # https://github.com/custom-components/ble_monitor/issues/7#issuecomment-595948254                                                            
+            device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, int(humi / 10))
+        else:
+            device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi / 10)
     return {}
 
 
