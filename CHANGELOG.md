@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.27.0 (2024-03-10)
+
+### Feature
+
+* Add ptx and xmpiro2sx ([#74](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/74)) ([`b0bb42f`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/b0bb42f777c9c5bdc6bc12590334bfc741b199a0))
+
 ## v0.26.2 (2024-03-10)
 
 ### Fix
