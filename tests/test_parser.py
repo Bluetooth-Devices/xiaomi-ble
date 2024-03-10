@@ -662,7 +662,7 @@ def test_Xiaomi_LYWSD03MMC_encrypted():
         },
         entity_values={
             KEY_HUMIDITY: SensorValue(
-                name="Humidity", device_key=KEY_HUMIDITY, native_value=46.7
+                name="Humidity", device_key=KEY_HUMIDITY, native_value=46
             ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
