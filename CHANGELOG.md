@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.26.2 (2024-03-10)
+
+### Fix
+
+* Handle jagged stairstep for LYWSD03MMC humidity ([#73](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/73)) ([`efb3229`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/efb322909933ac820b32012913ff3c35f9ca3659))
+
 ## v0.26.1 (2024-02-18)
 
 ### Fix
