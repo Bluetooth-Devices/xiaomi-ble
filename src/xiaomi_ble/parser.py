@@ -1001,8 +1001,8 @@ def obj3003(
 
 
 # The following data objects are device specific. For now only added for
-# LYWSD02MMC, MJWSD05MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI), K9BB
-# https://miot-spec.org/miot-spec-v2/instances?status=all
+# LYWSD02MMC, MJWSD05MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI),
+# K9BB, PTX https://miot-spec.org/miot-spec-v2/instances?status=all
 def obj4803(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1079,6 +1079,42 @@ def obj4a08(
     (illum,) = struct.unpack("f", xobj)
     device.update_predefined_binary_sensor(BinarySensorDeviceClass.MOTION, True)
     device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
+    return {}
+
+
+def obj4a0c(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Single press"""
+    device.fire_event(
+        key=EventDeviceKeys.BUTTON,
+        event_type="press",
+        event_properties=None,
+    )
+    return {}
+
+
+def obj4a0d(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Double press"""
+    device.fire_event(
+        key=EventDeviceKeys.BUTTON,
+        event_type="double_press",
+        event_properties=None,
+    )
+    return {}
+
+
+def obj4a0e(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Long press"""
+    device.fire_event(
+        key=EventDeviceKeys.BUTTON,
+        event_type="long_press",
+        event_properties=None,
+    )
     return {}
 
 
@@ -1200,12 +1236,20 @@ def obj4c14(
     return {"mode": mode}
 
 
+def obj4e01(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Low Battery"""
+    device.update_predefined_binary_sensor(BinarySensorDeviceClass.BATTERY, xobj[0])
+    return {}
+
+
 def obj4e0c(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Button press"""
-    press = xobj[0]
     if device_type == "XMWXKG01YL":
+        press = xobj[0]
         if press == 1:
             # left button
             device.fire_event(
@@ -1233,6 +1277,7 @@ def obj4e0c(
                 event_properties=None,
             )
     elif device_type == "K9BB-1BTN":
+        press = xobj[0]
         if press == 1:
             device.fire_event(
                 key=EventDeviceKeys.BUTTON,
@@ -1264,8 +1309,8 @@ def obj4e0d(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Double Press"""
-    press = xobj[0]
     if device_type == "XMWXKG01YL":
+        press = xobj[0]
         if press == 1:
             # left button
             device.fire_event(
@@ -1305,8 +1350,8 @@ def obj4e0e(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Long Press"""
-    press = xobj[0]
     if device_type == "XMWXKG01YL":
+        press = xobj[0]
         if press == 1:
             # left button
             device.fire_event(
@@ -1387,6 +1432,9 @@ xiaomi_dataobject_dict = {
     0x4818: obj4818,
     0x4A01: obj4a01,
     0x4A08: obj4a08,
+    0x4A0C: obj4a0c,
+    0x4A0D: obj4a0d,
+    0x4A0E: obj4a0e,
     0x4A0F: obj4a0f,
     0x4A12: obj4a12,
     0x4A13: obj4a13,
@@ -1396,6 +1444,7 @@ xiaomi_dataobject_dict = {
     0x4C03: obj4c03,
     0x4C08: obj4c08,
     0x4C14: obj4c14,
+    0x4E01: obj4e01,
     0x4E1C: obj4e1c,
     0x4E0C: obj4e0c,
     0x4E0D: obj4e0d,
@@ -1724,7 +1773,12 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                     break
                 this_start = payload_start + 3
                 dobject = payload[this_start:next_start]
-                if obj_length != 0:
+                if (
+                    dobject
+                    and obj_length != 0
+                    or hex(obj_typecode)
+                    in ["0x4a0c", "0x4a0d", "0x4a0e", "0x4e0c", "0x4e0d", "0x4e0e"]
+                ):
                     resfunc = xiaomi_dataobject_dict.get(obj_typecode, None)
                     if resfunc:
                         self.unhandled.update(resfunc(dobject, self, device_type))
