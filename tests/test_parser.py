@@ -2942,7 +2942,7 @@ def test_Xiaomi_XMPIRO2SXS():
 
 
 def test_Xiaomi_PTX_press():
-    """Test Xiaomi parser for Xiaomi PTX."""
+    """Test Xiaomi parser for Xiaomi PTX YK1 QMIMB."""
     bindkey = "a74510b40386d35ae6227a7451efc76e"
     data_string = b"XY\xbb8\x04\xad\xb9\xa58\xc1\xa4\xdc\x10\xb5\x04\x00\x00,\x12/\xb6"
     advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A5:B9:AD")
@@ -2951,12 +2951,12 @@ def test_Xiaomi_PTX_press():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Wireless Switch B9AD (PTX)",
+        title="Wireless Switch B9AD (PTX_YK1_QMIMB)",
         devices={
             None: SensorDeviceInfo(
                 name="Wireless Switch B9AD",
                 manufacturer="Xiaomi",
-                model="PTX",
+                model="PTX_YK1_QMIMB",
                 hw_version=None,
                 sw_version="Xiaomi (MiBeacon V5 encrypted)",
             )
