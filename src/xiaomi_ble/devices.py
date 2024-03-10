@@ -153,6 +153,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Motion Sensor",
         model="RTCGQ02LM",
     ),
+    0x3531: DeviceEntry(
+        name="Motion Sensor",
+        model="XMPIRO2SXS",
+    ),
     0x0863: DeviceEntry(
         name="Flood Detector",
         model="SJWS01LM",
@@ -196,6 +200,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
     0x07BF: DeviceEntry(
         name="Wireless Switch",
         model="YLAI003",
+    ),
+    0x38BB: DeviceEntry(
+        name="Wireless Switch",
+        model="PTX",
     ),
     0x0153: DeviceEntry(
         name="Remote Control",

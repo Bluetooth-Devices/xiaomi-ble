@@ -2887,5 +2887,145 @@ def test_Xiaomi_RTCGQ02LM_timeout_motion():
     )
 
 
+def test_Xiaomi_XMPIRO2SXS():
+    """Test Xiaomi parser for Xiaomi Human Body Sensor 2S XMPIRO2SXS."""
+    data_string = b"HY15\x0bdy\x91\x173\x1e\xf4\x02\x00\x00\xc5\xd2\xf6\xac"
+    advertisement = bytes_to_service_info(data_string, address="DC:8E:95:2D:EA:43")
+    bindkey = "685d647dc5e7bc9bcfcf5a1357bd2114"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Motion Sensor EA43 (XMPIRO2SXS)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Motion Sensor EA43",
+                manufacturer="Xiaomi",
+                model="XMPIRO2SXS",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_ILLUMINANCE: SensorDescription(
+                device_key=KEY_ILLUMINANCE,
+                device_class=DeviceClass.ILLUMINANCE,
+                native_unit_of_measurement=Units.LIGHT_LUX,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_ILLUMINANCE: SensorValue(
+                name="Illuminance", device_key=KEY_ILLUMINANCE, native_value=51
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
+            ),
+        },
+    )
+
+
+def test_Xiaomi_PTX_press():
+    """Test Xiaomi parser for Xiaomi PTX."""
+    bindkey = "a74510b40386d35ae6227a7451efc76e"
+    data_string = b"XY\xbb8\x04\xad\xb9\xa58\xc1\xa4\xdc\x10\xb5\x04\x00\x00,\x12/\xb6"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A5:B9:AD")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Wireless Switch B9AD (PTX)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Wireless Switch B9AD",
+                manufacturer="Xiaomi",
+                model="PTX",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_XMWXKG01LM_press():
+    """Test Xiaomi parser for Xiaomi XMWXKG01LM ."""
+    bindkey = "7202a2d4201bbf82ea5bb3705657c32a"
+    data_string = b"XY\x87#5\x057$<\xc2\x18\xd6w\x94\x02\x00\x00\xcb-\xe3\t"
+    advertisement = bytes_to_service_info(data_string, address="18:C2:3C:24:37:05")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Button 3705 (XMWXKG01LM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Button 3705",
+                manufacturer="Xiaomi",
+                model="XMWXKG01LM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
+
+
 def test_can_create():
     XiaomiBluetoothDeviceData()
