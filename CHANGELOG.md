@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.27.1 (2024-03-17)
+
+### Fix
+
+* Remove mac workaround ([#75](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/75)) ([`c5a900c`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/c5a900c5d6e23b62769a16c0840ceed174c3a8da))
+
 ## v0.27.0 (2024-03-10)
 
 ### Feature
