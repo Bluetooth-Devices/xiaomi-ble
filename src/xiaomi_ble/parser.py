@@ -1486,6 +1486,10 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # or encryption is not in use
         self.bindkey_verified = False
 
+        # If True then the decryption has failed or has not been verified yet.
+        # If False then the decryption has succeeded.
+        self.decryption_failed = True
+
         # If this is True, then we have not seen an advertisement with a payload
         # Until we see a payload, we can't tell if this device is encrypted or not
         self.pending = True
@@ -1739,10 +1743,15 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 if payload_length < next_start:
                     # The payload segments are corrupted - if this is legacy encryption
                     # then the key is probably just wrong
-                    # V4 encryption has an authentication tag, so we don't apply the
+                    # V4/V5 encryption has an authentication tag, so we don't apply the
                     # same restriction there.
                     if self.encryption_scheme == EncryptionScheme.MIBEACON_LEGACY:
-                        self.bindkey_verified = False
+                        if self.decryption_failed is True:
+                            # we only ask for reautentification
+                            # till the decryption has failed twice.
+                            self.bindkey_verified = False
+                        else:
+                            self.decryption_failed = True
                     _LOGGER.debug(
                         "Invalid payload data length, payload: %s", payload.hex()
                     )
@@ -1893,7 +1902,12 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 nonce, encrypted_payload + mic, associated_data
             )
         except InvalidTag as error:
-            self.bindkey_verified = False
+            if self.decryption_failed is True:
+                # we only ask for reautentification till
+                # the decryption has failed twice.
+                self.bindkey_verified = False
+            else:
+                self.decryption_failed = True
             _LOGGER.warning("Decryption failed: %s", error)
             _LOGGER.debug("mic: %s", mic.hex())
             _LOGGER.debug("nonce: %s", nonce.hex())
@@ -1906,6 +1920,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 to_mac(xiaomi_mac),
             )
             return None
+        self.decryption_failed = False
         self.bindkey_verified = True
         return decrypted_payload
 
@@ -1938,6 +1953,11 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
         assert cipher is not None  # nosec
         # decrypt the data
+        # note that V2/V3 encryption will often pass the decryption process with a
+        # wrong encryption key, resulting in useless data, and we won't be able
+        # to verify this, as V2/V3 encryption does not use a tag to verify
+        # the decrypted data. This will be filtered as wrong data length
+        # during the conversion of the payload to sensor data.
         try:
             decrypted_payload = cipher.decrypt(encrypted_payload)
         except ValueError as error:
