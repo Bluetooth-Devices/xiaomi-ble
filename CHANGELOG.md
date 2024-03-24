@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.28.0 (2024-03-24)
+
+### Feature
+
+* Allow one failed decryption before reauth ([#76](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/76)) ([`4682109`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/46821098f2d34b4c0c7c0244708500b4aa72f19e))
+
 ## v0.27.1 (2024-03-17)
 
 ### Fix
