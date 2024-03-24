@@ -214,6 +214,7 @@ def test_bindkey_wrong():
     device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
     assert device.supported(advertisement)
     assert not device.bindkey_verified
+    assert device.decryption_failed
     assert device.update(advertisement) == SensorUpdate(
         title="Motion Sensor C40F (RTCGQ02LM)",
         devices={
@@ -250,8 +251,18 @@ def test_bindkey_verified_can_be_unset_v4():
 
     device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
     device.bindkey_verified = True
+    device.decryption_failed = False
 
     assert device.supported(advertisement)
+    # the first advertisement will fail decryption, but we don't ask to reauth yet
+    assert device.bindkey_verified
+    assert device.decryption_failed
+
+    data_string = b"XY\x8d\n\x18\x0f\xc4\xe0D\xefT|\xc2z\\\x03\xa1\x00\x00\x00y"
+    advertisement = bytes_to_service_info(data_string, address="54:EF:44:E0:C4:0F")
+    assert device.supported(advertisement)
+    # the second advertisement will fail decryption again, but now we ask to reauth
+    assert device.decryption_failed
     assert not device.bindkey_verified
 
 
@@ -264,6 +275,7 @@ def test_bindkey_wrong_legacy():
     device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
     assert device.supported(advertisement)
     assert not device.bindkey_verified
+    assert device.decryption_failed
     assert device.update(advertisement) == SensorUpdate(
         title="Dimmer Switch 988B (YLKG07YL/YLKG08YL)",
         devices={
@@ -288,7 +300,6 @@ def test_bindkey_wrong_legacy():
             ),
         },
     )
-
     assert device.unhandled == {}
 
 
@@ -300,8 +311,18 @@ def test_bindkey_verified_can_be_unset_legacy():
 
     device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
     device.bindkey_verified = True
+    device.decryption_failed = False
 
     assert device.supported(advertisement)
+    # the first advertisement will fail decryption, but we don't ask to reauth yet
+    assert device.bindkey_verified
+    assert device.decryption_failed
+
+    data_string = b"X0\xb6\x03\xd3\x8b\x98\xc5A$\xf8\xc3I\x14vu~\x00\x00\x00\x99"
+    advertisement = bytes_to_service_info(data_string, address="F8:24:41:C5:98:8B")
+    assert device.supported(advertisement)
+    # the second advertisement will fail decryption again, but now we ask to reauth
+    assert device.decryption_failed
     assert not device.bindkey_verified
 
 
