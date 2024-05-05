@@ -2492,7 +2492,7 @@ def test_Xiaomi_RS1BB_MI_obj4806():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Flood and Rain Sensor (RS1BB(MI))",
+        title="Flood and Rain Sensor 4C67 (RS1BB)",
         devices={
             None: SensorDeviceInfo(
                 name="Flood and Rain Sensor",
@@ -2511,7 +2511,7 @@ def test_Xiaomi_RS1BB_MI_obj4806():
         },
         entity_values={
             KEY_SIGNAL_STRENGTH: SensorValue(
-                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-64
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
         binary_entity_descriptions={
