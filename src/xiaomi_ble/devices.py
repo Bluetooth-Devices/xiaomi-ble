@@ -253,6 +253,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Odor Eliminator",
         model="SU001-T",
     ),
+    0x3F0F: DeviceEntry(
+        name="Flood and Rain Sensor",
+        model="RS1BB"
+    ),
 }
 
 

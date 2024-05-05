@@ -1044,6 +1044,13 @@ def obj4805(
     return {}
 
 
+def obj4806(xobj):
+    """Moisture"""
+    device.update_predefined_binary_sensor(
+        BinarySensorDeviceClass.MOISTURE, xobj[0] > 0
+    )
+    return {}
+
 def obj4818(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1428,6 +1435,7 @@ xiaomi_dataobject_dict = {
     0x4803: obj4803,
     0x4804: obj4804,
     0x4805: obj4805,
+    0x4806: obj4806,
     0x4818: obj4818,
     0x4A01: obj4a01,
     0x4A08: obj4a08,
