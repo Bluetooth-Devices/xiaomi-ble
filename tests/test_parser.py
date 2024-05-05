@@ -2483,6 +2483,52 @@ def test_Xiaomi_MS1BB_MI_obj4a13():
     )
 
 
+def test_Xiaomi_RS1BB_MI_obj4806():
+    """Test Xiaomi parser for Linptech RS1BB(MI) with obj4806."""
+    data_string = b"XY\x0f?JgL\xb98\xc1\xa4\xd6\xe5{\x83\x04\x00\x00\xd0\x1e\x0bK"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:B9:4C:67")
+    bindkey = "33ede53321bc73c790a8daae4581f3d5"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Flood and Rain Sensor 4C67 (RS1BB(MI))",
+        devices={
+            None: SensorDeviceInfo(
+                name="Flood and Rain Sensor 4C67",
+                manufacturer="Xiaomi",
+                model="RS1BB(MI)",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_MOISTURE: BinarySensorDescription(
+                device_key=KEY_MOISTURE,
+                device_class=BinarySensorDeviceClass.MOISTURE,
+            ),
+        },
+        binary_entity_values={
+            KEY_MOISTURE: BinarySensorValue(
+                name="Moisture", device_key=KEY_MOISTURE, native_value=False
+            ),
+        },
+    )
+
+
 def test_Xiaomi_XMWXKG01YL():
     """Test Xiaomi parser for XMWXKG01YL Switch (double button)."""
     data_string = b"XYI\x19Os\x12\x87\x83\xed\xdc\x0b48\n\x02\x00\x00\x8dI\xae("
