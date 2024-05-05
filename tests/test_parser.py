@@ -2482,6 +2482,7 @@ def test_Xiaomi_MS1BB_MI_obj4a13():
         },
     )
 
+
 def test_Xiaomi_RS1BB_MI_obj4806():
     """Test Xiaomi parser for Linptech RS1BB(MI) with obj4806."""
     data_string = b"XY\x0f?JgL\xb98\xc1\xa4\xd6\xe5{\x83\x04\x00\x00\xd0\x1e\x0bK"
