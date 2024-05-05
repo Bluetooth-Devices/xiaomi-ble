@@ -2515,13 +2515,13 @@ def test_Xiaomi_RS1BB_MI_obj4806():
             ),
         },
         binary_entity_descriptions={
-            KEY_SMOKE: BinarySensorDescription(
+            KEY_MOISTURE: BinarySensorDescription(
                 device_key=KEY_MOISTURE,
                 device_class=BinarySensorDeviceClass.MOISTURE,
             ),
         },
         binary_entity_values={
-            KEY_SMOKE: BinarySensorValue(
+            KEY_MOISTURE: BinarySensorValue(
                 name="Moisture", device_key=KEY_MOISTURE, native_value=False
             ),
         },
