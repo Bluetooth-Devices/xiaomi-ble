@@ -2485,7 +2485,7 @@ def test_Xiaomi_MS1BB_MI_obj4a13():
 def test_Xiaomi_RS1BB_MI_obj4806():
     """Test Xiaomi parser for Linptech RS1BB(MI) with obj4806."""
     data_string = b"XY\x0f?JgL\xb98\xc1\xa4\xd6\xe5{\x83\x04\x00\x00\xd0\x1e\x0bK"
-    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:66:E5:67")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:B9:4C:67")
     bindkey = "33ede53321bc73c790a8daae4581f3d5"
 
     device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
