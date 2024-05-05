@@ -2492,10 +2492,10 @@ def test_Xiaomi_RS1BB_MI_obj4806():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Flood and Rain Sensor 4C67 (RS1BB)",
+        title="Flood and Rain Sensor 4C67 (RS1BB(MI))",
         devices={
             None: SensorDeviceInfo(
-                name="Flood and Rain Sensor",
+                name="Flood and Rain Sensor 4C67",
                 manufacturer="Xiaomi",
                 model="RS1BB(MI)",
                 hw_version=None,
