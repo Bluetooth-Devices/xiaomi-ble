@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.29.0 (2024-05-05)
+
+### Feature
+
+* Add support for Linptech RS1BB(MI) ([#77](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/77)) ([`57d070c`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/57d070c71282c43882bc64117c709cdf1aec8f09))
+
 ## v0.28.0 (2024-03-24)
 
 ### Feature
