@@ -2000,7 +2000,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             # kind of device we are
             return False
 
-        if self.device_id != 0x0098:
+        if self.device_id not in [0x03BC, 0x0098]:
             return False
 
         return not last_poll or last_poll > TIMEOUT_1DAY
@@ -2009,7 +2009,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         """
         Poll the device to retrieve any values we can't get from passive listening.
         """
-        if self.device_id == 0x0098:
+        if self.device_id in [0x03BC, 0x0098]:
             client = await establish_connection(
                 BleakClient, ble_device, ble_device.address
             )
