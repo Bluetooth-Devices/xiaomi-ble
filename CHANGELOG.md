@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.30.0 (2024-06-17)
+
+### Feature
+
+* Extend battery level reading to gcls002 ([`49530c5`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/49530c53893da290c26c4236d714a67df58612ff))
+
 ## v0.29.0 (2024-05-05)
 
 ### Feature
