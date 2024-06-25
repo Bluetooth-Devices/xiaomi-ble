@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.30.1 (2024-06-25)
+
+### Fix
+
+* Fix license classifier ([#81](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/81)) ([`27072da`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/27072da63e01204f3bae81b7ddf734790896f0b5))
+
 ## v0.30.0 (2024-06-17)
 
 ### Feature
