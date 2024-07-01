@@ -3,6 +3,7 @@ This file is shamlessly copied from the following repository:
 https://github.com/Ernst79/bleparser/blob/c42ae922e1abed2720c7fac993777e1bd59c0c93/package/bleparser/xiaomi.py
 MIT License applies.
 """
+
 from __future__ import annotations
 
 import datetime

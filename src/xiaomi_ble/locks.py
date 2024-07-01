@@ -1,4 +1,5 @@
 """Constants for Xiaomi Locks."""
+
 from enum import Enum
 
 

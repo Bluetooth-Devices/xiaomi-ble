@@ -1,4 +1,5 @@
 """Constants for Xiaomi BLE advertisements."""
+
 from enum import Enum
 
 from sensor_state_data import BaseDeviceClass
