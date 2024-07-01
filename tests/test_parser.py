@@ -1,4 +1,5 @@
 """The tests for the Xiaomi ble parser."""
+
 import logging
 from unittest.mock import patch
 
