@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v0.30.2 (2024-07-05)
+
+### Fix
+
+* Force release ([`cf7d48c`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/cf7d48c2194666eaede56ebd9ab3bfbc5ddfe3b1))
+* Force release ([`7bcbda1`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/7bcbda1a6468fad98a0959cc05001ddbd478b81b))
+* Force release ([`bae0ff3`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/bae0ff33e69ac4b40f5e6f090e3dbfd7af241ff8))
+* Force release ([`2ed0584`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/2ed05848718d1d80a7edb410bd7a229f8334d4de))
+
 ## v0.30.1 (2024-06-25)
 
 ### Fix
