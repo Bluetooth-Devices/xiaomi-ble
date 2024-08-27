@@ -1074,6 +1074,44 @@ def obj4818(
     return {}
 
 
+def obj484e(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Occupancy-status: uint8: 0 - No One, 1 - Has One"""
+    device.update_predefined_binary_sensor(
+        BinarySensorDeviceClass.OCCUPANCY, xobj[0] > 0
+    )
+    return {}
+
+
+def obj4851(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """has-someone-duration: uint8: 2 - 2 minutes, 5 - 5 minutes"""
+    device.update_sensor(
+        key=ExtendedSensorDeviceClass.HAS_SOMEONE_DURATION,
+        name="Has someone duration",
+        native_unit_of_measurement=Units.TIME_MINUTES,
+        device_class=ExtendedSensorDeviceClass.HAS_SOMEONE_DURATION,
+        native_value=xobj[0],
+    )
+    return {}
+
+
+def obj4852(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """no-one-duration: uint8: 2/5/10/30 - 2/5/10/30 minutes"""
+    device.update_sensor(
+        key=ExtendedSensorDeviceClass.NO_ONE_DURATION,
+        name="No one duration",
+        native_unit_of_measurement=Units.TIME_MINUTES,
+        device_class=ExtendedSensorDeviceClass.NO_ONE_DURATION,
+        native_value=xobj[0],
+    )
+    return {}
+
+
 def obj4a01(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1441,6 +1479,9 @@ xiaomi_dataobject_dict = {
     0x4805: obj4805,
     0x4806: obj4806,
     0x4818: obj4818,
+    0x484E: obj484e,
+    0x4851: obj4851,
+    0x4852: obj4852,
     0x4A01: obj4a01,
     0x4A08: obj4a08,
     0x4A0C: obj4a0c,
