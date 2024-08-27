@@ -80,3 +80,9 @@ class ExtendedSensorDeviceClass(BaseDeviceClass):
 
     # Toothbrush score
     SCORE = "score"
+
+    # Has-Someone-Duration
+    DURATION_DETECTED = "duration_detected"
+
+    # No-One-Duration
+    DURATION_CLEARED = "duration_cleared"

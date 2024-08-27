@@ -31,6 +31,7 @@ KEY_BATTERY = DeviceKey(key="battery", device_id=None)
 KEY_BINARY_DOOR = DeviceKey(key="door", device_id=None)
 KEY_BINARY_FINGERPRINT = DeviceKey(key="fingerprint", device_id=None)
 KEY_BINARY_MOTION = DeviceKey(key="motion", device_id=None)
+KEY_BINARY_OCCUPANCY = DeviceKey(key="occupancy", device_id=None)
 KEY_BINARY_LIGHT = DeviceKey(key="light", device_id=None)
 KEY_BINARY_LOCK = DeviceKey(key="lock", device_id=None)
 KEY_BINARY_OPENING = DeviceKey(key="opening", device_id=None)
@@ -3004,6 +3005,102 @@ def test_Xiaomi_XMPIRO2SXS():
         binary_entity_values={
             KEY_BINARY_MOTION: BinarySensorValue(
                 device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
+            ),
+        },
+    )
+
+
+def test_Xiaomi_XMOSB01XS_ILLUMINANCE():
+    """Test Xiaomi parser for Xiaomi Occupancy(Human Presence) Sensor XMOSB01XS."""
+    data_string = (
+        b"\x48\x59\x83\x46\x0D\xDC\x21\x3C\xE9\x81\xDA\x7A\xE2\x02\x00\x44\x41\xF8\x8C"
+    )
+    advertisement = bytes_to_service_info(data_string, address="0C:43:14:A1:41:1E")
+    bindkey = "0a4552cb19a639b72b8ed09bde6d5bfa"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Occupancy Sensor 411E (XMOSB01XS)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Occupancy Sensor 411E",
+                manufacturer="Xiaomi",
+                model="XMOSB01XS",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_ILLUMINANCE: SensorDescription(
+                device_key=KEY_ILLUMINANCE,
+                device_class=DeviceClass.ILLUMINANCE,
+                native_unit_of_measurement=Units.LIGHT_LUX,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_ILLUMINANCE: SensorValue(
+                name="Illuminance", device_key=KEY_ILLUMINANCE, native_value=38
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+    )
+
+
+def test_Xiaomi_XMOSB01XS_OCCUPANCY():
+    """Test Xiaomi parser for Xiaomi Occupancy(Human Presence) Sensor XMOSB01XS."""
+    data_string = (
+        b"\x58\x59\x83\x46\x1F\xBD\xB1\xC4\x67\x48\xD4"
+        b"\x9D\x1E\xFD\x8C\x04\x00\x00\xE5\x7E\x87\x3A"
+    )
+    advertisement = bytes_to_service_info(data_string, address="D4:48:67:C4:B1:BD")
+    bindkey = "920ce119b34410d38251ccea54c0f915"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Occupancy Sensor B1BD (XMOSB01XS)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Occupancy Sensor B1BD",
+                manufacturer="Xiaomi",
+                model="XMOSB01XS",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_OCCUPANCY: BinarySensorDescription(
+                device_key=KEY_BINARY_OCCUPANCY,
+                device_class=BinarySensorDeviceClass.OCCUPANCY,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OCCUPANCY: BinarySensorValue(
+                device_key=KEY_BINARY_OCCUPANCY, name="Occupancy", native_value=False
             ),
         },
     )
