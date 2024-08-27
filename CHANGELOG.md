@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.31.0 (2024-08-27)
+
+### Feature
+
+* Support xiaomi occupancy(human presence) sensor (XMOSB01XS) ([#93](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/93)) ([`f10c72b`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/f10c72b166572e8e711469da693192cdab5049c2))
+
 ## v0.30.2 (2024-07-05)
 
 ### Fix
