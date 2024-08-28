@@ -268,4 +268,5 @@ SLEEPY_DEVICE_MODELS = {
     "RTCGQ02LM",
     "MMC-W505",
     "RS1BB(MI)",
+    "XMOSB01XS",
 }
