@@ -3021,6 +3021,7 @@ def test_Xiaomi_XMOSB01XS_ILLUMINANCE():
     device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
     assert device.supported(advertisement)
     assert device.bindkey_verified
+    assert device.sleepy_device
     assert device.update(advertisement) == SensorUpdate(
         title="Occupancy Sensor 411E (XMOSB01XS)",
         devices={
@@ -3069,6 +3070,7 @@ def test_Xiaomi_XMOSB01XS_OCCUPANCY():
     device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
     assert device.supported(advertisement)
     assert device.bindkey_verified
+    assert device.sleepy_device
     assert device.update(advertisement) == SensorUpdate(
         title="Occupancy Sensor B1BD (XMOSB01XS)",
         devices={
