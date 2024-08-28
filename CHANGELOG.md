@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.31.1 (2024-08-28)
+
+### Fix
+
+* Add xmosb01xs as a sleepy device ([#94](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/94)) ([`648c7f8`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/648c7f80e4c1e9e9868b974e49e7da564457c094))
+
 ## v0.31.0 (2024-08-27)
 
 ### Feature

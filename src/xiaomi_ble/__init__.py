@@ -21,7 +21,7 @@ from sensor_state_data import (
 from .devices import SLEEPY_DEVICE_MODELS
 from .parser import EncryptionScheme, XiaomiBluetoothDeviceData
 
-__version__ = "0.31.0"
+__version__ = "0.31.1"
 
 __all__ = [
     "SLEEPY_DEVICE_MODELS",
