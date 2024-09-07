@@ -158,6 +158,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Motion Sensor",
         model="XMPIRO2SXS",
     ),
+    0x4C60: DeviceEntry(
+        name="Motion Sensor",
+        model="XMPIRO2GSXS",
+    ),
     0x4683: DeviceEntry(
         name="Occupancy Sensor",
         model="XMOSB01XS",
