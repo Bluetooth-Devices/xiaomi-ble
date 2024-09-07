@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.32.0 (2024-09-07)
+
+### Feature
+
+* Support xiaomi motion sensor 2s - global version (XMPIR02SGXS) ([#95](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/95)) ([`7e30569`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/7e30569a56b2668cd88ac1b4ee3d7454901e0c37))
+
 ## v0.31.1 (2024-08-28)
 
 ### Fix
