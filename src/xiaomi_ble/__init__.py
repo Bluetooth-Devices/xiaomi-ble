@@ -19,6 +19,7 @@ from sensor_state_data import (
 )
 
 from .cloud import (
+    XiaomiCloudBLEDevice,
     XiaomiCloudException,
     XiaomiCloudInvalidAuthenticationException,
     XiaomiCloudInvalidPasswordException,
@@ -43,10 +44,11 @@ __all__ = [
     "SensorDeviceInfo",
     "SensorValue",
     "Units",
-    "XiaomiCloudTokenFetch",
+    "XiaomiCloudBLEDevice",
     "XiaomiCloudException",
     "XiaomiCloudInvalidAuthenticationException",
     "XiaomiCloudInvalidPasswordException",
     "XiaomiCloudInvalidUsernameException",
+    "XiaomiCloudTokenFetch",
     "XiaomiCloudTwoFactorAuthenticationException",
 ]

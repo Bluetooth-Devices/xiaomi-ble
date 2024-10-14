@@ -1,9 +1,11 @@
 import base64
 import hashlib
 import hmac
+import logging
 import os
 import random
 import time
+from dataclasses import dataclass
 from typing import Any
 
 import aiohttp
@@ -12,7 +14,7 @@ from Cryptodome.Cipher import ARC4
 from yarl import URL
 
 SERVERS = ["cn", "de", "us", "ru", "tw", "sg", "in", "i2"]
-
+_LOGGER = logging.getLogger(__name__)
 
 # Adapted from PiotrMachowski's Xiaomi-cloud-tokens-extractor
 # MIT License
@@ -40,6 +42,14 @@ SERVERS = ["cn", "de", "us", "ru", "tw", "sg", "in", "i2"]
 
 LOGIN_URL = URL("https://account.xiaomi.com/pass/serviceLogin?sid=xiaomiio&_json=true")
 LOGIN_URL2 = URL("https://account.xiaomi.com/pass/serviceLoginAuth2")
+
+
+@dataclass
+class XiaomiCloudBLEDevice:
+
+    name: str
+    mac: str
+    bindkey: str
 
 
 class XiaomiCloudException(Exception):
@@ -365,7 +375,7 @@ class XiaomiCloudTokenFetch:
 
     async def get_device_info(
         self, mac: str, servers: list[str] = SERVERS
-    ) -> dict[str, Any] | None:
+    ) -> XiaomiCloudBLEDevice | None:
         """Get the token for a given MAC address."""
         formatted_mac = format_mac_upper(mac)
         connector = XiaomiCloudConnector(self._username, self._password, self._session)
@@ -395,8 +405,27 @@ class XiaomiCloudTokenFetch:
 
                 device_info: list[dict[str, Any]] = devices["result"]["device_info"]
                 for device in device_info:
-                    if device["mac"] == formatted_mac:
-                        return device
+                    if (
+                        device["mac"] != formatted_mac
+                        or "did" not in device
+                        or "blt" not in device["did"]
+                    ):
+                        continue
+                    key_result = await connector.get_beaconkey(server, device["did"])
+                    if (
+                        key_result
+                        and (result := key_result.get("result"))
+                        and (beacon_key := result.get("beaconkey"))
+                    ):
+                        _LOGGER.debug(
+                            "Found beacon key for %s: %s (%s)",
+                            formatted_mac,
+                            beacon_key,
+                            device,
+                        )
+                        return XiaomiCloudBLEDevice(
+                            device["name"], device["mac"], beacon_key
+                        )
 
         return None
 
