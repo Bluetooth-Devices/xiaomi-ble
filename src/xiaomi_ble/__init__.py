@@ -18,7 +18,14 @@ from sensor_state_data import (
     Units,
 )
 
-from .cloud import XiaomiCloudConnector
+from .cloud import (
+    XiaomiCloudException,
+    XiaomiCloudInvalidAuthenticationException,
+    XiaomiCloudInvalidPasswordException,
+    XiaomiCloudInvalidUsernameException,
+    XiaomiCloudTokenFetch,
+    XiaomiCloudTwoFactorAuthenticationException,
+)
 from .devices import SLEEPY_DEVICE_MODELS
 from .parser import EncryptionScheme, XiaomiBluetoothDeviceData
 
@@ -36,5 +43,10 @@ __all__ = [
     "SensorDeviceInfo",
     "SensorValue",
     "Units",
-    "XiaomiCloudConnector",
+    "XiaomiCloudTokenFetch",
+    "XiaomiCloudException",
+    "XiaomiCloudInvalidAuthenticationException",
+    "XiaomiCloudInvalidPasswordException",
+    "XiaomiCloudInvalidUsernameException",
+    "XiaomiCloudTwoFactorAuthenticationException",
 ]

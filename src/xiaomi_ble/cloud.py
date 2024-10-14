@@ -46,15 +46,21 @@ class XiaomiCloudException(Exception):
     """Raised when an error occurs during Xiaomi Cloud API communication."""
 
 
-class XiaomiCloudInvalidUsernameException(XiaomiCloudException):
+class XiaomiCloudInvalidAuthenticationException(XiaomiCloudException):
+    """Raised when an invalid authentication method is provided."""
+
+
+class XiaomiCloudInvalidUsernameException(XiaomiCloudInvalidAuthenticationException):
     """Raised when an invalid username is provided."""
 
 
-class XiaomiCloudInvalidPasswordException(XiaomiCloudException):
+class XiaomiCloudInvalidPasswordException(XiaomiCloudInvalidAuthenticationException):
     """Raised when an invalid password is provided."""
 
 
-class XiaomiCloudTwoFactorAuthenticationException(XiaomiCloudException):
+class XiaomiCloudTwoFactorAuthenticationException(
+    XiaomiCloudInvalidAuthenticationException
+):
     """Raised when two factor authentication is required."""
 
     def __init__(self, message: str, url: str) -> None:
@@ -142,7 +148,7 @@ class XiaomiCloudConnector:
             self._location, headers=headers, cookies=self._cookies
         )
         if response.status == 200:
-            self._serviceToken = response.cookies.get("serviceToken")
+            self._serviceToken = response.cookies.get("serviceToken").value
         return response.status == 200
 
     async def login(self) -> bool:
@@ -227,6 +233,8 @@ class XiaomiCloudConnector:
                 self.signed_nonce(fields["_nonce"]), await response.text()
             )
             return orjson.loads(decoded)
+        if response.status > 400 and response.status < 500:
+            raise XiaomiCloudInvalidAuthenticationException("Authentication failed")
         return None
 
     @staticmethod
@@ -343,3 +351,73 @@ class XiaomiCloudConnector:
         r = ARC4.new(base64.b64decode(password))
         r.encrypt(bytes(1024))
         return r.encrypt(base64.b64decode(payload))
+
+
+class XiaomiCloudTokenFetch:
+
+    def __init__(
+        self, username: str, password: str, session: aiohttp.ClientSession
+    ) -> None:
+        """Initialize the Xiaomi Cloud API."""
+        self._username = username
+        self._password = password
+        self._session = session
+
+    async def get_device_info(
+        self, mac: str, servers: list[str] = SERVERS
+    ) -> dict[str, Any] | None:
+        """Get the token for a given MAC address."""
+        formatted_mac = format_mac_upper(mac)
+        connector = XiaomiCloudConnector(self._username, self._password, self._session)
+        await connector.login()
+        assert connector.userId is not None
+        homes: dict[str, str] = {}
+
+        for server in servers:
+            home_info = await connector.get_homes(server)
+            if home_info is not None:
+                for h in home_info["result"]["homelist"]:
+                    homes[h["id"]] = connector.userId
+
+            dev_cnt = await connector.get_dev_cnt(server)
+            if dev_cnt is not None:
+                for h in dev_cnt["result"]["share"]["share_family"]:
+                    homes[h["home_id"]] = h["home_owner"]
+
+            for home_id, owner_id in homes.items():
+                devices = await connector.get_devices(server, home_id, owner_id)
+                if (
+                    devices is None
+                    or not devices["result"]
+                    or not devices["result"]["device_info"]
+                ):
+                    continue
+
+                device_info: list[dict[str, Any]] = devices["result"]["device_info"]
+                for device in device_info:
+                    if device["mac"] == formatted_mac:
+                        return device
+
+        return None
+
+
+def format_mac_upper(mac: str) -> str:
+    """Format the mac address string to be upper case."""
+    to_test = mac
+
+    if len(to_test) == 17 and to_test.count(":") == 5:
+        return to_test.upper()
+
+    if len(to_test) == 17 and to_test.count("-") == 5:
+        to_test = to_test.replace("-", "")
+    elif len(to_test) == 14 and to_test.count(".") == 2:
+        to_test = to_test.replace(".", "")
+
+    if len(to_test) == 12:
+        # no : included
+        return ":".join(
+            to_test.upper()[i : i + 2] for i in range(0, 12, 2)  # noqa: E203
+        )
+
+    # Not sure how formatted, return original
+    return mac
