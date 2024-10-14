@@ -8,7 +8,7 @@ from typing import Any
 
 import aiohttp
 import orjson
-from Crypto.Cipher import ARC4
+from Cryptodome.Cipher import ARC4
 from yarl import URL
 
 SERVERS = ["cn", "de", "us", "ru", "tw", "sg", "in", "i2"]
