@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.33.0 (2024-10-21)
+
+### Feature
+
+* Add support for extracting cloud keys ([#98](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/98)) ([`fdc3b90`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/fdc3b90cc07cd7e86e031c78bbb379800f549e72))
+
 ## v0.32.0 (2024-09-07)
 
 ### Feature
