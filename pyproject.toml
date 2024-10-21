@@ -37,6 +37,8 @@ bluetooth-data-tools = ">=0.3.1"
 bleak = ">=0.19.5"
 cryptography = ">=40.0.0"
 pycryptodomex = ">=3.19.1"
+aiohttp = ">=3.10.0"
+orjson = ">=3.9.0"
 
 [tool.poetry.extras]
 docs = [

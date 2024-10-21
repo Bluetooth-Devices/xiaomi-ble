@@ -57,3 +57,5 @@ This package was created with
 [Cookiecutter](https://github.com/audreyr/cookiecutter) and the
 [browniebroke/cookiecutter-pypackage](https://github.com/browniebroke/cookiecutter-pypackage)
 project template.
+
+Special thanks to Piotr Machowski for the cloud key extractor basis.
