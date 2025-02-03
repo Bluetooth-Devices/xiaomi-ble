@@ -2642,8 +2642,8 @@ def test_Xiaomi_XMZNMS08LM_lock():
     """Test Xiaomi parser for XMZNMS08LM."""
     bindkey = "2c3795afa33019a8afdc17ba99e6f217"
     data_string = (
-        b"\x48\x55\x39\x0E\x2F\xDF\x9D\x3F\xDD\x9A\x66\x37"
-        b"\x13\x15\x29\xF8\x7B\x53\x00\x00\xBC\xC3\x40\x21"
+        b"\x48\x55\x39\x0e\x2f\xdf\x9d\x3f\xdd\x9a\x66\x37"
+        b"\x13\x15\x29\xf8\x7b\x53\x00\x00\xbc\xc3\x40\x21"
     )
     advertisement = bytes_to_service_info(data_string, address="EE:89:73:44:BE:98")
 
@@ -3013,7 +3013,7 @@ def test_Xiaomi_XMPIRO2SXS():
 def test_Xiaomi_XMOSB01XS_ILLUMINANCE():
     """Test Xiaomi parser for Xiaomi Occupancy(Human Presence) Sensor XMOSB01XS."""
     data_string = (
-        b"\x48\x59\x83\x46\x0D\xDC\x21\x3C\xE9\x81\xDA\x7A\xE2\x02\x00\x44\x41\xF8\x8C"
+        b"\x48\x59\x83\x46\x0d\xdc\x21\x3c\xe9\x81\xda\x7a\xe2\x02\x00\x44\x41\xf8\x8c"
     )
     advertisement = bytes_to_service_info(data_string, address="0C:43:14:A1:41:1E")
     bindkey = "0a4552cb19a639b72b8ed09bde6d5bfa"
@@ -3061,8 +3061,8 @@ def test_Xiaomi_XMOSB01XS_ILLUMINANCE():
 def test_Xiaomi_XMOSB01XS_OCCUPANCY():
     """Test Xiaomi parser for Xiaomi Occupancy(Human Presence) Sensor XMOSB01XS."""
     data_string = (
-        b"\x58\x59\x83\x46\x1F\xBD\xB1\xC4\x67\x48\xD4"
-        b"\x9D\x1E\xFD\x8C\x04\x00\x00\xE5\x7E\x87\x3A"
+        b"\x58\x59\x83\x46\x1f\xbd\xb1\xc4\x67\x48\xd4"
+        b"\x9d\x1e\xfd\x8c\x04\x00\x00\xe5\x7e\x87\x3a"
     )
     advertisement = bytes_to_service_info(data_string, address="D4:48:67:C4:B1:BD")
     bindkey = "920ce119b34410d38251ccea54c0f915"
