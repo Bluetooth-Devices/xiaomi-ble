@@ -999,6 +999,25 @@ def obj3003(
         )
     return result
 
+# MJWSD06MMC
+def obj4801(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Temperature"""
+    if len(xobj) == 4:
+        temp = FLOAT_STRUCT.unpack(xobj)[0]
+        device.update_predefined_sensor(
+            SensorLibrary.TEMPERATURE__CELSIUS, round(temp, 2)
+        )
+    return {}
+
+# MJWSD06MMC
+def obj4802(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Humidity"""
+    device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, xobj[0])
+    return {}
 
 # The following data objects are device specific. For now only added for
 # LYWSD02MMC, MJWSD05MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI),
@@ -1477,6 +1496,8 @@ xiaomi_dataobject_dict = {
     0x101B: obj101b,
     0x2000: obj2000,
     0x3003: obj3003,
+    0x4801: obj4801,
+    0x4802: obj4802,
     0x4803: obj4803,
     0x4804: obj4804,
     0x4805: obj4805,
