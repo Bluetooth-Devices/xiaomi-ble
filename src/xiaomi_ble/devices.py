@@ -106,7 +106,7 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Temperature/Humidity Sensor",
         model="MJWSD05MMC",
     ),
-    0x55b5: DeviceEntry(
+    0x55B5: DeviceEntry(
         name="Temperature/Humidity Sensor",
         model="MJWSD06MMC",
     ),

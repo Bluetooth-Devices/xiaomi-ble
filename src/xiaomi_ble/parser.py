@@ -999,6 +999,7 @@ def obj3003(
         )
     return result
 
+
 # MJWSD06MMC
 def obj4801(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
@@ -1011,6 +1012,7 @@ def obj4801(
         )
     return {}
 
+
 # MJWSD06MMC
 def obj4802(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
@@ -1018,6 +1020,7 @@ def obj4802(
     """Humidity"""
     device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, xobj[0])
     return {}
+
 
 # The following data objects are device specific. For now only added for
 # LYWSD02MMC, MJWSD05MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI),
