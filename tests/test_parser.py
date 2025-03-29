@@ -1550,9 +1550,7 @@ def test_Xiaomi_MJWSD06MMC_temperature():
 
 def test_Xiaomi_MJWSD06MMC_humidity():
     """Test Xiaomi parser for MJWSD06MMC with encryption."""
-    data_string = (
-        b"XY\xb5U4\x07\x15\x808\xc1\xa4\xbc\xc72\x98\x0e\x00\x00f\x96\x0f\x10"
-    )
+    data_string = b"XY\xb5U4\x07\x15\x808\xc1\xa4\xbc\xc72\x98\x0e\x00\x00f\x96\x0f\x10"
     bindkey = "4d8f1373fb4d3bab557d0ebd1c78f8c4"
     advertisement = bytes_to_service_info(data_string, address="A4:C1:38:80:15:07")
 
