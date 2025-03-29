@@ -66,18 +66,18 @@ def parse_event_properties(
 
 
 # Structured objects for data conversions
-TH_STRUCT = struct.Struct("<hH")
-H_STRUCT = struct.Struct("<H")
-T_STRUCT = struct.Struct("<h")
-TTB_STRUCT = struct.Struct("<hhB")
-CND_STRUCT = struct.Struct("<H")
-ILL_STRUCT = struct.Struct("<I")
-LIGHT_STRUCT = struct.Struct("<I")
-FMDH_STRUCT = struct.Struct("<H")
-M_STRUCT = struct.Struct("<L")
-P_STRUCT = struct.Struct("<H")
-BUTTON_STRUCT = struct.Struct("<BBB")
-FLOAT_STRUCT = struct.Struct("<f")
+TH_STRUCT = struct.Struct("<hH").unpack
+H_STRUCT = struct.Struct("<H").unpack
+T_STRUCT = struct.Struct("<h").unpack
+TTB_STRUCT = struct.Struct("<hhB").unpack
+CND_STRUCT = struct.Struct("<H").unpack
+ILL_STRUCT = struct.Struct("<I").unpack
+LIGHT_STRUCT = struct.Struct("<I").unpack
+FMDH_STRUCT = struct.Struct("<H").unpack
+M_STRUCT = struct.Struct("<L").unpack
+P_STRUCT = struct.Struct("<H").unpack
+BUTTON_STRUCT = struct.Struct("<BBB").unpack
+FLOAT_STRUCT = struct.Struct("<f").unpack
 
 
 # Advertisement conversion of measurement data
@@ -296,7 +296,7 @@ def obj000a(
 ) -> dict[str, Any]:
     """Body Temperature"""
     if len(xobj) == 2:
-        (temp,) = T_STRUCT.unpack(xobj)
+        temp = T_STRUCT(xobj)[0]
         if temp:
             device.update_predefined_sensor(
                 SensorLibrary.TEMPERATURE__CELSIUS, temp / 100
@@ -427,7 +427,7 @@ def obj000f(
 ) -> dict[str, Any]:
     """Moving with light"""
     if len(xobj) == 3:
-        (illum,) = LIGHT_STRUCT.unpack(xobj + b"\x00")
+        illum = LIGHT_STRUCT(xobj + b"\x00")[0]
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.MOTION, True)
         if device_type in ["MJYD02YL", "RTCGQ02LM"]:
             # MJYD02YL:  1 - moving no light, 100 - moving with light
@@ -448,7 +448,7 @@ def obj1001(
     if len(xobj) != 3:
         return {}
 
-    (button_type, value, press_type) = BUTTON_STRUCT.unpack(xobj)
+    (button_type, value, press_type) = BUTTON_STRUCT(xobj)
 
     # button_type represents the pressed button or rubiks cube rotation direction
     remote_command = None
@@ -698,7 +698,7 @@ def obj1004(
 ) -> dict[str, Any]:
     """Temperature"""
     if len(xobj) == 2:
-        (temp,) = T_STRUCT.unpack(xobj)
+        temp = T_STRUCT(xobj)[0]
         device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp / 10)
     return {}
 
@@ -717,7 +717,7 @@ def obj1006(
 ) -> dict[str, Any]:
     """Humidity"""
     if len(xobj) == 2:
-        (humi,) = H_STRUCT.unpack(xobj)
+        humi = H_STRUCT(xobj)[0]
         if device_type in ["LYWSD03MMC", "MHO-C401"]:
             # To handle jagged stair stepping readings from these sensors.
             # https://github.com/custom-components/ble_monitor/blob/ef2e3944b9c1a635208390b8563710d0eec2a945/custom_components/ble_monitor/sensor.py#L752
@@ -738,7 +738,7 @@ def obj1007(
 ) -> dict[str, Any]:
     """Illuminance"""
     if len(xobj) == 3:
-        (illum,) = ILL_STRUCT.unpack(xobj + b"\x00")
+        illum = ILL_STRUCT(xobj + b"\x00")[0]
         if device_type in ["MJYD02YL", "MCCGQ02HL"]:
             # 100 means light, else dark (0 or 1)
             # MCCGQ02HL might use obj1018 for light sensor, just added here to be sure.
@@ -764,7 +764,7 @@ def obj1009(
 ) -> dict[str, Any]:
     """Conductivity"""
     if len(xobj) == 2:
-        (cond,) = CND_STRUCT.unpack(xobj)
+        cond = CND_STRUCT(xobj)[0]
         device.update_predefined_sensor(SensorLibrary.CONDUCTIVITY__CONDUCTIVITY, cond)
     return {}
 
@@ -774,7 +774,7 @@ def obj1010(
 ) -> dict[str, Any]:
     """Formaldehyde"""
     if len(xobj) == 2:
-        (fmdh,) = FMDH_STRUCT.unpack(xobj)
+        fmdh = FMDH_STRUCT(xobj)[0]
         device.update_predefined_sensor(
             SensorLibrary.FORMALDEHYDE__CONCENTRATION_MILLIGRAMS_PER_CUBIC_METER,
             fmdh / 100,
@@ -827,9 +827,9 @@ def obj1017(
 ) -> dict[str, Any]:
     """Time in seconds without motion"""
     if len(xobj) == 4:
-        (no_motion_time,) = M_STRUCT.unpack(xobj)
+        no_motion_time = M_STRUCT(xobj)[0]
         # seconds since last motion detected message
-        # 0x1017 is send 3 seconds after 0x000f, 5 seconds arter 0x1007
+        # 0x1017 is sent 3 seconds after 0x000f, 5 seconds arter 0x1007
         # and at 60, 120, 300, 600, 1200 and 1800 seconds after last motion.
         # Anything <= 30 seconds is regarded motion detected in the MiHome app.
         if no_motion_time <= 30:
@@ -901,7 +901,7 @@ def obj100d(
 ) -> dict[str, Any]:
     """Temperature and humidity"""
     if len(xobj) == 4:
-        (temp, humi) = TH_STRUCT.unpack(xobj)
+        (temp, humi) = TH_STRUCT(xobj)
         device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp / 10)
         device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi / 10)
     return {}
@@ -943,7 +943,7 @@ def obj2000(
 ) -> dict[str, Any]:
     """Body temperature"""
     if len(xobj) == 5:
-        (temp1, temp2, bat) = TTB_STRUCT.unpack(xobj)
+        (temp1, temp2, bat) = TTB_STRUCT(xobj)
         # Body temperature is calculated from the two measured temperatures.
         # Formula is based on approximation based on values in the app in
         # the range 36.5 - 37.8.
@@ -1006,7 +1006,7 @@ def obj4801(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Temperature"""
-    temp = FLOAT_STRUCT.unpack(xobj)[0]
+    temp = FLOAT_STRUCT(xobj)[0]
     device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, round(temp, 1))
     return {}
 
@@ -1056,7 +1056,7 @@ def obj4805(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Illuminance in lux"""
-    illum = FLOAT_STRUCT.unpack(xobj)[0]
+    illum = FLOAT_STRUCT(xobj)[0]
     device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
     return {}
 
@@ -1260,7 +1260,7 @@ def obj4c01(
 ) -> dict[str, Any]:
     """Temperature"""
     if len(xobj) == 4:
-        temp = FLOAT_STRUCT.unpack(xobj)[0]
+        temp = FLOAT_STRUCT(xobj)[0]
         device.update_predefined_sensor(
             SensorLibrary.TEMPERATURE__CELSIUS, round(temp, 2)
         )
@@ -1290,7 +1290,7 @@ def obj4c08(
 ) -> dict[str, Any]:
     """Humidity"""
     if len(xobj) == 4:
-        humi = FLOAT_STRUCT.unpack(xobj)[0]
+        humi = FLOAT_STRUCT(xobj)[0]
         device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi)
     return {}
 
