@@ -51,8 +51,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - uses: snok/install-poetry@v1
       - name: Install Dependencies
+        shell: bash
         run: poetry install
       - name: Test with Pytest
+        shell: bash
         run: poetry run pytest --cov-report=xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -67,6 +69,9 @@ jobs:
       - test
       - lint
       - commitlint
+    permissions:
+      id-token: write
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -78,9 +83,17 @@ jobs:
       # - Update version in code
       # - Create git tag
       # - Create GitHub release
-      # - Publish to PyPI
       - name: Python Semantic Release
-        uses: relekang/python-semantic-release@v9.21.0
+        id: release
+        uses: python-semantic-release/python-semantic-release@v9.21.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          pypi_token: ${{ secrets.PYPI_TOKEN }}
+      - name: Upload package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        if: steps.release.outputs.released == 'true'
+      - name: Upload Github Release Assets
+        uses: python-semantic-release/publish-action@v9.21.0
+        if: steps.release.outputs.released == 'true'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.release.outputs.tag }}
