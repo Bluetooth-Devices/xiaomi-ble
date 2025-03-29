@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.34.1 (2025-03-29)
+
+### Fix
+
+* Rewrite struct ([#151](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/151)) ([`98e313b`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/98e313be6b057407385893833f4d6d9482568515))
+
 ## v0.34.0 (2025-03-29)
 
 ### Feature
