@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "xiaomi-ble"
-version = "0.33.0"
+version = "0.34.0"
 description = "Manage Xiaomi BLE devices"
 authors = ["John Carr <john.carr@unrouted.co.uk>"]
 license = "Apache-2.0"

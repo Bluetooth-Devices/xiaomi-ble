@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.34.0 (2025-03-29)
+
+### Feature
+
+* Add support for MJWSD06MMC ([#150](https://github.com/Bluetooth-Devices/xiaomi-ble/issues/150)) ([`51cbe1c`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/51cbe1c364d6983decf9596fee8d1caf4501ff84))
+
 ## v0.33.0 (2024-10-21)
 
 ### Feature
