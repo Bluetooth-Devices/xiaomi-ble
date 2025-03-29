@@ -1006,7 +1006,7 @@ def obj4801(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Temperature"""
-    (temp,) = struct.unpack("f", xobj)
+    temp = FLOAT_STRUCT.unpack(xobj)[0]
     device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, round(temp, 1))
     return {}
 
@@ -1056,7 +1056,7 @@ def obj4805(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Illuminance in lux"""
-    (illum,) = struct.unpack("f", xobj)
+    illum = FLOAT_STRUCT.unpack(xobj)[0]
     device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
     return {}
 
