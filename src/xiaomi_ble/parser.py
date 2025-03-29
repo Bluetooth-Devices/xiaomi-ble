@@ -1000,9 +1000,25 @@ def obj3003(
     return result
 
 
-# The following data objects are device specific. For now only added for
-# LYWSD02MMC, MJWSD05MMC, XMWSDJ04MMC, XMWXKG01YL, LINPTECH MS1BB(MI), HS1BB(MI),
-# K9BB, PTX https://miot-spec.org/miot-spec-v2/instances?status=all
+# The following data objects are device specific.
+# https://miot-spec.org/miot-spec-v2/instances?status=all
+def obj4801(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Temperature"""
+    (temp,) = struct.unpack("f", xobj)
+    device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, round(temp, 1))
+    return {}
+
+
+def obj4802(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Humidity"""
+    device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, xobj[0])
+    return {}
+
+
 def obj4803(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1477,6 +1493,8 @@ xiaomi_dataobject_dict = {
     0x101B: obj101b,
     0x2000: obj2000,
     0x3003: obj3003,
+    0x4801: obj4801,
+    0x4802: obj4802,
     0x4803: obj4803,
     0x4804: obj4804,
     0x4805: obj4805,
