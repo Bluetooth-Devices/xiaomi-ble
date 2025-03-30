@@ -80,10 +80,10 @@ BUTTON_STRUCT = struct.Struct("<BBB").unpack
 FLOAT_STRUCT = struct.Struct("<f").unpack
 
 QUAD_BUTTON_TO_NAME = {
-  1: "left",
-  2: "mid_left",
-  3: "mid_right",
-  4: "right",
+    1: "left",
+    2: "mid_left",
+    3: "mid_right",
+    4: "right",
 }
 
 # Advertisement conversion of measurement data
@@ -1493,7 +1493,7 @@ def obj5414(
 
 def obj560c(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
-) -> dict[str, Any]:
+) -> dict[str, Any] | None:
     """Button press"""
     if device_type not in ["KS1", "KS1BP"]:
         return {}
@@ -1504,12 +1504,13 @@ def obj560c(
             event_type="press",
             event_properties=None,
         )
-    return {}
+    else:
+        return {}
 
 
 def obj560d(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
-) -> dict[str, Any]:
+) -> dict[str, Any]| None:
     """Double button press"""
     if device_type not in ["KS1", "KS1BP"]:
         return {}
@@ -1520,12 +1521,13 @@ def obj560d(
             event_type="double_press",
             event_properties=None,
         )
-    return {}
+    else:
+        return {}
 
 
 def obj560e(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
-) -> dict[str, Any]:
+) -> dict[str, Any] | None:
     """Long button press"""
     if device_type not in ["KS1", "KS1BP"]:
         return {}
@@ -1536,7 +1538,8 @@ def obj560e(
             event_type="long_press",
             event_properties=None,
         )
-    return {}
+    else:
+        return {}
 
 
 # Dataobject dictionary
