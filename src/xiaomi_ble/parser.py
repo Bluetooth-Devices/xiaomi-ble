@@ -1493,7 +1493,7 @@ def obj5414(
 
 def obj560c(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
-) -> dict[str, Any] | None:
+) -> dict[str, Any]:
     """Button press"""
     if device_type not in ["KS1", "KS1BP"]:
         return {}
@@ -1504,13 +1504,12 @@ def obj560c(
             event_type="press",
             event_properties=None,
         )
-    else:
-        return {}
+    return {}
 
 
 def obj560d(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
-) -> dict[str, Any]| None:
+) -> dict[str, Any]:
     """Double button press"""
     if device_type not in ["KS1", "KS1BP"]:
         return {}
@@ -1521,13 +1520,12 @@ def obj560d(
             event_type="double_press",
             event_properties=None,
         )
-    else:
-        return {}
+    return {}
 
 
 def obj560e(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
-) -> dict[str, Any] | None:
+) -> dict[str, Any]:
     """Long button press"""
     if device_type not in ["KS1", "KS1BP"]:
         return {}
@@ -1538,8 +1536,7 @@ def obj560e(
             event_type="long_press",
             event_properties=None,
         )
-    else:
-        return {}
+    return {}
 
 
 # Dataobject dictionary
