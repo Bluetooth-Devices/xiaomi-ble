@@ -86,6 +86,7 @@ QUAD_BUTTON_TO_NAME = {
     4: "right",
 }
 
+
 # Advertisement conversion of measurement data
 # https://iot.mi.com/new/doc/accesses/direct-access/embedded-development/ble/object-definition
 def obj0003(
@@ -1509,7 +1510,7 @@ def obj560c(
 
 def obj560d(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
-) -> dict[str, Any]| None:
+) -> dict[str, Any] | None:
     """Double button press"""
     if device_type not in ["KS1", "KS1BP"]:
         return {}
