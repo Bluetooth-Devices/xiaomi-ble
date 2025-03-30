@@ -1504,8 +1504,7 @@ def obj560c(
             event_type="press",
             event_properties=None,
         )
-    else:
-        return {}
+    return {}
 
 
 def obj560d(
@@ -1521,8 +1520,7 @@ def obj560d(
             event_type="double_press",
             event_properties=None,
         )
-    else:
-        return {}
+    return {}
 
 
 def obj560e(
@@ -1538,8 +1536,7 @@ def obj560e(
             event_type="long_press",
             event_properties=None,
         )
-    else:
-        return {}
+    return {}
 
 
 # Dataobject dictionary
