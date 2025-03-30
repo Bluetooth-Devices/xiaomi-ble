@@ -79,6 +79,12 @@ P_STRUCT = struct.Struct("<H").unpack
 BUTTON_STRUCT = struct.Struct("<BBB").unpack
 FLOAT_STRUCT = struct.Struct("<f").unpack
 
+QUAD_BUTTON_TO_NAME = {
+  1: "left",
+  2: "mid_left",
+  3: "mid_right",
+  4: "right",
+}
 
 # Advertisement conversion of measurement data
 # https://iot.mi.com/new/doc/accesses/direct-access/embedded-development/ble/object-definition
@@ -1487,121 +1493,53 @@ def obj5414(
 
 def obj560c(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
-) -> dict[str, Any]:
+) -> dict[str, Any] | None:
     """Button press"""
-    if device_type in ["KS1", "KS1BP"]:
-        # button click 1-4
-        button = xobj[0]
-        if button == 1:
-            # left button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_left",
-                event_type="press",
-                event_properties=None,
-            )
-        if button == 2:
-            # mid left button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_mid_left",
-                event_type="press",
-                event_properties=None,
-            )
-        if button == 3:
-            # mid right button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_mid_right",
-                event_type="press",
-                event_properties=None,
-            )
-        if button == 4:
-            # right button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_right",
-                event_type="press",
-                event_properties=None,
-            )
-        else:
-            return {}
-    return {}
+    if device_type not in ["KS1", "KS1BP"]:
+        return {}
+    button = xobj[0]
+    if button_name := QUAD_BUTTON_TO_NAME[button]:
+        device.fire_event(
+            key=f"{str(EventDeviceKeys.BUTTON)}_{button_name}",
+            event_type="press",
+            event_properties=None,
+        )
+    else:
+        return {}
 
 
 def obj560d(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
-) -> dict[str, Any]:
+) -> dict[str, Any]| None:
     """Double button press"""
-    if device_type in ["KS1", "KS1BP"]:
-        # double button click 1-4
-        button = xobj[0]
-        if button == 1:
-            # left button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_left",
-                event_type="double_press",
-                event_properties=None,
-            )
-        if button == 2:
-            # mid left button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_mid_left",
-                event_type="double_press",
-                event_properties=None,
-            )
-        if button == 3:
-            # mid right button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_mid_right",
-                event_type="double_press",
-                event_properties=None,
-            )
-        if button == 4:
-            # right button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_right",
-                event_type="double_press",
-                event_properties=None,
-            )
-        else:
-            return {}
-    return {}
+    if device_type not in ["KS1", "KS1BP"]:
+        return {}
+    button = xobj[0]
+    if button_name := QUAD_BUTTON_TO_NAME[button]:
+        device.fire_event(
+            key=f"{str(EventDeviceKeys.BUTTON)}_{button_name}",
+            event_type="double_press",
+            event_properties=None,
+        )
+    else:
+        return {}
 
 
 def obj560e(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
-) -> dict[str, Any]:
+) -> dict[str, Any] | None:
     """Long button press"""
-    if device_type in ["KS1", "KS1BP"]:
-        button = xobj[0]
-        if button == 1:
-            # left button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_left",
-                event_type="long_press",
-                event_properties=None,
-            )
-        if button == 2:
-            # mid left button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_mid_left",
-                event_type="long_press",
-                event_properties=None,
-            )
-        if button == 3:
-            # mid right button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_mid_right",
-                event_type="long_press",
-                event_properties=None,
-            )
-        if button == 4:
-            # right button
-            device.fire_event(
-                key=f"{str(EventDeviceKeys.BUTTON)}_right",
-                event_type="long_press",
-                event_properties=None,
-            )
-        else:
-            return {}
-    return {}
+    if device_type not in ["KS1", "KS1BP"]:
+        return {}
+    button = xobj[0]
+    if button_name := QUAD_BUTTON_TO_NAME[button]:
+        device.fire_event(
+            key=f"{str(EventDeviceKeys.BUTTON)}_{button_name}",
+            event_type="long_press",
+            event_properties=None,
+        )
+    else:
+        return {}
 
 
 # Dataobject dictionary
