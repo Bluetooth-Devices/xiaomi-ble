@@ -80,11 +80,12 @@ BUTTON_STRUCT = struct.Struct("<BBB").unpack
 FLOAT_STRUCT = struct.Struct("<f").unpack
 
 QUAD_BUTTON_TO_NAME = {
-  1: "left",
-  2: "mid_left",
-  3: "mid_right",
-  4: "right",
+    1: "left",
+    2: "mid_left",
+    3: "mid_right",
+    4: "right",
 }
+
 
 # Advertisement conversion of measurement data
 # https://iot.mi.com/new/doc/accesses/direct-access/embedded-development/ble/object-definition
@@ -1510,7 +1511,7 @@ def obj560c(
 
 def obj560d(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
-) -> dict[str, Any]| None:
+) -> dict[str, Any] | None:
     """Double button press"""
     if device_type not in ["KS1", "KS1BP"]:
         return {}
