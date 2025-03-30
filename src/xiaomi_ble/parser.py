@@ -1071,6 +1071,15 @@ def obj4806(
     return {}
 
 
+def obj4808(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Humidity"""
+    humi = FLOAT_STRUCT(xobj)[0]
+    device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, round(humi, 1))
+    return {}
+
+
 def obj4818(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1461,6 +1470,140 @@ def obj4e1c(
     return {"device reset": True}
 
 
+def obj5003(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Battery"""
+    device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, xobj[0])
+    return {}
+
+
+def obj5414(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Device mode (KSI and KSIBP, not used in HA)"""
+    return {"mode": xobj[0]}
+
+
+def obj560c(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Button press"""
+    if device_type in ["KS1", "KS1BP"]:
+        # button click 1-4
+        button = xobj[0]
+        if button == 1:
+            # left button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_left",
+                event_type="press",
+                event_properties=None,
+            )
+        if button == 2:
+            # mid left button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_mid_left",
+                event_type="press",
+                event_properties=None,
+            )
+        if button == 3:
+            # mid right button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_mid_right",
+                event_type="press",
+                event_properties=None,
+            )
+        if button == 4:
+            # right button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_right",
+                event_type="press",
+                event_properties=None,
+            )
+        else:
+            return{}
+    return {}
+
+
+def obj560d(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Double button press"""
+    if device_type in ["KS1", "KS1BP"]:
+        # double button click 1-4
+        button = xobj[0]
+        if button == 1:
+            # left button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_left",
+                event_type="double_press",
+                event_properties=None,
+            )
+        if button == 2:
+            # mid left button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_mid_left",
+                event_type="double_press",
+                event_properties=None,
+            )
+        if button == 3:
+            # mid right button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_mid_right",
+                event_type="double_press",
+                event_properties=None,
+            )
+        if button == 4:
+            # right button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_right",
+                event_type="double_press",
+                event_properties=None,
+            )
+        else:
+            return{}
+    return {}
+
+
+def obj560e(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Long button press"""
+    if device_type in ["KS1", "KS1BP"]:
+        button = xobj[0]
+        if button == 1:
+            # left button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_left",
+                event_type="long_press",
+                event_properties=None,
+            )
+        if button == 2:
+            # mid left button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_mid_left",
+                event_type="long_press",
+                event_properties=None,
+            )
+        if button == 3:
+            # mid right button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_mid_right",
+                event_type="long_press",
+                event_properties=None,
+            )
+        if button == 4:
+            # right button
+            device.fire_event(
+                key=f"{str(EventDeviceKeys.BUTTON)}_right",
+                event_type="long_press",
+                event_properties=None,
+            )
+        else:
+            return{}
+    return {}
+
+
 # Dataobject dictionary
 # {dataObject_id: (converter}
 xiaomi_dataobject_dict = {
@@ -1499,6 +1642,7 @@ xiaomi_dataobject_dict = {
     0x4804: obj4804,
     0x4805: obj4805,
     0x4806: obj4806,
+    0x4808: obj4808,
     0x4818: obj4818,
     0x484E: obj484e,
     0x4851: obj4851,
@@ -1522,6 +1666,11 @@ xiaomi_dataobject_dict = {
     0x4E0C: obj4e0c,
     0x4E0D: obj4e0d,
     0x4E0E: obj4e0e,
+    0x5003: obj5003,
+    0x5414: obj5414,
+    0x560C: obj560c,
+    0x560D: obj560d,
+    0x560E: obj560e,
 }
 
 
@@ -1836,7 +1985,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                     dobject
                     and obj_length != 0
                     or hex(obj_typecode)
-                    in ["0x4a0c", "0x4a0d", "0x4a0e", "0x4e0c", "0x4e0d", "0x4e0e"]
+                    in ["0x4a0c", "0x4a0d", "0x4a0e",
+                        "0x4e0c", "0x4e0d", "0x4e0e",
+                        "0x560c", "0x560d", "0x560e"]
                 ):
                     resfunc = xiaomi_dataobject_dict.get(obj_typecode, None)
                     if resfunc:
