@@ -1521,7 +1521,7 @@ def obj560c(
                 event_properties=None,
             )
         else:
-            return{}
+            return {}
     return {}
 
 
@@ -1561,7 +1561,7 @@ def obj560d(
                 event_properties=None,
             )
         else:
-            return{}
+            return {}
     return {}
 
 
@@ -1600,7 +1600,7 @@ def obj560e(
                 event_properties=None,
             )
         else:
-            return{}
+            return {}
     return {}
 
 
@@ -1985,9 +1985,17 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                     dobject
                     and obj_length != 0
                     or hex(obj_typecode)
-                    in ["0x4a0c", "0x4a0d", "0x4a0e",
-                        "0x4e0c", "0x4e0d", "0x4e0e",
-                        "0x560c", "0x560d", "0x560e"]
+                    in [
+                        "0x4a0c",
+                        "0x4a0d",
+                        "0x4a0e",
+                        "0x4e0c",
+                        "0x4e0d",
+                        "0x4e0e",
+                        "0x560c",
+                        "0x560d",
+                        "0x560e",
+                    ]
                 ):
                     resfunc = xiaomi_dataobject_dict.get(obj_typecode, None)
                     if resfunc:
