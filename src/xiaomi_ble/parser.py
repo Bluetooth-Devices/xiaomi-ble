@@ -86,6 +86,18 @@ QUAD_BUTTON_TO_NAME = {
     4: "right",
 }
 
+OBJECTS_DEVICE_TYPE = {
+    "0x4a0c",
+    "0x4a0d",
+    "0x4a0e",
+    "0x4e0c",
+    "0x4e0d",
+    "0x4e0e",
+    "0x560c",
+    "0x560d",
+    "0x560e"
+}
+
 
 # Advertisement conversion of measurement data
 # https://iot.mi.com/new/doc/accesses/direct-access/embedded-development/ble/object-definition
@@ -1921,17 +1933,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                     dobject
                     and obj_length != 0
                     or hex(obj_typecode)
-                    in [
-                        "0x4a0c",
-                        "0x4a0d",
-                        "0x4a0e",
-                        "0x4e0c",
-                        "0x4e0d",
-                        "0x4e0e",
-                        "0x560c",
-                        "0x560d",
-                        "0x560e",
-                    ]
+                    in OBJECTS_DEVICE_TYPE
                 ):
                     resfunc = xiaomi_dataobject_dict.get(obj_typecode, None)
                     if resfunc:
