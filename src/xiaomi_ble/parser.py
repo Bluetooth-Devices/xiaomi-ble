@@ -95,7 +95,7 @@ OBJECTS_DEVICE_TYPE = {
     "0x4e0e",
     "0x560c",
     "0x560d",
-    "0x560e"
+    "0x560e",
 }
 
 
@@ -1932,8 +1932,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 if (
                     dobject
                     and obj_length != 0
-                    or hex(obj_typecode)
-                    in OBJECTS_DEVICE_TYPE
+                    or hex(obj_typecode) in OBJECTS_DEVICE_TYPE
                 ):
                     resfunc = xiaomi_dataobject_dict.get(obj_typecode, None)
                     if resfunc:
