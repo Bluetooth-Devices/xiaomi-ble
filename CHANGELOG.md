@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.36.0 (2025-03-31)
+
+### Features
+
+- Add ks1 and ks1bp ([#156](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/156),
+  [`415a3b3`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/415a3b38b113256e700284198d9a2d911886d79a))
+
+
 ## v0.35.0 (2025-03-29)
 
 ### Chores
