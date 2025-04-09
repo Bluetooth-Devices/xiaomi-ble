@@ -1552,6 +1552,49 @@ def obj560e(
     return {}
 
 
+def obj6e16(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Body Composition Scale S400"""
+    (profile_id, data, _) = struct.unpack("<BII", xobj)
+    if not data:
+        return {}
+    mass = data & 0x7FF
+    heart_rate = (data >> 11) & 0x7F
+    impedance = data >> 18
+    if mass != 0:
+        device.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, mass / 10)
+    if 0 < heart_rate < 127:
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.HEART_RATE,
+            name="Heart Rate",
+            device_class=ExtendedSensorDeviceClass.HEART_RATE,
+            native_unit_of_measurement="bpm",
+            native_value=heart_rate + 50,
+        )
+    if impedance != 0:
+        if mass != 0:
+            device.update_predefined_sensor(
+                SensorLibrary.IMPEDANCE__OHM, impedance / 10
+            )
+        else:
+            device.update_sensor(
+                key=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
+                name="Impedance Low",
+                device_class=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
+                native_unit_of_measurement=Units.OHM,
+                native_value=impedance / 10,
+            )
+    device.update_sensor(
+        key=ExtendedSensorDeviceClass.PROFILE_ID,
+        name="Profile ID",
+        device_class=ExtendedSensorDeviceClass.PROFILE_ID,
+        native_unit_of_measurement=None,
+        native_value=profile_id,
+    )
+    return {}
+
+
 # Dataobject dictionary
 # {dataObject_id: (converter}
 xiaomi_dataobject_dict = {
@@ -1619,6 +1662,7 @@ xiaomi_dataobject_dict = {
     0x560C: obj560c,
     0x560D: obj560d,
     0x560E: obj560e,
+    0x6E16: obj6e16,
 }
 
 

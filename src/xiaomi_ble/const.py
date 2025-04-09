@@ -86,3 +86,12 @@ class ExtendedSensorDeviceClass(BaseDeviceClass):
 
     # No-One-Duration
     DURATION_CLEARED = "duration_cleared"
+
+    # Low frequency impedance
+    IMPEDANCE_LOW = "impedance_low"
+
+    # Heart rate
+    HEART_RATE = "heart_rate"
+
+    # User profile id
+    PROFILE_ID = "profile_id"
