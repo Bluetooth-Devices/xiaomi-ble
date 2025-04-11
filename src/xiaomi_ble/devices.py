@@ -278,6 +278,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Body Composition Scale",
         model="MJTZC01YM",
     ),
+    0x5968: DeviceEntry(
+        name="Switch (double button)",
+        model="XMWS01XS",
+    ),
 }
 
 
