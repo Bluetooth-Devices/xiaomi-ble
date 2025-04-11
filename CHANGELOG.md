@@ -1,6 +1,47 @@
 # CHANGELOG
 
 
+## v0.37.0 (2025-04-11)
+
+### Chores
+
+- **deps**: Bump aiohttp from 3.11.14 to 3.11.16
+  ([#160](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/160),
+  [`12093dc`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/12093dc3d76f3ef2cfc14adb0ab9da90201dd598))
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+- **deps-dev**: Bump pytest-cov from 6.0.0 to 6.1.1
+  ([#159](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/159),
+  [`446907c`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/446907cffa4bbd668246bd545e8a4882128ca5ee))
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+- **pre-commit.ci**: Pre-commit autoupdate
+  ([#157](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/157),
+  [`8831729`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/8831729d0ebf0d41a74c83933960f02970b85eb0))
+
+Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+
+- **pre-commit.ci**: Pre-commit autoupdate
+  ([#162](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/162),
+  [`35fa4d7`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/35fa4d7d5722cb68966b79fc6961eb37f149841f))
+
+Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+
+### Features
+
+- Support Body Composition Scale S400 (MJTZC01YM)
+  ([#163](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/163),
+  [`5840470`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/5840470b93519946771afafe7bcffdd3ca855f76))
+
+Signed-off-by: zry98 <dev@zry.io>
+
+
 ## v0.36.0 (2025-03-31)
 
 ### Features
