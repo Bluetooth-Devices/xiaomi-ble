@@ -274,6 +274,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Odor Eliminator",
         model="SU001-T",
     ),
+    0x3BD5: DeviceEntry(
+        name="Body Composition Scale",
+        model="MJTZC01YM",
+    ),
 }
 
 
@@ -285,4 +289,5 @@ SLEEPY_DEVICE_MODELS = {
     "MMC-W505",
     "RS1BB(MI)",
     "XMOSB01XS",
+    "MJTZC01YM",
 }

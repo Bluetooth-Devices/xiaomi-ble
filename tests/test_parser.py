@@ -61,6 +61,9 @@ KEY_SCORE = DeviceKey(key="score", device_id=None)
 KEY_SIGNAL_STRENGTH = DeviceKey(key="signal_strength", device_id=None)
 KEY_SMOKE = DeviceKey(key="smoke", device_id=None)
 KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
+KEY_IMPEDANCE_LOW = DeviceKey(key="impedance_low", device_id=None)
+KEY_HEART_RATE = DeviceKey(key="heart_rate", device_id=None)
+KEY_PROFILE_ID = DeviceKey(key="profile_id", device_id=None)
 
 
 @pytest.fixture(autouse=True)
@@ -3277,6 +3280,144 @@ def test_Xiaomi_XMWXKG01LM_press():
                 event_properties=None,
             ),
         },
+    )
+
+
+def test_Xiaomi_Scale_S400_MJTZC01YM():
+    """Test Xiaomi parser for Xiaomi Body Composition Scale S400 MJTZC01YM."""
+    data_string = b'HY\xd5;\n\xbc\x07\x8f\xf24\x8c\x84A8\xe90"\x00\x00\x00\x9eS\x85\x99'
+    advertisement = bytes_to_service_info(data_string, address="8C:D0:B2:F6:BE:EF")
+    bindkey = "0728974d657a4b60964c1b1677f35f7c"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Body Composition Scale BEEF (MJTZC01YM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Body Composition Scale BEEF",
+                manufacturer="Xiaomi",
+                model="MJTZC01YM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_MASS: SensorDescription(
+                device_key=KEY_MASS,
+                device_class=DeviceClass.MASS,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_IMPEDANCE: SensorDescription(
+                device_key=KEY_IMPEDANCE,
+                device_class=DeviceClass.IMPEDANCE,
+                native_unit_of_measurement=Units.OHM,
+            ),
+            KEY_HEART_RATE: SensorDescription(
+                device_key=KEY_HEART_RATE,
+                device_class=ExtendedSensorDeviceClass.HEART_RATE,
+                native_unit_of_measurement="bpm",
+            ),
+            KEY_PROFILE_ID: SensorDescription(
+                device_key=KEY_PROFILE_ID,
+                device_class=ExtendedSensorDeviceClass.PROFILE_ID,
+                native_unit_of_measurement=None,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_MASS: SensorValue(
+                name="Mass",
+                device_key=KEY_MASS,
+                native_value=69.9,
+            ),
+            KEY_IMPEDANCE: SensorValue(
+                name="Impedance",
+                device_key=KEY_IMPEDANCE,
+                native_value=543.2,
+            ),
+            KEY_HEART_RATE: SensorValue(
+                name="Heart Rate",
+                device_key=KEY_HEART_RATE,
+                native_value=92,
+            ),
+            KEY_PROFILE_ID: SensorValue(
+                name="Profile ID",
+                device_key=KEY_PROFILE_ID,
+                native_value=1,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+    )
+
+
+def test_Xiaomi_Scale_S400_MJTZC01YM_packet_2():
+    """Test Xiaomi parser for Xiaomi Body Composition Scale S400 MJTZC01YM
+    (second packet with only low frequency impedance).
+    """
+    data_string = b"HY\xd5;\x0b\xd6\xef\x0b%\xdbrx^~/F\xd6\x00\x00\x00\xd8d-\xf6"
+    advertisement = bytes_to_service_info(data_string, address="8C:D0:B2:F6:BE:EF")
+    bindkey = "0728974d657a4b60964c1b1677f35f7c"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Body Composition Scale BEEF (MJTZC01YM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Body Composition Scale BEEF",
+                manufacturer="Xiaomi",
+                model="MJTZC01YM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_IMPEDANCE_LOW: SensorDescription(
+                device_key=KEY_IMPEDANCE_LOW,
+                device_class=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
+                native_unit_of_measurement=Units.OHM,
+            ),
+            KEY_PROFILE_ID: SensorDescription(
+                device_key=KEY_PROFILE_ID,
+                device_class=ExtendedSensorDeviceClass.PROFILE_ID,
+                native_unit_of_measurement=None,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_IMPEDANCE_LOW: SensorValue(
+                name="Impedance Low",
+                device_key=KEY_IMPEDANCE_LOW,
+                native_value=497.6,
+            ),
+            KEY_PROFILE_ID: SensorValue(
+                name="Profile ID",
+                device_key=KEY_PROFILE_ID,
+                native_value=1,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
     )
 
 
