@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.38.0 (2025-04-15)
+
+### Chores
+
+- **pre-commit.ci**: Pre-commit autoupdate
+  ([#165](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/165),
+  [`1d958af`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/1d958af6e974c619f031d0216c313bc88539da9c))
+
+Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+
+### Features
+
+- Add support for XMWS01XS ([#161](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/161),
+  [`2401e72`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/2401e720844f22a129e0a52ebeca08a366c8a3d7))
+
+
 ## v0.37.0 (2025-04-11)
 
 ### Chores
