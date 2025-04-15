@@ -3421,5 +3421,134 @@ def test_Xiaomi_Scale_S400_MJTZC01YM_packet_2():
     )
 
 
+def test_Xiaomi_XMWS01XS_press():
+    """Test Xiaomi parser for XMWS01XS Switch (double button)."""
+    data_string = b"XYhYR\x11n _\xb9\x080&T\x8d\x02\x00\x00\xce1\xcf\xc3"
+    advertisement = bytes_to_service_info(data_string, address="08:B9:5F:20:6E:11")
+    bindkey = "59ba8eef0f5351bb09d6896762d5afa5"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Switch (double button) 6E11 (XMWS01XS)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Switch (double button) 6E11",
+                manufacturer="Xiaomi",
+                model="XMWS01XS",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            DeviceKey(key="button_left", device_id=None): Event(
+                device_key=DeviceKey(key="button_left", device_id=None),
+                name="Button Left",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_XMWS01XS_double_press():
+    """Test Xiaomi parser for XMWS01XS Switch (double button)."""
+    data_string = b"XYhYQ\x11n _\xb9\x08\xd9\x1b\xd5\x85\x02\x00\x00\x07\xcc\xa8I"
+    advertisement = bytes_to_service_info(data_string, address="08:B9:5F:20:6E:11")
+    bindkey = "59ba8eef0f5351bb09d6896762d5afa5"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Switch (double button) 6E11 (XMWS01XS)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Switch (double button) 6E11",
+                manufacturer="Xiaomi",
+                model="XMWS01XS",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            DeviceKey(key="button_right", device_id=None): Event(
+                device_key=DeviceKey(key="button_right", device_id=None),
+                name="Button Right",
+                event_type="double_press",
+                event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_XMWS01XS_long_press():
+    """Test Xiaomi parser for XMWS01XS Switch (double button)."""
+    data_string = b"XYhYS\x11n _\xb9\x08\xf3xQ\x81\x02\x00\x00\xea\xc1\x83\xf4"
+    advertisement = bytes_to_service_info(data_string, address="08:B9:5F:20:6E:11")
+    bindkey = "59ba8eef0f5351bb09d6896762d5afa5"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Switch (double button) 6E11 (XMWS01XS)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Switch (double button) 6E11",
+                manufacturer="Xiaomi",
+                model="XMWS01XS",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            DeviceKey(key="button_right", device_id=None): Event(
+                device_key=DeviceKey(key="button_right", device_id=None),
+                name="Button Right",
+                event_type="long_press",
+                event_properties=None,
+            ),
+        },
+    )
+
+
 def test_can_create():
     XiaomiBluetoothDeviceData()
