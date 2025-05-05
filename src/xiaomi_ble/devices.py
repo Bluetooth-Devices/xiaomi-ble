@@ -294,4 +294,5 @@ SLEEPY_DEVICE_MODELS = {
     "RS1BB(MI)",
     "XMOSB01XS",
     "MJTZC01YM",
+    "HS1BB(MI)",
 }
