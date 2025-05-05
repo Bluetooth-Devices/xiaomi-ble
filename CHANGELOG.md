@@ -1,6 +1,32 @@
 # CHANGELOG
 
 
+## v0.38.1 (2025-05-05)
+
+### Bug Fixes
+
+- Add hs1bb_mi to sleepy devices list
+  ([`aa944d9`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/aa944d92e86b39ce79d0c291a61b1e5bb650ac8a))
+
+### Chores
+
+- **deps**: Bump aiohttp from 3.11.16 to 3.11.17
+  ([#166](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/166),
+  [`39dc292`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/39dc2929b74911b5e3b0c953a055581c7bb2ef01))
+
+- **deps**: Bump aiohttp from 3.11.17 to 3.11.18
+  ([#169](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/169),
+  [`c5bfd2b`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/c5bfd2b8d57703642ba4dd89031cad7e1fdecc67))
+
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+- **deps**: Bump orjson from 3.10.16 to 3.10.18
+  ([#170](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/170),
+  [`2fa41a0`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/2fa41a07b035941962d6a3b1526b4ef8ed50e629))
+
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+
 ## v0.38.0 (2025-04-15)
 
 ### Chores
