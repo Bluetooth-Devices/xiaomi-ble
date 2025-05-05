@@ -1,6 +1,16 @@
 # CHANGELOG
 
 
+## v0.39.0 (2025-05-05)
+
+### Features
+
+- Add xiaomi mbs17 ([#171](https://github.com/Bluetooth-Devices/xiaomi-ble/pull/171),
+  [`4468b52`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/4468b52b6ef1c849af9b9f0f2c512a23315462d9))
+
+Co-authored-by: Ernst <ernst.klamer@rhdhv.com>
+
+
 ## v0.38.1 (2025-05-05)
 
 ### Bug Fixes
