@@ -1961,18 +1961,18 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "sensor-state-data"
-version = "2.18.1"
+version = "2.19.0"
 description = "Models for storing and converting Sensor Data state"
 optional = false
 python-versions = "<4.0,>=3.9"
 groups = ["main"]
 files = [
-    {file = "sensor_state_data-2.18.1-py3-none-any.whl", hash = "sha256:45a223acf5d4aefde45c028fa810c7925db6448984097aa1b500fe4f206d113f"},
-    {file = "sensor_state_data-2.18.1.tar.gz", hash = "sha256:25f17ed98748ae006ddab82d5013cf30301daaf23526d1992f99c4dc0beb49c3"},
+    {file = "sensor_state_data-2.19.0-py3-none-any.whl", hash = "sha256:79313cf595aa3d71d65ac349804eedae5bff5e9f17614732d6268041cb6b5043"},
+    {file = "sensor_state_data-2.19.0.tar.gz", hash = "sha256:d125c27eff7b4d56816c10e4af8866d1a9d419192eda1a0c8b40d87e6246cca5"},
 ]
 
 [package.extras]
-docs = ["Sphinx (>=5.0,<6.0)", "myst-parser (>=0.18,<0.19)", "sphinx-rtd-theme (>=1.0,<2.0)"]
+docs = ["Sphinx (>=5,<8)", "myst-parser (>=0.18,<3.1)", "sphinx-rtd-theme (>=1,<4)"]
 
 [[package]]
 name = "snowballstemmer"
