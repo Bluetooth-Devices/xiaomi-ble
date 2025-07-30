@@ -294,6 +294,11 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Body Composition Scale",
         model="MJTZC03YM",
     ),
+    0x50FB: DeviceEntry(
+        name="Human Presence Sensor",
+        model="ES3",
+        manufacturer="Linptech",
+    ),
     0x5968: DeviceEntry(
         name="Switch (double button)",
         model="XMWS01XS",
@@ -303,6 +308,7 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
 
 SLEEPY_DEVICE_MODELS = {
     "CGH1",
+    "ES3",
     "JTYJGD03MI",
     "MCCGQ02HL",
     "RTCGQ02LM",

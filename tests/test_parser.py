@@ -3552,3 +3552,143 @@ def test_Xiaomi_XMWS01XS_long_press():
 
 def test_can_create():
     XiaomiBluetoothDeviceData()
+
+
+def test_Xiaomi_ES3_illuminance():
+    """Test Xiaomi parser for Linptech ES3 illuminance."""
+    data_string = b"HY\xfbP\xd9\x86\xd2~\x8fS\x13\xe9\x00\x00\x000\xadm\xa8"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:C7:C3:76")
+    bindkey = "b26295a7a08fbac306c8706ade7f0fe4"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Human Presence Sensor C376 (ES3)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Human Presence Sensor C376",
+                manufacturer="Linptech",
+                model="ES3",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_ILLUMINANCE: SensorDescription(
+                device_key=KEY_ILLUMINANCE,
+                device_class=DeviceClass.ILLUMINANCE,
+                native_unit_of_measurement=Units.LIGHT_LUX,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_ILLUMINANCE: SensorValue(
+                name="Illuminance", device_key=KEY_ILLUMINANCE, native_value=173
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+    )
+
+
+def test_Xiaomi_ES3_occupancy_on():
+    """Test Xiaomi parser for Linptech ES3 occupancy detected."""
+    data_string = b"XY\xfbP\xdav\xc3\xc78\xc1\xa4\xaa\xbcL\x16\x00\x00\x00\xc6\x0c\x16F"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:C7:C3:76")
+    bindkey = "b26295a7a08fbac306c8706ade7f0fe4"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Human Presence Sensor C376 (ES3)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Human Presence Sensor C376",
+                manufacturer="Linptech",
+                model="ES3",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_OCCUPANCY: BinarySensorDescription(
+                device_key=KEY_BINARY_OCCUPANCY,
+                device_class=BinarySensorDeviceClass.OCCUPANCY,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OCCUPANCY: BinarySensorValue(
+                device_key=KEY_BINARY_OCCUPANCY, name="Occupancy", native_value=True
+            ),
+        },
+    )
+
+
+def test_Xiaomi_ES3_occupancy_off():
+    """Test Xiaomi parser for Linptech ES3 occupancy cleared."""
+    data_string = b"XY\xfbP2\x8a\x88\xa48\xc1\xa4E\x8a\x85\xb7\x96\x00\x00H\xfe\x13\xba"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A4:88:8A")
+    bindkey = "fb352ea2139ab095877a9e2ae600c912"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Human Presence Sensor 888A (ES3)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Human Presence Sensor 888A",
+                manufacturer="Linptech",
+                model="ES3",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_OCCUPANCY: BinarySensorDescription(
+                device_key=KEY_BINARY_OCCUPANCY,
+                device_class=BinarySensorDeviceClass.OCCUPANCY,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OCCUPANCY: BinarySensorValue(
+                device_key=KEY_BINARY_OCCUPANCY, name="Occupancy", native_value=False
+            ),
+        },
+    )
