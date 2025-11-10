@@ -23,6 +23,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESCCM
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import (
     BinarySensorDeviceClass,
+    DeviceClass,
     SensorLibrary,
     SensorUpdate,
     Units,
@@ -1606,6 +1607,43 @@ def obj560e(
     return {}
 
 
+def obj4e16(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """
+    Parser for Xiaomi Smart Scale S200 MJTZC02YM
+    https://www.mi.com/global/product/xiaomi-smart-scale-s200/
+    """
+
+    if len(xobj) != 9:
+        return {}
+
+    (profile_id, data, timestamp) = struct.unpack("<BII", xobj)
+    if data == 0:
+        return {}
+
+    weight_kg = data / 100.0
+    device.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, weight_kg)
+    device.update_sensor(
+        key=ExtendedSensorDeviceClass.PROFILE_ID,
+        name="Profile ID",
+        device_class=ExtendedSensorDeviceClass.PROFILE_ID,
+        native_unit_of_measurement=None,
+        native_value=profile_id,
+    )
+    device.update_sensor(
+        key=DeviceClass.TIMESTAMP,
+        name="Measurement Time",
+        device_class=DeviceClass.TIMESTAMP,
+        native_unit_of_measurement=None,
+        native_value=datetime.datetime.fromtimestamp(
+            timestamp, tz=datetime.timezone.utc
+        ),
+    )
+
+    return {}
+
+
 def obj6e16(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1707,6 +1745,7 @@ xiaomi_dataobject_dict = {
     0x4C08: obj4c08,
     0x4C14: obj4c14,
     0x4E01: obj4e01,
+    0x4E16: obj4e16,
     0x4E1C: obj4e1c,
     0x4E0C: obj4e0c,
     0x4E0D: obj4e0d,
