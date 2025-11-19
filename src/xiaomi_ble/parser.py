@@ -23,7 +23,6 @@ from cryptography.hazmat.primitives.ciphers.aead import AESCCM
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import (
     BinarySensorDeviceClass,
-    DeviceClass,
     SensorLibrary,
     SensorUpdate,
     Units,
@@ -1630,15 +1629,6 @@ def obj4e16(
         device_class=ExtendedSensorDeviceClass.PROFILE_ID,
         native_unit_of_measurement=None,
         native_value=profile_id,
-    )
-    device.update_sensor(
-        key=DeviceClass.TIMESTAMP,
-        name="Measurement Time",
-        device_class=DeviceClass.TIMESTAMP,
-        native_unit_of_measurement=None,
-        native_value=datetime.datetime.fromtimestamp(
-            timestamp, tz=datetime.timezone.utc
-        ),
     )
 
     return {}

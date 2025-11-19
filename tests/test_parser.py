@@ -1,6 +1,5 @@
 """The tests for the Xiaomi ble parser."""
 
-import datetime
 import logging
 from unittest.mock import patch
 
@@ -3314,11 +3313,6 @@ def test_Xiaomi_Scale_S200_MJTZC02YM():
                 device_class=DeviceClass.MASS,
                 native_unit_of_measurement=Units.MASS_KILOGRAMS,
             ),
-            KEY_TIMESTAMP: SensorDescription(
-                device_key=KEY_TIMESTAMP,
-                device_class=DeviceClass.TIMESTAMP,
-                native_unit_of_measurement=None,
-            ),
             KEY_PROFILE_ID: SensorDescription(
                 device_key=KEY_PROFILE_ID,
                 device_class=ExtendedSensorDeviceClass.PROFILE_ID,
@@ -3335,13 +3329,6 @@ def test_Xiaomi_Scale_S200_MJTZC02YM():
                 name="Mass",
                 device_key=KEY_MASS,
                 native_value=62.25,
-            ),
-            KEY_TIMESTAMP: SensorValue(
-                name="Measurement Time",
-                device_key=KEY_TIMESTAMP,
-                native_value=datetime.datetime(
-                    2025, 11, 9, 22, 54, 2, tzinfo=datetime.timezone.utc
-                ),
             ),
             KEY_PROFILE_ID: SensorValue(
                 name="Profile ID",
