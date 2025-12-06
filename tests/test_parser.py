@@ -64,6 +64,7 @@ KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
 KEY_IMPEDANCE_LOW = DeviceKey(key="impedance_low", device_id=None)
 KEY_HEART_RATE = DeviceKey(key="heart_rate", device_id=None)
 KEY_PROFILE_ID = DeviceKey(key="profile_id", device_id=None)
+KEY_TIMESTAMP = DeviceKey(key="timestamp", device_id=None)
 
 
 @pytest.fixture(autouse=True)
@@ -3280,6 +3281,66 @@ def test_Xiaomi_XMWXKG01LM_press():
                 event_properties=None,
             ),
         },
+    )
+
+
+def test_Xiaomi_Scale_S200_MJTZC02YM():
+    """Test Xiaomi parser for Xiaomi Smart Scale S200 MJTZC02YM."""
+    data_string = (
+        b"HY\x04L\x01\x9a\x80\xa2u\x93\x90\x10\xf0\xab\xc4\xfa\xdc\x06\x00\x00=)\xc0D"
+    )
+    advertisement = bytes_to_service_info(data_string, address="D0:7B:6F:27:D7:29")
+    bindkey = "653b1b10e1cb35e4ac5e60fa45f3bf29"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    #    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Smart Scale S200 D729 (MJTZC02YM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Smart Scale S200 D729",
+                manufacturer="Xiaomi",
+                model="MJTZC02YM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_MASS: SensorDescription(
+                device_key=KEY_MASS,
+                device_class=DeviceClass.MASS,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_PROFILE_ID: SensorDescription(
+                device_key=KEY_PROFILE_ID,
+                device_class=ExtendedSensorDeviceClass.PROFILE_ID,
+                native_unit_of_measurement=None,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_MASS: SensorValue(
+                name="Mass",
+                device_key=KEY_MASS,
+                native_value=62.25,
+            ),
+            KEY_PROFILE_ID: SensorValue(
+                name="Profile ID",
+                device_key=KEY_PROFILE_ID,
+                native_value=1,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
     )
 
 
