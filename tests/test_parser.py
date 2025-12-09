@@ -470,6 +470,50 @@ def test_Xiaomi_CGDK2():
     )
 
 
+def test_Xiaomi_CGDK3():
+    """Test Xiaomi parser for CGDK3."""
+    data_string = b"HXYO\xefTo\x0etPr\x93!\x01\x008\xd7C3"
+    bindkey = "872ea1bb02ba9713e885cb054c537368"
+
+    advertisement = bytes_to_service_info(data_string, address="58:2D:34:87:94:0C")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Temperature/Humidity Sensor 940C (CGDK3)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temperature/Humidity Sensor 940C",
+                manufacturer="Xiaomi",
+                model="CGDK3",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_TEMPERATURE: SensorDescription(
+                device_key=KEY_TEMPERATURE,
+                device_class=DeviceClass.TEMPERATURE,
+                native_unit_of_measurement="°C",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=23.8
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
 def test_Xiaomi_LYWSD02():
     """Test Xiaomi parser for LYWSD02."""
 
