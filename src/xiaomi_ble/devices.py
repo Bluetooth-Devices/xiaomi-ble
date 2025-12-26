@@ -298,6 +298,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Body Composition Scale",
         model="MJTZC03YM",
     ),
+    0x4F59: DeviceEntry(
+        name="Temperature/Humidity Sensor",
+        model="CGDK3",
+    ),
     0x50FB: DeviceEntry(
         name="Human Presence Sensor",
         model="ES3",
