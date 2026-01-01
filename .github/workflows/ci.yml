@@ -85,14 +85,14 @@ jobs:
       # - Create GitHub release
       - name: Python Semantic Release
         id: release
-        uses: python-semantic-release/python-semantic-release@v10.5.2
+        uses: python-semantic-release/python-semantic-release@v10.5.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         if: steps.release.outputs.released == 'true'
       - name: Upload Github Release Assets
-        uses: python-semantic-release/publish-action@v10.5.2
+        uses: python-semantic-release/publish-action@v10.5.3
         if: steps.release.outputs.released == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
