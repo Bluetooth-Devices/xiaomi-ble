@@ -1998,7 +1998,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.set_device_manufacturer(device.manufacturer)
 
         # check that data contains object
-        if frctrl_object_include == 0 and device.model not in ["XCQ03RM"]:
+        if frctrl_object_include == 0 and self.device_id not in [0x0248]:
             # data does not contain Object
             _LOGGER.debug("Advertisement doesn't contain payload, adv: %s.\n%s", data.hex(), sinfo)
             return False
@@ -2019,7 +2019,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             # check minimum advertisement length with data
             firmware = "Xiaomi (MiBeacon V" + str(frctrl_version) + ")"
             sinfo += ", No encryption"
-            if msg_length < i + 3:
+            if msg_length < i + 3 and self.device_id not in [0x0248]:
                 _LOGGER.debug(
                     "Invalid data length (in non-encrypted data), adv: %s",
                     data.hex(),
