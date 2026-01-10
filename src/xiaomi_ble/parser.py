@@ -30,11 +30,13 @@ from sensor_state_data import (
 
 from .const import (
     CHARACTERISTIC_BATTERY,
+    SERVICE_BT_BASE,
     SERVICE_HHCCJCY10,
     SERVICE_MIBEACON,
     SERVICE_SCALE1,
     SERVICE_SCALE2,
     TIMEOUT_1DAY,
+    TIMEOUT_15MIN,
     EncryptionScheme,
     ExtendedBinarySensorDeviceClass,
     ExtendedSensorDeviceClass,
@@ -1996,9 +1998,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.set_device_manufacturer(device.manufacturer)
 
         # check that data contains object
-        if frctrl_object_include == 0:
+        if frctrl_object_include == 0 and device.model not in ["XCQ03RM"]:
             # data does not contain Object
-            _LOGGER.debug("Advertisement doesn't contain payload, adv: %s", data.hex())
+            _LOGGER.debug("Advertisement doesn't contain payload, adv: %s.\n%s", data.hex(), sinfo)
             return False
 
         self.pending = False
@@ -2274,6 +2276,37 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.bindkey_verified = True
         return decrypted_payload
 
+    async def _poll_roidmi_f8(self, client: BleakClient) -> dict[str, Any]:
+        """ Poll information from vacuum cleaner """
+
+        # FFD2: battery pack voltage (2 decimal volts)
+        battery_char = client.services.get_characteristic(SERVICE_BT_BASE.format("ffd2"))
+        payload = await client.read_gatt_char(battery_char)
+
+        if len(payload) >= 7:
+            v1_raw = int.from_bytes(payload[5:7], "little", signed=False)
+            pack_voltage = round(v1_raw / 100.0, 2)
+            self.update_predefined_sensor(
+                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
+                pack_voltage,
+            )
+
+        # FFD8: contains ON/OFF, instant power, and battery estimate
+        power_char = client.services.get_characteristic(SERVICE_BT_BASE.format("ffd8"))
+        payload = await client.read_gatt_char(power_char)
+        if len(payload) >= 2:
+            st = payload[1]
+            # battery value is estimate
+            battery = int.from_bytes(payload[6:8], "big", signed=False)
+            # 0x00 ON, 0x01 OFF
+            self.update_predefined_binary_sensor(
+                BinarySensorDeviceClass.POWER,
+                st == 0x00,
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.BATTERY__PERCENTAGE, round(battery / 18.5, 1)
+            )
+
     def poll_needed(
         self, service_info: BluetoothServiceInfo, last_poll: float | None
     ) -> bool:
@@ -2287,28 +2320,41 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             # kind of device we are
             return False
 
-        if self.device_id not in [0x03BC, 0x0098]:
-            return False
+        # HHCC plant/garden sensors: poll daily
+        if self.device_id in [0x03BC, 0x0098]:
+            return not last_poll or last_poll > TIMEOUT_1DAY
 
-        return not last_poll or last_poll > TIMEOUT_1DAY
+        # Roidmi F8 Cordless Vacuum Cleaner (XCQ03RM): poll every 15 minutes
+        if self.device_id == 0x0248:
+            return not last_poll or last_poll > TIMEOUT_15MIN
+
+        return False
 
     async def async_poll(self, ble_device: BLEDevice) -> SensorUpdate:
         """
         Poll the device to retrieve any values we can't get from passive listening.
         """
-        if self.device_id in [0x03BC, 0x0098]:
-            client = await establish_connection(
-                BleakClient, ble_device, ble_device.address
-            )
-            try:
-                battery_char = client.services.get_characteristic(
-                    CHARACTERISTIC_BATTERY
-                )
-                payload = await client.read_gatt_char(battery_char)
-            finally:
-                await client.disconnect()
+        # Only certain devices need active polling
+        if self.device_id not in [0x03BC, 0x0098, 0x0248]:
+            return self._finish_update()
 
-            self.set_device_sw_version(payload[2:].decode("utf-8"))
-            self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, payload[0])
+        # _LOGGER.debug("connecting to device ID %s", self.device_id)
+        client = await establish_connection(BleakClient, ble_device, ble_device.address)
+        try:
+            # HHCC plant/garden sensors: dedicated battery characteristic
+            if self.device_id in [0x03BC, 0x0098]:
+                battery_char = client.services.get_characteristic(CHARACTERISTIC_BATTERY)
+                payload = await client.read_gatt_char(battery_char)
+
+                self.set_device_sw_version(payload[2:].decode("utf-8"))
+                self.update_predefined_sensor(
+                    SensorLibrary.BATTERY__PERCENTAGE, payload[0]
+                )
+
+            # Roidmi F8 Cordless Vacuum Cleaner (XCQ03RM)
+            elif self.device_id == 0x0248:
+                await self._poll_roidmi_f8(client)
+        finally:
+            await client.disconnect()
 
         return self._finish_update()
