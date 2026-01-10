@@ -2000,7 +2000,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # check that data contains object
         if frctrl_object_include == 0 and self.device_id not in [0x0248]:
             # data does not contain Object
-            _LOGGER.debug("Advertisement doesn't contain payload, adv: %s.\n%s", data.hex(), sinfo)
+            _LOGGER.debug(
+                "Advertisement doesn't contain payload, adv: %s.\n%s", data.hex(), sinfo
+            )
             return False
 
         self.pending = False
@@ -2277,10 +2279,12 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         return decrypted_payload
 
     async def _poll_roidmi_f8(self, client: BleakClient) -> dict[str, Any]:
-        """ Poll information from vacuum cleaner """
+        """Poll information from vacuum cleaner"""
 
         # FFD2: battery pack voltage (2 decimal volts)
-        battery_char = client.services.get_characteristic(SERVICE_BT_BASE.format("ffd2"))
+        battery_char = client.services.get_characteristic(
+            SERVICE_BT_BASE.format("ffd2")
+        )
         payload = await client.read_gatt_char(battery_char)
 
         if len(payload) >= 7:
@@ -2343,7 +2347,9 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         try:
             # HHCC plant/garden sensors: dedicated battery characteristic
             if self.device_id in [0x03BC, 0x0098]:
-                battery_char = client.services.get_characteristic(CHARACTERISTIC_BATTERY)
+                battery_char = client.services.get_characteristic(
+                    CHARACTERISTIC_BATTERY
+                )
                 payload = await client.read_gatt_char(battery_char)
 
                 self.set_device_sw_version(payload[2:].decode("utf-8"))
