@@ -1563,15 +1563,24 @@ def obj560c(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Button press"""
-    if device_type not in ["KS1", "KS1BP"]:
+    if device_type not in ["KS1", "KS1BP", "KS2BB"]:
         return {}
-    button = xobj[0]
-    if button_name := QUAD_BUTTON_TO_NAME[button]:
-        device.fire_event(
-            key=f"{str(EventDeviceKeys.BUTTON)}_{button_name}",
-            event_type="press",
-            event_properties=None,
+    if device_type == "KS2BB":
+        button_key = EventDeviceKeys.BUTTON
+    else:
+        button = xobj[0]
+        button_name = QUAD_BUTTON_TO_NAME.get(button)
+        button_key = (
+            f"{str(EventDeviceKeys.BUTTON)}_{button_name}"
+            if button_name
+            else EventDeviceKeys.BUTTON
         )
+
+    device.fire_event(
+        key=button_key,
+        event_type="press",
+        event_properties=None,
+    )
     return {}
 
 
