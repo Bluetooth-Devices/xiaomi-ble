@@ -3746,7 +3746,7 @@ def test_Xiaomi_ES3_occupancy_on():
         },
         binary_entity_values={
             KEY_BINARY_OCCUPANCY: BinarySensorValue(
-                device_key=KEY_BINARY_OCCUPANCY, name="Occupancy", native_value=False
+                device_key=KEY_BINARY_OCCUPANCY, name="Occupancy", native_value=True
             ),
         },
     )

@@ -1121,12 +1121,18 @@ def obj4818(
 def obj484e(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
-    """From miot-spec: occupancy-status: uint8: 0 - No One, 1 - Has One,
-    2 - Quick Check"""
-    """Translate to: occupancy: bool: 0 - Clear, 1 - Detected, 2 - Clear"""
-    device.update_predefined_binary_sensor(
-        BinarySensorDeviceClass.OCCUPANCY, xobj[0] == 1
-    )
+    """From miot-spec: occupancy-status: uint8: 0 - No One, 1 - Has One"""
+    """Translate to: occupancy: bool: 0 - Clear, 1 - Detected"""
+    if device_type == "XMOSB01XS":
+        """Translate to: occupancy: bool: 0 - Clear, 1 - Detected, 2 - Clear"""
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.OCCUPANCY, xobj[0] == 1
+        )
+    else:
+        """Translate to: occupancy: bool: 0 - Clear, 1 - Detected"""
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.OCCUPANCY, xobj[0] > 0
+        )
     return {}
 
 
