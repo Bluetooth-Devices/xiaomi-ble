@@ -3797,3 +3797,142 @@ def test_Xiaomi_ES3_occupancy_off():
             ),
         },
     )
+
+
+def test_Xiaomi_KS2_button_press():
+    """Test Xiaomi parser for Linptech KS2 button press."""
+    bindkey = "8bdff7d0f70fa7f5c68f42157b5fd65b"
+    data_string = (
+        b"XY\x0bR\xb4\xe6\xfe\xa1\x38\xc1\xa40\x8f\xa8\t\x00\x00\r\xe1\xeb\xdb"
+    )
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A1:FE:E6")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Temperature/Humidity Sensor with Button FEE6 (KS2BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temperature/Humidity Sensor with Button FEE6",
+                manufacturer="Linptech",
+                model="KS2BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_KS2_temperature():
+    """Test Xiaomi parser for Linptech KS2 with temperature reading."""
+    bindkey = "8bdff7d0f70fa7f5c68f42157b5fd65b"
+    data_string = b"HY\x0bR\xb3\xc1\xb8\\P\xf3\\W\t\x00\x00J\x9e\xd6\xb8"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A1:FE:E6")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Temperature/Humidity Sensor with Button FEE6 (KS2BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temperature/Humidity Sensor with Button FEE6",
+                manufacturer="Linptech",
+                model="KS2BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_TEMPERATURE: SensorDescription(
+                device_key=KEY_TEMPERATURE,
+                device_class=DeviceClass.TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=26.2
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+        events={},
+    )
+
+
+def test_Xiaomi_KS2_humidity():
+    """Test Xiaomi parser for Linptech KS2 with humidity reading."""
+    bindkey = "8bdff7d0f70fa7f5c68f42157b5fd65b"
+    data_string = b"XY\x0bRl\xe6\xfe\xa1\x38\xc1\xa4C\x05@g\x0b\x00\x00LDE\xf1"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A1:FE:E6")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Temperature/Humidity Sensor with Button FEE6 (KS2BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temperature/Humidity Sensor with Button FEE6",
+                manufacturer="Linptech",
+                model="KS2BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_HUMIDITY: SensorDescription(
+                device_key=KEY_HUMIDITY,
+                device_class=DeviceClass.HUMIDITY,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_HUMIDITY: SensorValue(
+                name="Humidity", device_key=KEY_HUMIDITY, native_value=71
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+        events={},
+    )

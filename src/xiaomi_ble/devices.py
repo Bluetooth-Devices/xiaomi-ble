@@ -307,6 +307,11 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         model="ES3",
         manufacturer="Linptech",
     ),
+    0x520B: DeviceEntry(
+        name="Temperature/Humidity Sensor with Button",
+        model="KS2BB",
+        manufacturer="Linptech",
+    ),
     0x5968: DeviceEntry(
         name="Switch (double button)",
         model="XMWS01XS",
