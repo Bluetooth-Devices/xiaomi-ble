@@ -294,6 +294,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Smart Scale S200",
         model="MJTZC02YM",
     ),
+    0x4DCB: DeviceEntry(
+        name="Smart Scale S200",
+        model="MJTZC02YM",
+    ),
     0x4B05: DeviceEntry(
         name="Body Composition Scale",
         model="MJTZC03YM",
