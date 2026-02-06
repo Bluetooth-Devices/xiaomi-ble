@@ -467,7 +467,7 @@ def obj1001(
     if len(xobj) != 3:
         return {}
 
-    (button_type, value, press_type) = BUTTON_STRUCT(xobj)
+    button_type, value, press_type = BUTTON_STRUCT(xobj)
 
     # button_type represents the pressed button or rubiks cube rotation direction
     remote_command = None
@@ -920,7 +920,7 @@ def obj100d(
 ) -> dict[str, Any]:
     """Temperature and humidity"""
     if len(xobj) == 4:
-        (temp, humi) = TH_STRUCT(xobj)
+        temp, humi = TH_STRUCT(xobj)
         device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp / 10)
         device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi / 10)
     return {}
@@ -962,7 +962,7 @@ def obj2000(
 ) -> dict[str, Any]:
     """Body temperature"""
     if len(xobj) == 5:
-        (temp1, temp2, bat) = TTB_STRUCT(xobj)
+        temp1, temp2, bat = TTB_STRUCT(xobj)
         # Body temperature is calculated from the two measured temperatures.
         # Formula is based on approximation based on values in the app in
         # the range 36.5 - 37.8.
@@ -1633,7 +1633,7 @@ def obj4e16(
     if len(xobj) != 9:
         return {}
 
-    (profile_id, data, timestamp) = struct.unpack("<BII", xobj)
+    profile_id, data, timestamp = struct.unpack("<BII", xobj)
     if data == 0:
         return {}
 
@@ -1654,7 +1654,7 @@ def obj6e16(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Body Composition Scale S400"""
-    (profile_id, data, _) = struct.unpack("<BII", xobj)
+    profile_id, data, _ = struct.unpack("<BII", xobj)
     if not data:
         return {}
     mass = data & 0x7FF
@@ -1866,7 +1866,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.set_device_manufacturer("HHCC Plant Technology Co. Ltd")
 
         xvalue_1 = data[0:3]
-        (moist, temp) = struct.unpack(">BH", xvalue_1)
+        moist, temp = struct.unpack(">BH", xvalue_1)
         self.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, temp / 10)
         self.update_predefined_sensor(SensorLibrary.MOISTURE__PERCENTAGE, moist)
 
@@ -1875,7 +1875,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illu)
 
         xvalue_3 = data[6:9]
-        (batt, cond) = struct.unpack(">BH", xvalue_3)
+        batt, cond = struct.unpack(">BH", xvalue_3)
         self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
         self.update_predefined_sensor(SensorLibrary.CONDUCTIVITY__CONDUCTIVITY, cond)
 
