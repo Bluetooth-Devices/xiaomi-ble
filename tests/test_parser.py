@@ -4104,3 +4104,99 @@ def test_Xiaomi_M1S_T500_score_and_counter():
         },
         events={},
     )
+
+
+def test_Xiaomi_M1S_T500_state_only():
+    """Test Xiaomi parser for M1S-T500 toothbrush state only (no score/counter)."""
+
+    # Toothbrush off (no score)
+    data_string_off = bytes.fromhex("5020890401ffeeddccbbaa10000101")
+    advertisement_off = bytes_to_service_info(
+        data_string_off, address="AA:BB:CC:DD:EE:FF"
+    )
+
+    device1 = XiaomiBluetoothDeviceData()
+    assert device1.supported(advertisement_off)
+    assert not device1.bindkey_verified
+    assert device1.update(advertisement_off) == SensorUpdate(
+        title="Smart Toothbrush EEFF (M1S-T500)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Smart Toothbrush EEFF",
+                manufacturer="Xiaomi",
+                model="M1S-T500",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V2)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_TOOTHBRUSH: BinarySensorDescription(
+                device_key=KEY_BINARY_TOOTHBRUSH,
+                device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_TOOTHBRUSH: BinarySensorValue(
+                name="Toothbrush", device_key=KEY_BINARY_TOOTHBRUSH, native_value=False
+            ),
+        },
+        events={},
+    )
+
+    # Toothbrush on (no counter)
+    data_string_on = bytes.fromhex("5020890401ffeeddccbbaa10000100")
+    advertisement_on = bytes_to_service_info(
+        data_string_on, address="AA:BB:CC:DD:EE:FF"
+    )
+
+    device2 = XiaomiBluetoothDeviceData()
+    assert device2.supported(advertisement_on)
+    assert not device2.bindkey_verified
+    assert device2.update(advertisement_on) == SensorUpdate(
+        title="Smart Toothbrush EEFF (M1S-T500)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Smart Toothbrush EEFF",
+                manufacturer="Xiaomi",
+                model="M1S-T500",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V2)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_TOOTHBRUSH: BinarySensorDescription(
+                device_key=KEY_BINARY_TOOTHBRUSH,
+                device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_TOOTHBRUSH: BinarySensorValue(
+                name="Toothbrush", device_key=KEY_BINARY_TOOTHBRUSH, native_value=True
+            ),
+        },
+        events={},
+    )
