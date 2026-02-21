@@ -292,6 +292,14 @@ def obj0010(
             device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
             name="Toothbrush",
         )
+        if len(xobj) > 1:
+            device.update_sensor(
+                key=ExtendedSensorDeviceClass.COUNTER,
+                name="Counter",
+                native_unit_of_measurement=None,
+                device_class=ExtendedSensorDeviceClass.COUNTER,
+                native_value=xobj[1],
+            )
     else:
         device.update_binary_sensor(
             key=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
@@ -299,14 +307,14 @@ def obj0010(
             device_class=ExtendedBinarySensorDeviceClass.TOOTHBRUSH,
             name="Toothbrush",
         )
-    if len(xobj) > 1:
-        device.update_sensor(
-            key=ExtendedSensorDeviceClass.COUNTER,
-            name="Counter",
-            native_unit_of_measurement=Units.TIME_SECONDS,
-            device_class=ExtendedSensorDeviceClass.COUNTER,
-            native_value=xobj[1],
-        )
+        if len(xobj) > 1:
+            device.update_sensor(
+                key=ExtendedSensorDeviceClass.SCORE,
+                name="Score",
+                native_unit_of_measurement=None,
+                device_class=ExtendedSensorDeviceClass.SCORE,
+                native_value=xobj[1],
+            )
     return {}
 
 
