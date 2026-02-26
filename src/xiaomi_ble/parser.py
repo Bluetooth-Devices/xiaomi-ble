@@ -907,7 +907,12 @@ def obj100a(
 ) -> dict[str, Any]:
     """Battery"""
     batt = xobj[0]
-    volt = 2.2 + (3.1 - 2.2) * (batt / 100)
+    if device_type in ["LYWSDCGQ", "CGDK3"]:
+        # Those devices have a single AAA 1.5V battery
+        volt = 0.8 + (1.6 - 0.8) * (batt / 100)
+    else:
+        # The rest has CR2032 3V battery
+        volt = 2.2 + (3.1 - 2.2) * (batt / 100)
     device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
     device.update_predefined_sensor(
         SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT, volt
