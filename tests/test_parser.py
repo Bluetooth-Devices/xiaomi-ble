@@ -65,6 +65,7 @@ KEY_IMPEDANCE_LOW = DeviceKey(key="impedance_low", device_id=None)
 KEY_HEART_RATE = DeviceKey(key="heart_rate", device_id=None)
 KEY_PROFILE_ID = DeviceKey(key="profile_id", device_id=None)
 KEY_TIMESTAMP = DeviceKey(key="timestamp", device_id=None)
+KEY_VOLTAGE = DeviceKey(key="voltage", device_id=None)
 
 
 @pytest.fixture(autouse=True)
@@ -334,18 +335,18 @@ def test_bindkey_verified_can_be_unset_legacy():
 
 def test_Xiaomi_LYWSDCGQ(caplog):
     """Test Xiaomi parser for LYWSDCGQ."""
-    data_string = b"P \xaa\x01\xda!\x9354-X\r\x10\x04\xfe\x00H\x02"
-    advertisement = bytes_to_service_info(data_string, address="58:2D:34:35:93:21")
+    data_string = b"P \xaa\x01\xa3\xbf.;4-X\r\x10\x04\xb4\x00\x95\x02\n\x10\x01;"
+    advertisement = bytes_to_service_info(data_string, address="58:2D:34:3B:2E:BF")
 
     device = XiaomiBluetoothDeviceData()
     assert device.supported(advertisement)
     assert not device.bindkey_verified
     assert not device.sleepy_device
     assert device.update(advertisement) == SensorUpdate(
-        title="Temperature/Humidity Sensor 9321 (LYWSDCGQ)",
+        title="Temperature/Humidity Sensor 2EBF (LYWSDCGQ)",
         devices={
             None: SensorDeviceInfo(
-                name="Temperature/Humidity Sensor 9321",
+                name="Temperature/Humidity Sensor 2EBF",
                 manufacturer="Xiaomi",
                 model="LYWSDCGQ",
                 sw_version="Xiaomi (MiBeacon V2)",
@@ -363,6 +364,16 @@ def test_Xiaomi_LYWSDCGQ(caplog):
                 device_class=DeviceClass.HUMIDITY,
                 native_unit_of_measurement="%",
             ),
+            KEY_VOLTAGE: SensorDescription(
+                device_key=KEY_VOLTAGE,
+                device_class=DeviceClass.VOLTAGE,
+                native_unit_of_measurement="V",
+            ),
+            KEY_BATTERY: SensorDescription(
+                device_key=KEY_BATTERY,
+                device_class=DeviceClass.BATTERY,
+                native_unit_of_measurement="%",
+            ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
                 device_class=DeviceClass.SIGNAL_STRENGTH,
@@ -371,10 +382,16 @@ def test_Xiaomi_LYWSDCGQ(caplog):
         },
         entity_values={
             KEY_TEMPERATURE: SensorValue(
-                device_key=KEY_TEMPERATURE, name="Temperature", native_value=25.4
+                device_key=KEY_TEMPERATURE, name="Temperature", native_value=18.0
             ),
             KEY_HUMIDITY: SensorValue(
-                device_key=KEY_HUMIDITY, name="Humidity", native_value=58.4
+                device_key=KEY_HUMIDITY, name="Humidity", native_value=66.1
+            ),
+            KEY_VOLTAGE: SensorValue(
+                device_key=KEY_VOLTAGE, name="Voltage", native_value=1.272
+            ),
+            KEY_BATTERY: SensorValue(
+                device_key=KEY_BATTERY, name="Battery", native_value=59.0
             ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
