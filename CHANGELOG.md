@@ -1604,4 +1604,4 @@ Co-authored-by: Ernst Klamer <e.klamer@gmail.com>
 
 - Upgrade sensor-state-data>=2.0
   ([`59f2d00`](https://github.com/Bluetooth-Devices/xiaomi-ble/commit/59f2d0056b52238e02343c3d70d57eda3d1c2301))
- 
+
