@@ -324,12 +324,18 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Smart Band 10 NFC",
         model="M2456B1",
     ),
+    0x6A0F: DeviceEntry(
+        name="Human Presence Sensor",
+        model="ES5BB",
+        manufacturer="Linptech",
+    ),
 }
 
 
 SLEEPY_DEVICE_MODELS = {
     "CGH1",
     "ES3",
+    "ES5BB",
     "JTYJGD03MI",
     "MCCGQ02HL",
     "RTCGQ02LM",

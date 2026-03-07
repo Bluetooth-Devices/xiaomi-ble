@@ -32,6 +32,9 @@ KEY_BINARY_DOOR = DeviceKey(key="door", device_id=None)
 KEY_BINARY_FINGERPRINT = DeviceKey(key="fingerprint", device_id=None)
 KEY_BINARY_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_BINARY_OCCUPANCY = DeviceKey(key="occupancy", device_id=None)
+KEY_BINARY_OCCUPANCY_CLOSE_RANGE = DeviceKey(
+    key="occupancy_close_range", device_id=None
+)
 KEY_BINARY_LIGHT = DeviceKey(key="light", device_id=None)
 KEY_BINARY_LOCK = DeviceKey(key="lock", device_id=None)
 KEY_BINARY_OPENING = DeviceKey(key="opening", device_id=None)
@@ -69,6 +72,8 @@ KEY_VOLTAGE = DeviceKey(key="voltage", device_id=None)
 KEY_CHARGING_STATE = DeviceKey(key="charging_state", device_id=None)
 KEY_SLEEP_STATE = DeviceKey(key="sleep_state", device_id=None)
 KEY_DEVICE_WEARING_STATUS = DeviceKey(key="device_wearing_status", device_id=None)
+KEY_DURATION_DETECTED = DeviceKey(key="duration_detected", device_id=None)
+KEY_DURATION_CLEARED = DeviceKey(key="duration_cleared", device_id=None)
 
 
 @pytest.fixture(autouse=True)
@@ -4369,4 +4374,238 @@ def test_Xiaomi_M2456B1_device_wearing_status():
         binary_entity_descriptions={},
         binary_entity_values={},
         events={},
+    )
+
+
+def test_Xiaomi_ES5BB_illuminance():
+    """Test Xiaomi parser for Linptech ES5 Illuminance."""
+    data_string = bytes.fromhex("48590f6abc7a1f20cfb0b0971c00009dad6cca")
+    advertisement = bytes_to_service_info(data_string, address="E8:B5:27:74:91:EE")
+    bindkey = "068a081b4e5aa7295ebf263585adf4f1"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Human Presence Sensor 91EE (ES5BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Human Presence Sensor 91EE",
+                manufacturer="Linptech",
+                model="ES5BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_ILLUMINANCE: SensorDescription(
+                device_key=KEY_ILLUMINANCE,
+                device_class=DeviceClass.ILLUMINANCE,
+                native_unit_of_measurement=Units.LIGHT_LUX,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_ILLUMINANCE: SensorValue(
+                name="Illuminance", device_key=KEY_ILLUMINANCE, native_value=8.0
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+    )
+
+
+def test_Xiaomi_ES5BB_occupancy():
+    """Test Xiaomi parser for Linptech ES5 Occupancy."""
+    data_string = bytes.fromhex("58590f6a11ee917427b5e83567ac0e1c0000f681b610")
+    advertisement = bytes_to_service_info(data_string, address="E8:B5:27:74:91:EE")
+    bindkey = "068a081b4e5aa7295ebf263585adf4f1"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Human Presence Sensor 91EE (ES5BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Human Presence Sensor 91EE",
+                manufacturer="Linptech",
+                model="ES5BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_OCCUPANCY: BinarySensorDescription(
+                device_key=KEY_BINARY_OCCUPANCY,
+                device_class=BinarySensorDeviceClass.OCCUPANCY,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OCCUPANCY: BinarySensorValue(
+                device_key=KEY_BINARY_OCCUPANCY, name="Occupancy", native_value=True
+            ),
+        },
+    )
+
+
+def test_Xiaomi_ES5BB_occupancy_close_range():
+    """Test Xiaomi parser for Linptech ES5 Occupancy close range."""
+    data_string = bytes.fromhex("58590f6a14ee917427b5e8f139cdae1c00001bd88863")
+    advertisement = bytes_to_service_info(data_string, address="E8:B5:27:74:91:EE")
+    bindkey = "068a081b4e5aa7295ebf263585adf4f1"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Human Presence Sensor 91EE (ES5BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Human Presence Sensor 91EE",
+                manufacturer="Linptech",
+                model="ES5BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_OCCUPANCY_CLOSE_RANGE: BinarySensorDescription(
+                device_key=KEY_BINARY_OCCUPANCY_CLOSE_RANGE,
+                device_class=BinarySensorDeviceClass.OCCUPANCY,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OCCUPANCY_CLOSE_RANGE: BinarySensorValue(
+                device_key=KEY_BINARY_OCCUPANCY_CLOSE_RANGE,
+                name="Occupancy close range",
+                native_value=True,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_ES5BB_duration_detected():
+    """Test Xiaomi parser for Linptech ES5 Duration detected."""
+    data_string = bytes.fromhex("58590f6abdee917427b5e885884d061c0000c263fbd0")
+    advertisement = bytes_to_service_info(data_string, address="E8:B5:27:74:91:EE")
+    bindkey = "068a081b4e5aa7295ebf263585adf4f1"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Human Presence Sensor 91EE (ES5BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Human Presence Sensor 91EE",
+                manufacturer="Linptech",
+                model="ES5BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+            KEY_DURATION_DETECTED: SensorDescription(
+                device_key=KEY_DURATION_DETECTED,
+                device_class=ExtendedSensorDeviceClass.DURATION_DETECTED,
+                native_unit_of_measurement="min",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+            KEY_DURATION_DETECTED: SensorValue(
+                device_key=KEY_DURATION_DETECTED,
+                name="Duration detected",
+                native_value=1,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_ES5BB_duration_cleared():
+    """Test Xiaomi parser for Linptech ES5 duration cleared."""
+    data_string = bytes.fromhex("58590f6ac1ee917427b5e8bb7b2c201c0000f252a862")
+    advertisement = bytes_to_service_info(data_string, address="E8:B5:27:74:91:EE")
+    bindkey = "068a081b4e5aa7295ebf263585adf4f1"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Human Presence Sensor 91EE (ES5BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Human Presence Sensor 91EE",
+                manufacturer="Linptech",
+                model="ES5BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+            KEY_DURATION_CLEARED: SensorDescription(
+                device_key=KEY_DURATION_CLEARED,
+                device_class=ExtendedSensorDeviceClass.DURATION_CLEARED,
+                native_unit_of_measurement="min",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+            KEY_DURATION_CLEARED: SensorValue(
+                device_key=KEY_DURATION_CLEARED,
+                name="Duration cleared",
+                native_value=1,
+            ),
+        },
     )
