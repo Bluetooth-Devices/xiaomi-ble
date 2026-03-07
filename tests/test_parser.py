@@ -69,6 +69,9 @@ KEY_HEART_RATE = DeviceKey(key="heart_rate", device_id=None)
 KEY_PROFILE_ID = DeviceKey(key="profile_id", device_id=None)
 KEY_TIMESTAMP = DeviceKey(key="timestamp", device_id=None)
 KEY_VOLTAGE = DeviceKey(key="voltage", device_id=None)
+KEY_CHARGING_STATE = DeviceKey(key="charging_state", device_id=None)
+KEY_SLEEP_STATE = DeviceKey(key="sleep_state", device_id=None)
+KEY_DEVICE_WEARING_STATUS = DeviceKey(key="device_wearing_status", device_id=None)
 KEY_DURATION_DETECTED = DeviceKey(key="duration_detected", device_id=None)
 KEY_DURATION_CLEARED = DeviceKey(key="duration_cleared", device_id=None)
 
@@ -4220,6 +4223,156 @@ def test_Xiaomi_M1S_T500_state_only():
                 name="Toothbrush", device_key=KEY_BINARY_TOOTHBRUSH, native_value=True
             ),
         },
+        events={},
+    )
+
+
+def test_Xiaomi_M2456B1_charging_state():
+    """Test Xiaomi parser for M2456B1 Charging State."""
+    data_string = bytes.fromhex("4859fc59c32705ff45020000d6d291b3")
+    bindkey = "05eecf799ee981b3b73664e114b9373b"
+    advertisement = bytes_to_service_info(data_string, address="04:34:C3:75:6F:6D")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Smart Band 10 NFC 6F6D (M2456B1)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Smart Band 10 NFC 6F6D",
+                manufacturer="Xiaomi",
+                model="M2456B1",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            ),
+        },
+        entity_descriptions={
+            KEY_CHARGING_STATE: SensorDescription(
+                device_key=KEY_CHARGING_STATE,
+                device_class=ExtendedSensorDeviceClass.CHARGING_STATE,
+                native_unit_of_measurement=None,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_CHARGING_STATE: SensorValue(
+                device_key=KEY_CHARGING_STATE,
+                name="Charging State",
+                native_value="Full",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                device_key=KEY_SIGNAL_STRENGTH,
+                name="Signal Strength",
+                native_value=-60,
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+        events={},
+    )
+
+
+def test_Xiaomi_M2456B1_sleep_state():
+    """Test Xiaomi parser for M2456B1 Sleep State."""
+    data_string = bytes.fromhex("4859fc59da28bc61b4020000d935d001")
+    bindkey = "05eecf799ee981b3b73664e114b9373b"
+    advertisement = bytes_to_service_info(data_string, address="04:34:C3:75:6F:6D")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Smart Band 10 NFC 6F6D (M2456B1)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Smart Band 10 NFC 6F6D",
+                manufacturer="Xiaomi",
+                model="M2456B1",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            ),
+        },
+        entity_descriptions={
+            KEY_SLEEP_STATE: SensorDescription(
+                device_key=KEY_SLEEP_STATE,
+                device_class=ExtendedSensorDeviceClass.SLEEP_STATE,
+                native_unit_of_measurement=None,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SLEEP_STATE: SensorValue(
+                device_key=KEY_SLEEP_STATE,
+                name="Sleep State",
+                native_value="Awake",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                device_key=KEY_SIGNAL_STRENGTH,
+                name="Signal Strength",
+                native_value=-60,
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+        events={},
+    )
+
+
+def test_Xiaomi_M2456B1_device_wearing_status():
+    """Test Xiaomi parser for M2456B1 Device Wearing Status."""
+    data_string = bytes.fromhex("4859fc59bf1c9fd59b020000084a4740")
+    bindkey = "05eecf799ee981b3b73664e114b9373b"
+    advertisement = bytes_to_service_info(data_string, address="04:34:C3:75:6F:6D")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Smart Band 10 NFC 6F6D (M2456B1)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Smart Band 10 NFC 6F6D",
+                manufacturer="Xiaomi",
+                model="M2456B1",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            ),
+        },
+        entity_descriptions={
+            KEY_DEVICE_WEARING_STATUS: SensorDescription(
+                device_key=KEY_DEVICE_WEARING_STATUS,
+                device_class=ExtendedSensorDeviceClass.DEVICE_WEARING_STATUS,
+                native_unit_of_measurement=None,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_DEVICE_WEARING_STATUS: SensorValue(
+                device_key=KEY_DEVICE_WEARING_STATUS,
+                name="Device Wearing Status",
+                native_value="Not Wear",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                device_key=KEY_SIGNAL_STRENGTH,
+                name="Signal Strength",
+                native_value=-60,
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
         events={},
     )
 

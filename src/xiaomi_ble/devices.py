@@ -320,6 +320,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Switch (double button)",
         model="XMWS01XS",
     ),
+    0x59FC: DeviceEntry(
+        name="Smart Band 10 NFC",
+        model="M2456B1",
+    ),
     0x6A0F: DeviceEntry(
         name="Human Presence Sensor",
         model="ES5BB",
@@ -342,4 +346,5 @@ SLEEPY_DEVICE_MODELS = {
     "MJTZC03YM",
     "HS1BB(MI)",
     "XMPIRO2SXS",
+    "M2456B1",
 }

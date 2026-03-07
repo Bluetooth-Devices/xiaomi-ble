@@ -95,3 +95,12 @@ class ExtendedSensorDeviceClass(BaseDeviceClass):
 
     # User profile id
     PROFILE_ID = "profile_id"
+
+    # Charging State
+    CHARGING_STATE = "charging_state"
+
+    # Sleep State
+    SLEEP_STATE = "sleep_state"
+
+    # Device Wearing Status
+    DEVICE_WEARING_STATUS = "device_wearing_status"

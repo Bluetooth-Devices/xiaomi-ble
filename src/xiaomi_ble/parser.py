@@ -1594,6 +1594,30 @@ def obj5414(
     return {"mode": xobj[0]}
 
 
+def obj5422(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Charging State"""
+    if len(xobj) != 1:
+        return {}
+    if xobj[0] == 0:
+        charging_state = "Charging"
+    elif xobj[0] == 1:
+        charging_state = "Not Charging"
+    elif xobj[0] == 2:
+        charging_state = "Full"
+    else:
+        charging_state = "Unknown"
+    device.update_sensor(
+        key=ExtendedSensorDeviceClass.CHARGING_STATE,
+        device_class=ExtendedSensorDeviceClass.CHARGING_STATE,
+        name="Charging State",
+        native_value=charging_state,
+        native_unit_of_measurement=None,
+    )
+    return {}
+
+
 def obj560c(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1676,6 +1700,50 @@ def obj4e16(
         native_value=profile_id,
     )
 
+    return {}
+
+
+def obj5810(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Sleep State"""
+    if len(xobj) != 1:
+        return {}
+    if xobj[0] == 0:
+        sleep_state = "Fall Asleep"
+    elif xobj[0] == 1:
+        sleep_state = "Awake"
+    else:
+        sleep_state = "Unknown"
+    device.update_sensor(
+        key=ExtendedSensorDeviceClass.SLEEP_STATE,
+        device_class=ExtendedSensorDeviceClass.SLEEP_STATE,
+        name="Sleep State",
+        native_value=sleep_state,
+        native_unit_of_measurement=None,
+    )
+    return {}
+
+
+def obj6461(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Device Wearing Status"""
+    if len(xobj) != 1:
+        return {}
+    if xobj[0] == 0:
+        device_wearing_status = "Wearing"
+    elif xobj[0] == 1:
+        device_wearing_status = "Not Wear"
+    else:
+        device_wearing_status = "Unknown"
+    device.update_sensor(
+        key=ExtendedSensorDeviceClass.DEVICE_WEARING_STATUS,
+        device_class=ExtendedSensorDeviceClass.DEVICE_WEARING_STATUS,
+        name="Device Wearing Status",
+        native_value=device_wearing_status,
+        native_unit_of_measurement=None,
+    )
     return {}
 
 
@@ -1788,9 +1856,12 @@ xiaomi_dataobject_dict = {
     0x5003: obj5003,
     0x5413: obj5413,
     0x5414: obj5414,
+    0x5422: obj5422,
     0x560C: obj560c,
     0x560D: obj560d,
     0x560E: obj560e,
+    0x5810: obj5810,
+    0x6461: obj6461,
     0x6E16: obj6e16,
 }
 
