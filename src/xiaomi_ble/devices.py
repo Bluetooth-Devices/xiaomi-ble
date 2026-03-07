@@ -170,6 +170,11 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Motion Sensor",
         model="RTCGQ02LM",
     ),
+    0x0248: DeviceEntry(
+        name="Roidmi F8 Cordless Vacuum Cleaner",
+        model="XCQ03RM",
+        manufacturer="ROIDMI",
+    ),
     0x3531: DeviceEntry(
         name="Motion Sensor",
         model="XMPIRO2SXS",
