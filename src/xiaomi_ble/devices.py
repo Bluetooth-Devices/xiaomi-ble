@@ -90,6 +90,11 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         model="HS1BB(MI)",
     ),
     0x3F0F: DeviceEntry(name="Flood and Rain Sensor", model="RS1BB(MI)"),
+    0x3F4C: DeviceEntry(
+        name="Seat Pressure Sensor",
+        model="PS1BB",
+        manufacturer="Linptech",
+    ),
     0x01AA: DeviceEntry(
         name="Temperature/Humidity Sensor",
         model="LYWSDCGQ",
@@ -336,6 +341,7 @@ SLEEPY_DEVICE_MODELS = {
     "CGH1",
     "ES3",
     "ES5BB",
+    "PS1BB",
     "JTYJGD03MI",
     "MCCGQ02HL",
     "RTCGQ02LM",

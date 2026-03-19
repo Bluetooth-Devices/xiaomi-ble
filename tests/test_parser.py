@@ -74,6 +74,12 @@ KEY_SLEEP_STATE = DeviceKey(key="sleep_state", device_id=None)
 KEY_DEVICE_WEARING_STATUS = DeviceKey(key="device_wearing_status", device_id=None)
 KEY_DURATION_DETECTED = DeviceKey(key="duration_detected", device_id=None)
 KEY_DURATION_CLEARED = DeviceKey(key="duration_cleared", device_id=None)
+KEY_PRESSURE_PRESENT_DURATION = DeviceKey(
+    key="pressure_present_duration", device_id=None
+)
+KEY_PRESSURE_NOT_PRESENT_DURATION = DeviceKey(
+    key="pressure_not_present_duration", device_id=None
+)
 
 
 @pytest.fixture(autouse=True)
@@ -4606,6 +4612,252 @@ def test_Xiaomi_ES5BB_duration_cleared():
                 device_key=KEY_DURATION_CLEARED,
                 name="Duration cleared",
                 native_value=1,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_PS1BB_pressure_present_duration():
+    """Test Xiaomi parser for Linptech PS1BB Pressure Present Duration."""
+    data_string = bytes.fromhex("59584c3f2012efbe38c1a4bbacc927535b030000004cdc48fd")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:BE:EF:12")
+    bindkey = "8b72476b60fe2a0b63bf58d588fe4ea1"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Seat Pressure Sensor EF12 (PS1BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Seat Pressure Sensor EF12",
+                manufacturer="Linptech",
+                model="PS1BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+            KEY_PRESSURE_PRESENT_DURATION: SensorDescription(
+                device_key=KEY_PRESSURE_PRESENT_DURATION,
+                device_class=ExtendedSensorDeviceClass.PRESSURE_PRESENT_DURATION,
+                native_unit_of_measurement="s",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength",
+                device_key=KEY_SIGNAL_STRENGTH,
+                native_value=-60,
+            ),
+            KEY_PRESSURE_PRESENT_DURATION: SensorValue(
+                device_key=KEY_PRESSURE_PRESENT_DURATION,
+                name="Pressure present duration",
+                native_value=7800,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_PS1BB_pressure_state_occupied():
+    """Test Xiaomi parser for Linptech PS1BB pressure state occupied."""
+    data_string = bytes.fromhex("58594c3f1012efbe38c1a47f7b3e9500000035019b75")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:BE:EF:12")
+    bindkey = "8b72476b60fe2a0b63bf58d588fe4ea1"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Seat Pressure Sensor EF12 (PS1BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Seat Pressure Sensor EF12",
+                manufacturer="Linptech",
+                model="PS1BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength",
+                device_key=KEY_SIGNAL_STRENGTH,
+                native_value=-60,
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_OCCUPANCY: BinarySensorDescription(
+                device_key=KEY_BINARY_OCCUPANCY,
+                device_class=BinarySensorDeviceClass.OCCUPANCY,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OCCUPANCY: BinarySensorValue(
+                device_key=KEY_BINARY_OCCUPANCY,
+                name="Occupancy",
+                native_value=True,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_PS1BB_pressure_state_clear():
+    """Test Xiaomi parser for Linptech PS1BB pressure state clear."""
+    data_string = bytes.fromhex("58594c3f1312efbe38c1a418e36bcb000000e6fab951")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:BE:EF:12")
+    bindkey = "8b72476b60fe2a0b63bf58d588fe4ea1"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Seat Pressure Sensor EF12 (PS1BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Seat Pressure Sensor EF12",
+                manufacturer="Linptech",
+                model="PS1BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength",
+                device_key=KEY_SIGNAL_STRENGTH,
+                native_value=-60,
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_OCCUPANCY: BinarySensorDescription(
+                device_key=KEY_BINARY_OCCUPANCY,
+                device_class=BinarySensorDeviceClass.OCCUPANCY,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OCCUPANCY: BinarySensorValue(
+                device_key=KEY_BINARY_OCCUPANCY,
+                name="Occupancy",
+                native_value=False,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_PS1BB_pressure_not_present_duration():
+    """Test Xiaomi parser for Linptech PS1BB pressure not present duration."""
+    data_string = bytes.fromhex("59584c3f2112efbe38c1a4558db5277810330000001906bc63")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:BE:EF:12")
+    bindkey = "8b72476b60fe2a0b63bf58d588fe4ea1"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Seat Pressure Sensor EF12 (PS1BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Seat Pressure Sensor EF12",
+                manufacturer="Linptech",
+                model="PS1BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+            KEY_PRESSURE_NOT_PRESENT_DURATION: SensorDescription(
+                device_key=KEY_PRESSURE_NOT_PRESENT_DURATION,
+                device_class=ExtendedSensorDeviceClass.PRESSURE_NOT_PRESENT_DURATION,
+                native_unit_of_measurement="s",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength",
+                device_key=KEY_SIGNAL_STRENGTH,
+                native_value=-60,
+            ),
+            KEY_PRESSURE_NOT_PRESENT_DURATION: SensorValue(
+                device_key=KEY_PRESSURE_NOT_PRESENT_DURATION,
+                name="Pressure not present duration",
+                native_value=120,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_PS1BB_battery():
+    """Test Xiaomi parser for Linptech PS1BB battery."""
+    data_string = bytes.fromhex("59584c3f2212efbe38c1a4da2cec2100000029c7c0c7")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:BE:EF:12")
+    bindkey = "8b72476b60fe2a0b63bf58d588fe4ea1"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Seat Pressure Sensor EF12 (PS1BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Seat Pressure Sensor EF12",
+                manufacturer="Linptech",
+                model="PS1BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+            KEY_BATTERY: SensorDescription(
+                device_key=KEY_BATTERY,
+                device_class=DeviceClass.BATTERY,
+                native_unit_of_measurement="%",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength",
+                device_key=KEY_SIGNAL_STRENGTH,
+                native_value=-60,
+            ),
+            KEY_BATTERY: SensorValue(
+                device_key=KEY_BATTERY,
+                name="Battery",
+                native_value=100,
             ),
         },
     )

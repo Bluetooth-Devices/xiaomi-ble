@@ -99,6 +99,12 @@ class ExtendedSensorDeviceClass(BaseDeviceClass):
     # Charging State
     CHARGING_STATE = "charging_state"
 
+    # Pressure Present Duration
+    PRESSURE_PRESENT_DURATION = "pressure_present_duration"
+
+    # Pressure Not Present Duration
+    PRESSURE_NOT_PRESENT_DURATION = "pressure_not_present_duration"
+
     # Sleep State
     SLEEP_STATE = "sleep_state"
 
