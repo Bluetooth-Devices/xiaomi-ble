@@ -1131,6 +1131,50 @@ def obj4818(
     return {}
 
 
+def obj483c(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Pressure Present State: uint8: 0 - No pressure, 1 - Pressure detected"""
+    if len(xobj) != 1:
+        return {}
+    device.update_predefined_binary_sensor(
+        BinarySensorDeviceClass.OCCUPANCY, xobj[0] > 0
+    )
+    return {}
+
+
+def obj483d(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Pressure Present Duration in seconds"""
+    if len(xobj) == 4:
+        (duration,) = struct.unpack("<I", xobj)
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.PRESSURE_PRESENT_DURATION,
+            name="Pressure present duration",
+            native_unit_of_measurement=Units.TIME_SECONDS,
+            device_class=ExtendedSensorDeviceClass.PRESSURE_PRESENT_DURATION,
+            native_value=duration,
+        )
+    return {}
+
+
+def obj483e(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Pressure Not Present Duration in seconds"""
+    if len(xobj) == 4:
+        (duration,) = struct.unpack("<I", xobj)
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.PRESSURE_NOT_PRESENT_DURATION,
+            name="Pressure not present duration",
+            native_unit_of_measurement=Units.TIME_SECONDS,
+            device_class=ExtendedSensorDeviceClass.PRESSURE_NOT_PRESENT_DURATION,
+            native_value=duration,
+        )
+    return {}
+
+
 def obj484e(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1830,6 +1874,9 @@ xiaomi_dataobject_dict = {
     0x4806: obj4806,
     0x4808: obj4808,
     0x4818: obj4818,
+    0x483C: obj483c,
+    0x483D: obj483d,
+    0x483E: obj483e,
     0x484E: obj484e,
     0x4851: obj4851,
     0x4852: obj4852,
