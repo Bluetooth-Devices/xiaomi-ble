@@ -325,8 +325,20 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Switch (double button)",
         model="XMWS01XS",
     ),
-    0x59FC: DeviceEntry(
+    0x59FA: DeviceEntry(
+        name="Smart Band 10",
+        model="M2457B1",
+    ),
+    0x59FB: DeviceEntry(
         name="Smart Band 10 NFC",
+        model="M2456B1",
+    ),
+    0x59FC: DeviceEntry(
+        name="Smart Band 10 Ceramic Edition",
+        model="M2456B1",
+    ),
+    0x6188: DeviceEntry(
+        name="Smart Band 10 Glimmer Edition",
         model="M2456B1",
     ),
     0x6A0F: DeviceEntry(
@@ -353,4 +365,5 @@ SLEEPY_DEVICE_MODELS = {
     "HS1BB(MI)",
     "XMPIRO2SXS",
     "M2456B1",
+    "M2457B1",
 }
