@@ -35,6 +35,9 @@ class ExtendedBinarySensorDeviceClass(BaseDeviceClass):
     # On means armed (away), Off means disarmed
     ARMED = "armed"
 
+    # On means asleep, Off means awake
+    ASLEEP = "asleep"
+
     # On means door left open, Off means door closed
     DEVICE_FORCIBLY_REMOVED = "device_forcibly_removed"
 
@@ -56,6 +59,9 @@ class ExtendedBinarySensorDeviceClass(BaseDeviceClass):
     # On means toothbrush On, Off means toothbrush Off
     TOOTHBRUSH = "toothbrush"
 
+    # On means wearing, Off means not wearing
+    WEARING = "wearing"
+
     # On means antilock turned On, Off means antilOck turned Off
     ANTILOCK = "antilock"
 
@@ -65,6 +71,9 @@ class ExtendedBinarySensorDeviceClass(BaseDeviceClass):
 
 class ExtendedSensorDeviceClass(BaseDeviceClass):
     """Device class for additional sensors (compared to sensor-state-data)."""
+
+    # Charging State
+    CHARGING_STATE = "charging_state"
 
     # Consumable
     CONSUMABLE = "consumable"
@@ -96,17 +105,8 @@ class ExtendedSensorDeviceClass(BaseDeviceClass):
     # User profile id
     PROFILE_ID = "profile_id"
 
-    # Charging State
-    CHARGING_STATE = "charging_state"
-
     # Pressure Present Duration
     PRESSURE_PRESENT_DURATION = "pressure_present_duration"
 
     # Pressure Not Present Duration
     PRESSURE_NOT_PRESENT_DURATION = "pressure_not_present_duration"
-
-    # Sleep State
-    SLEEP_STATE = "sleep_state"
-
-    # Device Wearing Status
-    DEVICE_WEARING_STATUS = "device_wearing_status"

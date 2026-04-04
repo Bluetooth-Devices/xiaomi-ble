@@ -70,8 +70,8 @@ KEY_PROFILE_ID = DeviceKey(key="profile_id", device_id=None)
 KEY_TIMESTAMP = DeviceKey(key="timestamp", device_id=None)
 KEY_VOLTAGE = DeviceKey(key="voltage", device_id=None)
 KEY_CHARGING_STATE = DeviceKey(key="charging_state", device_id=None)
-KEY_SLEEP_STATE = DeviceKey(key="sleep_state", device_id=None)
-KEY_DEVICE_WEARING_STATUS = DeviceKey(key="device_wearing_status", device_id=None)
+KEY_ASLEEP = DeviceKey(key="asleep", device_id=None)
+KEY_WEARING = DeviceKey(key="wearing", device_id=None)
 KEY_DURATION_DETECTED = DeviceKey(key="duration_detected", device_id=None)
 KEY_DURATION_CLEARED = DeviceKey(key="duration_cleared", device_id=None)
 KEY_PRESSURE_PRESENT_DURATION = DeviceKey(
@@ -4243,10 +4243,10 @@ def test_Xiaomi_M2456B1_charging_state():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Smart Band 10 NFC 6F6D (M2456B1)",
+        title="Smart Band 10 Ceramic Edition 6F6D (M2456B1)",
         devices={
             None: SensorDeviceInfo(
-                name="Smart Band 10 NFC 6F6D",
+                name="Smart Band 10 Ceramic Edition 6F6D",
                 manufacturer="Xiaomi",
                 model="M2456B1",
                 hw_version=None,
@@ -4293,10 +4293,10 @@ def test_Xiaomi_M2456B1_sleep_state():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Smart Band 10 NFC 6F6D (M2456B1)",
+        title="Smart Band 10 Ceramic Edition 6F6D (M2456B1)",
         devices={
             None: SensorDeviceInfo(
-                name="Smart Band 10 NFC 6F6D",
+                name="Smart Band 10 Ceramic Edition 6F6D",
                 manufacturer="Xiaomi",
                 model="M2456B1",
                 hw_version=None,
@@ -4304,11 +4304,6 @@ def test_Xiaomi_M2456B1_sleep_state():
             ),
         },
         entity_descriptions={
-            KEY_SLEEP_STATE: SensorDescription(
-                device_key=KEY_SLEEP_STATE,
-                device_class=ExtendedSensorDeviceClass.SLEEP_STATE,
-                native_unit_of_measurement=None,
-            ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
                 device_class=DeviceClass.SIGNAL_STRENGTH,
@@ -4316,19 +4311,25 @@ def test_Xiaomi_M2456B1_sleep_state():
             ),
         },
         entity_values={
-            KEY_SLEEP_STATE: SensorValue(
-                device_key=KEY_SLEEP_STATE,
-                name="Sleep State",
-                native_value="Awake",
-            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 device_key=KEY_SIGNAL_STRENGTH,
                 name="Signal Strength",
                 native_value=-60,
             ),
         },
-        binary_entity_descriptions={},
-        binary_entity_values={},
+        binary_entity_descriptions={
+            KEY_ASLEEP: BinarySensorDescription(
+                device_key=KEY_ASLEEP,
+                device_class=ExtendedBinarySensorDeviceClass.ASLEEP,
+            ),
+        },
+        binary_entity_values={
+            KEY_ASLEEP: BinarySensorValue(
+                device_key=KEY_ASLEEP,
+                name="Asleep",
+                native_value=False,
+            ),
+        },
         events={},
     )
 
@@ -4343,10 +4344,10 @@ def test_Xiaomi_M2456B1_device_wearing_status():
     assert device.supported(advertisement)
     assert device.bindkey_verified
     assert device.update(advertisement) == SensorUpdate(
-        title="Smart Band 10 NFC 6F6D (M2456B1)",
+        title="Smart Band 10 Ceramic Edition 6F6D (M2456B1)",
         devices={
             None: SensorDeviceInfo(
-                name="Smart Band 10 NFC 6F6D",
+                name="Smart Band 10 Ceramic Edition 6F6D",
                 manufacturer="Xiaomi",
                 model="M2456B1",
                 hw_version=None,
@@ -4354,11 +4355,6 @@ def test_Xiaomi_M2456B1_device_wearing_status():
             ),
         },
         entity_descriptions={
-            KEY_DEVICE_WEARING_STATUS: SensorDescription(
-                device_key=KEY_DEVICE_WEARING_STATUS,
-                device_class=ExtendedSensorDeviceClass.DEVICE_WEARING_STATUS,
-                native_unit_of_measurement=None,
-            ),
             KEY_SIGNAL_STRENGTH: SensorDescription(
                 device_key=KEY_SIGNAL_STRENGTH,
                 device_class=DeviceClass.SIGNAL_STRENGTH,
@@ -4366,19 +4362,25 @@ def test_Xiaomi_M2456B1_device_wearing_status():
             ),
         },
         entity_values={
-            KEY_DEVICE_WEARING_STATUS: SensorValue(
-                device_key=KEY_DEVICE_WEARING_STATUS,
-                name="Device Wearing Status",
-                native_value="Not Wear",
-            ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 device_key=KEY_SIGNAL_STRENGTH,
                 name="Signal Strength",
                 native_value=-60,
             ),
         },
-        binary_entity_descriptions={},
-        binary_entity_values={},
+        binary_entity_descriptions={
+            KEY_WEARING: BinarySensorDescription(
+                device_key=KEY_WEARING,
+                device_class=ExtendedBinarySensorDeviceClass.WEARING,
+            ),
+        },
+        binary_entity_values={
+            KEY_WEARING: BinarySensorValue(
+                device_key=KEY_WEARING,
+                name="Wearing",
+                native_value=False,
+            ),
+        },
         events={},
     )
 

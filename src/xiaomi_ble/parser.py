@@ -1753,18 +1753,12 @@ def obj5810(
     """Sleep State"""
     if len(xobj) != 1:
         return {}
-    if xobj[0] == 0:
-        sleep_state = "Fall Asleep"
-    elif xobj[0] == 1:
-        sleep_state = "Awake"
-    else:
-        sleep_state = "Unknown"
-    device.update_sensor(
-        key=ExtendedSensorDeviceClass.SLEEP_STATE,
-        device_class=ExtendedSensorDeviceClass.SLEEP_STATE,
-        name="Sleep State",
+    sleep_state = xobj[0] ^ 1
+    device.update_binary_sensor(
+        key=ExtendedBinarySensorDeviceClass.ASLEEP,
         native_value=sleep_state,
-        native_unit_of_measurement=None,
+        device_class=ExtendedBinarySensorDeviceClass.ASLEEP,
+        name="Asleep",
     )
     return {}
 
@@ -1772,21 +1766,15 @@ def obj5810(
 def obj6461(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
-    """Device Wearing Status"""
+    """Wearing State"""
     if len(xobj) != 1:
         return {}
-    if xobj[0] == 0:
-        device_wearing_status = "Wearing"
-    elif xobj[0] == 1:
-        device_wearing_status = "Not Wear"
-    else:
-        device_wearing_status = "Unknown"
-    device.update_sensor(
-        key=ExtendedSensorDeviceClass.DEVICE_WEARING_STATUS,
-        device_class=ExtendedSensorDeviceClass.DEVICE_WEARING_STATUS,
-        name="Device Wearing Status",
-        native_value=device_wearing_status,
-        native_unit_of_measurement=None,
+    wearing_state = xobj[0] ^ 1
+    device.update_binary_sensor(
+        key=ExtendedBinarySensorDeviceClass.WEARING,
+        native_value=wearing_state,
+        device_class=ExtendedBinarySensorDeviceClass.WEARING,
+        name="Wearing",
     )
     return {}
 
