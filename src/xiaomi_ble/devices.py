@@ -364,6 +364,7 @@ SLEEPY_DEVICE_MODELS = {
     "MJTZC03YM",
     "HS1BB(MI)",
     "XMPIRO2SXS",
+    "XMPIRO2GSXS",
     "M2456B1",
     "M2457B1",
 }
