@@ -33,6 +33,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Door/Window Sensor",
         model="CGH1",
     ),
+    0x78D1: DeviceEntry(
+        name="Door/Window Sensor",
+        model="MC-COMM",
+    ),
     0x0A83: DeviceEntry(
         name="Motion/Light Sensor",
         model="CGPR1",
@@ -219,6 +223,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Door Lock",
         model="XMZNMST02YD",
     ),
+    0x0599: DeviceEntry(
+        name="Door Lock",
+        model="MJZNMS03LM",
+    ),
     0x0784: DeviceEntry(
         name="Door Lock",
         model="XMZNMS04LM",
@@ -356,6 +364,7 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
 SLEEPY_DEVICE_MODELS = {
     "CGH1",
     "ES3",
+    "MC-COMM",
     "ES5BB",
     "PS1BB",
     "JTYJGD03MI",
