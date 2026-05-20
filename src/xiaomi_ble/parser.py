@@ -1111,7 +1111,10 @@ def obj4808(
     device.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, round(humi, 1))
     return {}
 
-def obj480c(xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str) -> dict[str, Any]:
+
+def obj480c(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
     """Door/Window state for zhiee.magnet.mc01 and similar devices."""
     if len(xobj) != 1:
         return {}
@@ -1121,6 +1124,7 @@ def obj480c(xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str) ->
     elif state == 0x01:
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, False)
     return {}
+
 
 def obj4818(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
