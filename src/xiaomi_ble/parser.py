@@ -1112,6 +1112,20 @@ def obj4808(
     return {}
 
 
+def obj480c(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Door/Window state for zhiee.magnet.mc01 and similar devices."""
+    if len(xobj) != 1:
+        return {}
+    state = xobj[0]
+    if state == 0x00:
+        device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, True)
+    elif state == 0x01:
+        device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, False)
+    return {}
+
+
 def obj4818(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1861,6 +1875,7 @@ xiaomi_dataobject_dict = {
     0x4805: obj4805,
     0x4806: obj4806,
     0x4808: obj4808,
+    0x480C: obj480c,
     0x4818: obj4818,
     0x483C: obj483c,
     0x483D: obj483d,
