@@ -5,11 +5,13 @@ from enum import Enum
 from sensor_state_data import BaseDeviceClass
 
 TIMEOUT_1DAY = 86400
+TIMEOUT_15MIN = 900
 
 SERVICE_MIBEACON = "0000fe95-0000-1000-8000-00805f9b34fb"
 SERVICE_HHCCJCY10 = "0000fd50-0000-1000-8000-00805f9b34fb"
 SERVICE_SCALE1 = "0000181d-0000-1000-8000-00805f9b34fb"
 SERVICE_SCALE2 = "0000181b-0000-1000-8000-00805f9b34fb"
+SERVICE_BT_BASE = "0000{}-0000-1000-8000-00805f9b34fb"
 
 # This characteristic contains the current battery level for a HHCCJCY01
 # as well as the firmware version
