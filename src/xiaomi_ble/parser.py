@@ -1705,7 +1705,14 @@ def obj560d(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Double button press"""
-    if device_type not in ["KS1", "KS1BP"]:
+    if device_type not in ["KS1", "KS1BP", "KS2BB"]:
+        return {}
+    if device_type == "KS2BB":
+        device.fire_event(
+            key=EventDeviceKeys.BUTTON,
+            event_type="double_press",
+            event_properties=None,
+        )
         return {}
     button = xobj[0]
     if button_name := QUAD_BUTTON_TO_NAME[button]:
@@ -1721,7 +1728,14 @@ def obj560e(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Long button press"""
-    if device_type not in ["KS1", "KS1BP"]:
+    if device_type not in ["KS1", "KS1BP", "KS2BB"]:
+        return {}
+    if device_type == "KS2BB":
+        device.fire_event(
+            key=EventDeviceKeys.BUTTON,
+            event_type="long_press",
+            event_properties=None,
+        )
         return {}
     button = xobj[0]
     if button_name := QUAD_BUTTON_TO_NAME[button]:
