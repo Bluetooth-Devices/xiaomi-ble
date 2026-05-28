@@ -65,8 +65,10 @@ KEY_SIGNAL_STRENGTH = DeviceKey(key="signal_strength", device_id=None)
 KEY_SMOKE = DeviceKey(key="smoke", device_id=None)
 KEY_TEMPERATURE = DeviceKey(key="temperature", device_id=None)
 KEY_IMPEDANCE_LOW = DeviceKey(key="impedance_low", device_id=None)
+KEY_IMPEDANCE_HIGH = DeviceKey(key="impedance_high", device_id=None)
 KEY_HEART_RATE = DeviceKey(key="heart_rate", device_id=None)
 KEY_PROFILE_ID = DeviceKey(key="profile_id", device_id=None)
+KEY_STABILIZED = DeviceKey(key="stabilized", device_id=None)
 KEY_TIMESTAMP = DeviceKey(key="timestamp", device_id=None)
 KEY_VOLTAGE = DeviceKey(key="voltage", device_id=None)
 KEY_CHARGING_STATE = DeviceKey(key="charging_state", device_id=None)
@@ -3446,9 +3448,9 @@ def test_Xiaomi_Scale_S400_MJTZC01YM():
                 device_class=DeviceClass.MASS,
                 native_unit_of_measurement=Units.MASS_KILOGRAMS,
             ),
-            KEY_IMPEDANCE: SensorDescription(
-                device_key=KEY_IMPEDANCE,
-                device_class=DeviceClass.IMPEDANCE,
+            KEY_IMPEDANCE_LOW: SensorDescription(
+                device_key=KEY_IMPEDANCE_LOW,
+                device_class=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
                 native_unit_of_measurement=Units.OHM,
             ),
             KEY_HEART_RATE: SensorDescription(
@@ -3473,9 +3475,9 @@ def test_Xiaomi_Scale_S400_MJTZC01YM():
                 device_key=KEY_MASS,
                 native_value=69.9,
             ),
-            KEY_IMPEDANCE: SensorValue(
-                name="Impedance",
-                device_key=KEY_IMPEDANCE,
+            KEY_IMPEDANCE_LOW: SensorValue(
+                name="Impedance Low",
+                device_key=KEY_IMPEDANCE_LOW,
                 native_value=543.2,
             ),
             KEY_HEART_RATE: SensorValue(
@@ -3492,8 +3494,19 @@ def test_Xiaomi_Scale_S400_MJTZC01YM():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
-        binary_entity_descriptions={},
-        binary_entity_values={},
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized",
+                device_key=KEY_STABILIZED,
+                native_value=False,
+            ),
+        },
     )
 
 
@@ -3521,9 +3534,9 @@ def test_Xiaomi_Scale_S400_MJTZC01YM_packet_2():
             )
         },
         entity_descriptions={
-            KEY_IMPEDANCE_LOW: SensorDescription(
-                device_key=KEY_IMPEDANCE_LOW,
-                device_class=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
+            KEY_IMPEDANCE_HIGH: SensorDescription(
+                device_key=KEY_IMPEDANCE_HIGH,
+                device_class=ExtendedSensorDeviceClass.IMPEDANCE_HIGH,
                 native_unit_of_measurement=Units.OHM,
             ),
             KEY_PROFILE_ID: SensorDescription(
@@ -3538,9 +3551,9 @@ def test_Xiaomi_Scale_S400_MJTZC01YM_packet_2():
             ),
         },
         entity_values={
-            KEY_IMPEDANCE_LOW: SensorValue(
-                name="Impedance Low",
-                device_key=KEY_IMPEDANCE_LOW,
+            KEY_IMPEDANCE_HIGH: SensorValue(
+                name="Impedance High",
+                device_key=KEY_IMPEDANCE_HIGH,
                 native_value=497.6,
             ),
             KEY_PROFILE_ID: SensorValue(
@@ -3552,8 +3565,19 @@ def test_Xiaomi_Scale_S400_MJTZC01YM_packet_2():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
-        binary_entity_descriptions={},
-        binary_entity_values={},
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized",
+                device_key=KEY_STABILIZED,
+                native_value=True,
+            ),
+        },
     )
 
 
