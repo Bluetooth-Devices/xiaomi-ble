@@ -56,6 +56,9 @@ class ExtendedBinarySensorDeviceClass(BaseDeviceClass):
     # On means door pried, Off means door not pried
     PRY_THE_DOOR = "pry_the_door"
 
+    # On means measurement stabilized, Off means measuring or stepped off
+    STABILIZED = "stabilized"
+
     # On means toothbrush On, Off means toothbrush Off
     TOOTHBRUSH = "toothbrush"
 
@@ -96,8 +99,11 @@ class ExtendedSensorDeviceClass(BaseDeviceClass):
     # No-One-Duration
     DURATION_CLEARED = "duration_cleared"
 
-    # Low frequency impedance
+    # Low frequency impedance 50 kHz
     IMPEDANCE_LOW = "impedance_low"
+
+    # High frequency impedance 250 kHz
+    IMPEDANCE_HIGH = "impedance_high"
 
     # Heart rate
     HEART_RATE = "heart_rate"

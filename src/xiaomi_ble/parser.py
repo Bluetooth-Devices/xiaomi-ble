@@ -1798,11 +1798,28 @@ def obj6e16(
 ) -> dict[str, Any]:
     """Body Composition Scale S400"""
     profile_id, data, _ = struct.unpack("<BII", xobj)
-    if not data:
-        return {}
     mass = data & 0x7FF
     heart_rate = (data >> 11) & 0x7F
     impedance = data >> 18
+
+    device.update_sensor(
+        key=ExtendedSensorDeviceClass.PROFILE_ID,
+        name="Profile ID",
+        device_class=ExtendedSensorDeviceClass.PROFILE_ID,
+        native_unit_of_measurement=None,
+        native_value=profile_id,
+    )
+
+    if mass == 0 and heart_rate == 0 and impedance == 0:
+        # Person stepped off the scale → reset
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.STABILIZED,
+            name="Stabilized",
+            device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            native_value=False,
+        )
+        return {}
+
     if mass != 0:
         device.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, mass / 10)
     if 0 < heart_rate < 127:
@@ -1813,26 +1830,46 @@ def obj6e16(
             native_unit_of_measurement="bpm",
             native_value=heart_rate + 50,
         )
-    if impedance != 0:
-        if mass != 0:
-            device.update_predefined_sensor(
-                SensorLibrary.IMPEDANCE__OHM, impedance / 10
-            )
-        else:
-            device.update_sensor(
-                key=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
-                name="Impedance Low",
-                device_class=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
-                native_unit_of_measurement=Units.OHM,
-                native_value=impedance / 10,
-            )
-    device.update_sensor(
-        key=ExtendedSensorDeviceClass.PROFILE_ID,
-        name="Profile ID",
-        device_class=ExtendedSensorDeviceClass.PROFILE_ID,
-        native_unit_of_measurement=None,
-        native_value=profile_id,
-    )
+
+    if mass == 0 and heart_rate == 0:
+        # Last packet → high frequency 250 kHz → impedance_high → stabilized
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.IMPEDANCE_HIGH,
+            name="Impedance High",
+            device_class=ExtendedSensorDeviceClass.IMPEDANCE_HIGH,
+            native_unit_of_measurement=Units.OHM,
+            native_value=impedance / 10,
+        )
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.STABILIZED,
+            name="Stabilized",
+            device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            native_value=True,
+        )
+    elif impedance != 0:
+        # Packet with weight → low frequency 50 kHz → impedance_low
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
+            name="Impedance Low",
+            device_class=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
+            native_unit_of_measurement=Units.OHM,
+            native_value=impedance / 10,
+        )
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.STABILIZED,
+            name="Stabilized",
+            device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            native_value=False,
+        )
+    else:
+        # Packet with weight only → with socks → stabilized
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.STABILIZED,
+            name="Stabilized",
+            device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            native_value=True,
+        )
+
     return {}
 
 
