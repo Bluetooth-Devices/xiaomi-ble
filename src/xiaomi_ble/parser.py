@@ -1798,11 +1798,28 @@ def obj6e16(
 ) -> dict[str, Any]:
     """Body Composition Scale S400"""
     profile_id, data, _ = struct.unpack("<BII", xobj)
-    if not data:
-        return {}
     mass = data & 0x7FF
     heart_rate = (data >> 11) & 0x7F
     impedance = data >> 18
+
+    device.update_sensor(
+        key=ExtendedSensorDeviceClass.PROFILE_ID,
+        name="Profile ID",
+        device_class=ExtendedSensorDeviceClass.PROFILE_ID,
+        native_unit_of_measurement=None,
+        native_value=profile_id,
+    )
+
+    if mass == 0 and heart_rate == 0 and impedance == 0:
+        # Person stepped off the scale → reset
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.STABILIZED,
+            name="Stabilized",
+            device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            native_value=False,
+        )
+        return {}
+
     if mass != 0:
         device.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, mass / 10)
     if 0 < heart_rate < 127:
@@ -1814,15 +1831,7 @@ def obj6e16(
             native_value=heart_rate + 50,
         )
 
-    if mass == 0 and heart_rate == 0 and impedance == 0:
-        # Person stepped off the scale
-        device.update_binary_sensor(
-            key=ExtendedBinarySensorDeviceClass.STABILIZED,
-            name="Stabilized",
-            device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
-            native_value=False,
-        )
-    elif mass == 0 and heart_rate == 0:
+    if mass == 0 and heart_rate == 0:
         # Last packet → high frequency 250 kHz → impedance_high → stabilized
         device.update_sensor(
             key=ExtendedSensorDeviceClass.IMPEDANCE_HIGH,
@@ -1861,13 +1870,6 @@ def obj6e16(
             native_value=True,
         )
 
-    device.update_sensor(
-        key=ExtendedSensorDeviceClass.PROFILE_ID,
-        name="Profile ID",
-        device_class=ExtendedSensorDeviceClass.PROFILE_ID,
-        native_unit_of_measurement=None,
-        native_value=profile_id,
-    )
     return {}
 
 

@@ -3512,7 +3512,7 @@ def test_Xiaomi_Scale_S400_MJTZC01YM():
 
 def test_Xiaomi_Scale_S400_MJTZC01YM_packet_2():
     """Test Xiaomi parser for Xiaomi Body Composition Scale S400 MJTZC01YM
-    (second packet with only low frequency impedance).
+    (second packet with only high frequency impedance).
     """
     data_string = b"HY\xd5;\x0b\xd6\xef\x0b%\xdbrx^~/F\xd6\x00\x00\x00\xd8d-\xf6"
     advertisement = bytes_to_service_info(data_string, address="8C:D0:B2:F6:BE:EF")
@@ -3619,6 +3619,126 @@ def test_Xiaomi_XMWS01XS_press():
                 name="Button Left",
                 event_type="press",
                 event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_Scale_S400_MJTZC01YM_socks():
+    """Test Xiaomi parser for S400 — measurement with socks (no impedance)."""
+    data_string = (
+        b"HY\xd5;\x71\x53\x04\x38\xb5\x89\x4b"
+        b"\x24\x2c\x20\x99\x08\xda\x00\x00\x00\x47\x9e\xcd\xa3"
+    )
+    advertisement = bytes_to_service_info(data_string, address="04:AE:47:67:C6:7C")
+    bindkey = "02d2900363ef629c736a4549677acbee"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Body Composition Scale C67C (MJTZC01YM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Body Composition Scale C67C",
+                manufacturer="Xiaomi",
+                model="MJTZC01YM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_MASS: SensorDescription(
+                device_key=KEY_MASS,
+                device_class=DeviceClass.MASS,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_PROFILE_ID: SensorDescription(
+                device_key=KEY_PROFILE_ID,
+                device_class=ExtendedSensorDeviceClass.PROFILE_ID,
+                native_unit_of_measurement=None,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_MASS: SensorValue(name="Mass", device_key=KEY_MASS, native_value=74.7),
+            KEY_PROFILE_ID: SensorValue(
+                name="Profile ID", device_key=KEY_PROFILE_ID, native_value=1
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=True
+            ),
+        },
+    )
+
+
+def test_Xiaomi_Scale_S400_MJTZC01YM_reset():
+    """Test Xiaomi parser for S400 — person stepped off scale."""
+    data_string = (
+        b"HY\xd5;\x72\x03\x6c\x67\x94\x35\x5a"
+        b"\x19\xdb\xc8\x64\xbf\xb3\x00\x00\x00\xe4\x15\x1d\xc8"
+    )
+    advertisement = bytes_to_service_info(data_string, address="04:AE:47:67:C6:7C")
+    bindkey = "02d2900363ef629c736a4549677acbee"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Body Composition Scale C67C (MJTZC01YM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Body Composition Scale C67C",
+                manufacturer="Xiaomi",
+                model="MJTZC01YM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_PROFILE_ID: SensorDescription(
+                device_key=KEY_PROFILE_ID,
+                device_class=ExtendedSensorDeviceClass.PROFILE_ID,
+                native_unit_of_measurement=None,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_PROFILE_ID: SensorValue(
+                name="Profile ID", device_key=KEY_PROFILE_ID, native_value=1
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=False
             ),
         },
     )
