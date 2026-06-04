@@ -1719,6 +1719,102 @@ def test_Xiaomi_MJWSD06MMC_new_hw_revision():
     )
 
 
+def test_Xiaomi_ESM787_discovery():
+    """Test Xiaomi parser for the Yanmi ESM787 (product_id 0x78DB).
+
+    The raw advertisement reported in GH #295 is an unencrypted MiBeacon V5
+    discovery beacon (object_include=0): it carries the MAC but no measurement
+    object. Registering 0x78DB is enough to identify the device so Home
+    Assistant can discover it; sensor values arrive on later object-bearing
+    adverts (see test_Xiaomi_ESM787_temperature_humidity).
+    """
+    data_string = b"\x10Y\xdbx\r\xf4\xf8\x028\xc1\xa4"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:02:F8:F4")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert device.update(advertisement) == SensorUpdate(
+        title="Temperature/Humidity Sensor F8F4 (ESM787)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temperature/Humidity Sensor F8F4",
+                manufacturer="Yanmi",
+                model="ESM787",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
+def test_Xiaomi_ESM787_temperature_humidity():
+    """Test Xiaomi parser for the Yanmi ESM787 temperature + humidity.
+
+    Synthesized unencrypted MiBeacon V5 advert for product_id 0x78DB carrying a
+    standard combined temperature/humidity object (obj100d). Built from the real
+    MAC/product_id reported in GH #295 with the object_include frame-control bit
+    set, so it exercises the registered device through the established obj100d
+    decoder (temp=23.5 °C, humidity=48.7 %).
+    """
+    data_string = b"PY\xdbx\r\xf4\xf8\x028\xc1\xa4\r\x10\x04\xeb\x00\xe7\x01"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:02:F8:F4")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert device.update(advertisement) == SensorUpdate(
+        title="Temperature/Humidity Sensor F8F4 (ESM787)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temperature/Humidity Sensor F8F4",
+                manufacturer="Yanmi",
+                model="ESM787",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5)",
+            )
+        },
+        entity_descriptions={
+            KEY_TEMPERATURE: SensorDescription(
+                device_key=KEY_TEMPERATURE,
+                device_class=DeviceClass.TEMPERATURE,
+                native_unit_of_measurement="°C",
+            ),
+            KEY_HUMIDITY: SensorDescription(
+                device_key=KEY_HUMIDITY,
+                device_class=DeviceClass.HUMIDITY,
+                native_unit_of_measurement="%",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=23.5
+            ),
+            KEY_HUMIDITY: SensorValue(
+                name="Humidity", device_key=KEY_HUMIDITY, native_value=48.7
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
 def test_Xiaomi_MJYD02YL():
     """Test Xiaomi parser for MJYD02YL."""
 
