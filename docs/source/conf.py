@@ -10,16 +10,19 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+# The package is installed (``pip install .[docs]``) when the docs are built, so
+# autodoc can simply import ``xiaomi_ble`` without any sys.path manipulation.
 from typing import Any, List
+
+import xiaomi_ble
 
 # -- Project information -----------------------------------------------------
 
 project = "Xiaomi BLE"
 copyright = "2020, J. Nick Koston"
 author = "J. Nick Koston"
+release = xiaomi_ble.__version__
+version = release
 
 
 # -- General configuration ---------------------------------------------------
@@ -29,7 +32,27 @@ author = "J. Nick Koston"
 # ones.
 extensions = [
     "myst_parser",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.intersphinx",
 ]
+
+# -- Autodoc / autosummary ---------------------------------------------------
+
+autosummary_generate = True
+autodoc_member_order = "bysource"
+autodoc_typehints = "description"
+autodoc_default_options = {
+    "members": True,
+    "show-inheritance": True,
+}
+
+# Link out to the standard library and key runtime dependencies.
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+}
 
 # The suffix of source filenames.
 source_suffix = [".rst", ".md"]
