@@ -1670,6 +1670,55 @@ def test_Xiaomi_MJWSD06MMC_humidity():
     )
 
 
+def test_Xiaomi_MJWSD06MMC_new_hw_revision():
+    """Test MJWSD06MMC new hw revision (product_id 0x5BEA, July 2025 batch).
+
+    Same model as 0x55B5 but Xiaomi shipped units broadcasting product_id
+    0x5BEA, which left them undiscovered. See GH #277. The advert below is
+    the 0x55B5 temperature payload re-encrypted under the new product_id, so
+    it must decode identically.
+    """
+    data_string = b"HY\xea[:\xe4\xda\x12\xe2\xb1\xfb\xf5\x12\x00\x00B\xb2\x9fP"
+    bindkey = "4d8f1373fb4d3bab557d0ebd1c78f8c4"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:80:15:07")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Temperature/Humidity Sensor 1507 (MJWSD06MMC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temperature/Humidity Sensor 1507",
+                manufacturer="Xiaomi",
+                model="MJWSD06MMC",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_TEMPERATURE: SensorDescription(
+                device_key=KEY_TEMPERATURE,
+                device_class=DeviceClass.TEMPERATURE,
+                native_unit_of_measurement="°C",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=25.2
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
 def test_Xiaomi_MJYD02YL():
     """Test Xiaomi parser for MJYD02YL."""
 
