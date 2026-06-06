@@ -2303,6 +2303,15 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         mass_stabilized = bool(int(control_byte & (1 << 5)))
         mass_removed = bool(int(control_byte & (1 << 7)))
 
+        # Reset stabilization state when scale is empty / user steps off
+        if mass == 0:
+            self.update_binary_sensor(
+                key=ExtendedBinarySensorDeviceClass.STABILIZED,
+                name="Stabilized",
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+                native_value=False,
+            )
+
         if mass_in_kilograms:
             # sensor advertises kg * 200
             mass /= 200
@@ -2316,8 +2325,25 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.update_predefined_sensor(
             SensorLibrary.MASS_NON_STABILIZED__MASS_KILOGRAMS, mass
         )
-        if mass_stabilized and not mass_removed:
+        
+        # Handling stabilization sensor based on weight status
+        if mass_stabilized and not mass_removed and mass > 0:
             self.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, mass)
+            self.update_binary_sensor(
+                key=ExtendedBinarySensorDeviceClass.STABILIZED,
+                name="Stabilized",
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+                native_value=True,
+            )
+        else:
+            # Scale is measuring / not stabilized yet
+            if mass > 0:
+                self.update_binary_sensor(
+                    key=ExtendedBinarySensorDeviceClass.STABILIZED,
+                    name="Stabilized",
+                    device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+                    native_value=False,
+                )
 
         return True
 
@@ -2352,6 +2378,15 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         mass_removed = bool(int(control_flags[8]))
         impedance_stabilized = bool(int(control_flags[14]))
 
+        # Reset stabilization state when scale is empty / user steps off
+        if mass == 0:
+            self.update_binary_sensor(
+                key=ExtendedBinarySensorDeviceClass.STABILIZED,
+                name="Stabilized",
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+                native_value=False,
+            )
+
         if mass_in_kilograms:
             # sensor advertises kg * 200
             mass /= 200
@@ -2365,10 +2400,28 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.update_predefined_sensor(
             SensorLibrary.MASS_NON_STABILIZED__MASS_KILOGRAMS, mass
         )
-        if mass_stabilized and not mass_removed:
+        
+        # Handling stabilization sensor based on weight status
+        if mass_stabilized and not mass_removed and mass > 0:
             self.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, mass)
             if impedance_stabilized:
                 self.update_predefined_sensor(SensorLibrary.IMPEDANCE__OHM, impedance)
+            
+            self.update_binary_sensor(
+                key=ExtendedBinarySensorDeviceClass.STABILIZED,
+                name="Stabilized",
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+                native_value=True,
+            )
+        else:
+            # Scale is measuring / not stabilized yet
+            if mass > 0:
+                self.update_binary_sensor(
+                    key=ExtendedBinarySensorDeviceClass.STABILIZED,
+                    name="Stabilized",
+                    device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+                    native_value=False,
+                )
 
         return True
 
