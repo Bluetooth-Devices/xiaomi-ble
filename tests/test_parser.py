@@ -1817,6 +1817,51 @@ def test_Xiaomi_ESM787_temperature_humidity():
     )
 
 
+def test_malformed_object_does_not_crash_parser():
+    """A truncated object must not abort parsing the whole advertisement.
+
+    Adverts from non-Xiaomi devices that happen to reuse a registered
+    product_id (or corrupted frames) can carry an object whose declared length
+    is shorter than the decoder expects. Here obj4a08 (illuminance, a 4-byte
+    float) is declared with only 3 bytes — its decoder would previously raise
+    ``struct.error`` and abort the entire parse. The parser must instead skip
+    the bad object and still surface the device.
+    """
+    # Unencrypted MiBeacon V5 frame for product_id 0x78DB (ESM787) carrying a
+    # single malformed obj4a08 (typecode 0x4a08 LE, declared length 3).
+    data_string = b"PY\xdbx\r\xf4\xf8\x028\xc1\xa4\x08J\x03\x00\x00\x00"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:02:F8:F4")
+
+    device = XiaomiBluetoothDeviceData()
+    # supported() runs the parse; it must not raise on the malformed object.
+    assert device.supported(advertisement)
+    update = device.update(advertisement)
+
+    # The device is still identified and the malformed illuminance is dropped.
+    assert update.entity_values[KEY_SIGNAL_STRENGTH].native_value == -60
+    assert KEY_ILLUMINANCE not in update.entity_values
+
+
+def test_malformed_object_followed_by_valid_object_still_parses():
+    """A bad object must not swallow valid objects later in the same payload."""
+    # Same frame as above but the malformed obj4a08 is followed by a valid
+    # obj100d (temperature 23.5 °C, humidity 48.7 %).
+    data_string = (
+        b"PY\xdbx\r\xf4\xf8\x028\xc1\xa4"
+        b"\x08J\x03\x00\x00\x00"
+        b"\r\x10\x04\xeb\x00\xe7\x01"
+    )
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:02:F8:F4")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    update = device.update(advertisement)
+
+    assert update.entity_values[KEY_TEMPERATURE].native_value == 23.5
+    assert update.entity_values[KEY_HUMIDITY].native_value == 48.7
+    assert KEY_ILLUMINANCE not in update.entity_values
+
+
 def test_Xiaomi_MJYD02YL():
     """Test Xiaomi parser for MJYD02YL."""
 

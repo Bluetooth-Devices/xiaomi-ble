@@ -2267,7 +2267,23 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 ):
                     resfunc = xiaomi_dataobject_dict.get(obj_typecode, None)
                     if resfunc:
-                        self.unhandled.update(resfunc(dobject, self, device_type))
+                        try:
+                            self.unhandled.update(resfunc(dobject, self, device_type))
+                        except (IndexError, struct.error, ValueError) as err:
+                            # A single malformed or truncated object must not
+                            # abort parsing of the whole packet. This happens
+                            # with corrupted frames or adverts from non-Xiaomi
+                            # devices that reuse a registered product_id and
+                            # carry an object whose declared length does not
+                            # match what the decoder expects. Skip it and let
+                            # any remaining objects in the payload parse.
+                            _LOGGER.debug(
+                                "%s, skipping malformed object 0x%x (data %s): %s",
+                                sinfo,
+                                obj_typecode,
+                                dobject.hex(),
+                                err,
+                            )
                     else:
                         _LOGGER.info(
                             "%s, UNKNOWN dataobject in payload! Adv: %s",
