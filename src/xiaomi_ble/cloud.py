@@ -386,12 +386,12 @@ class QrCodeXiaomiCloudConnector(XiaomiCloudConnector):
 
     def __init__(self, session: aiohttp.ClientSession):
         super().__init__(session)
-        self._cUserId = None
-        self._location = None
-        self._login_url = None
-        self._long_polling_url = None
-        self._pass_token = None
-        self._qr_image_url = None
+        self._cUserId: str | None = None
+        self._location: str | None = None
+        self._login_url: str | None = None
+        self._long_polling_url: str | None = None
+        self._pass_token: str | None = None
+        self._qr_image_url: str | None = None
 
     async def _login_step_1(self) -> bool:
         url = "https://account.xiaomi.com/longPolling/loginUrl"
@@ -447,7 +447,11 @@ class QrCodeXiaomiCloudConnector(XiaomiCloudConnector):
         return valid
 
     async def get_login_qrcode(self) -> XiaomiCloudQrCode:
-        if not await self._login_step_1():
+        if (
+            not await self._login_step_1()
+            or not self._qr_image_url
+            or not self._login_url
+        ):
             raise XiaomiCloudInvalidAuthenticationException("Unable to get login url.")
         return XiaomiCloudQrCode(self._qr_image_url, self._login_url)
 
@@ -475,7 +479,7 @@ class XiaomiCloudTokenFetch:
         self._username = username
         self._password = password
         self._session = session
-        self._connector: XiaomiCloudConnector | None = None
+        self._connector: XiaomiCloudConnector
 
     async def get_login_qrcode(self) -> XiaomiCloudQrCode:
         """Get login qrcode."""
@@ -487,7 +491,7 @@ class XiaomiCloudTokenFetch:
     ) -> XiaomiCloudBLEDevice | None:
         """Get the token for a given MAC address."""
         formatted_mac = format_mac_upper(mac)
-        if not self._connector:
+        if not self._connector and self._username and self._password:
             self._connector = PasswordXiaomiCloudConnector(
                 self._username, self._password, self._session
             )
