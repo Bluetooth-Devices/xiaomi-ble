@@ -1802,9 +1802,6 @@ def obj6e16(
     heart_rate = (data >> 11) & 0x7F
     impedance = data >> 18
 
-    if not hasattr(device, "_s400_stabilized_lock"):
-        device._s400_stabilized_lock = False
-
     device.update_sensor(
         key=ExtendedSensorDeviceClass.PROFILE_ID,
         name="Profile ID",
@@ -1813,9 +1810,8 @@ def obj6e16(
         native_value=profile_id,
     )
 
-    # Reset stabilization state when scale is empty / user steps off
     if mass == 0 and heart_rate == 0 and impedance == 0:
-        device._s400_stabilized_lock = False
+        # Person stepped off the scale → reset
         device.update_binary_sensor(
             key=ExtendedBinarySensorDeviceClass.STABILIZED,
             name="Stabilized",
@@ -1844,7 +1840,6 @@ def obj6e16(
             native_unit_of_measurement=Units.OHM,
             native_value=impedance / 10,
         )
-        device._s400_stabilized_lock = True
         device.update_binary_sensor(
             key=ExtendedBinarySensorDeviceClass.STABILIZED,
             name="Stabilized",
@@ -1853,23 +1848,21 @@ def obj6e16(
         )
     elif impedance != 0:
         # Packet with weight → low frequency 50 kHz → impedance_low
-        if not device._s400_stabilized_lock:
-            device.update_sensor(
-                key=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
-                name="Impedance Low",
-                device_class=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
-                native_unit_of_measurement=Units.OHM,
-                native_value=impedance / 10,
-            )
-            device.update_binary_sensor(
-                key=ExtendedBinarySensorDeviceClass.STABILIZED,
-                name="Stabilized",
-                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
-                native_value=False,
-            )
+        device.update_sensor(
+            key=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
+            name="Impedance Low",
+            device_class=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
+            native_unit_of_measurement=Units.OHM,
+            native_value=impedance / 10,
+        )
+        device.update_binary_sensor(
+            key=ExtendedBinarySensorDeviceClass.STABILIZED,
+            name="Stabilized",
+            device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            native_value=False,
+        )
     else:
         # Packet with weight only → with socks → stabilized
-        device._s400_stabilized_lock = True
         device.update_binary_sensor(
             key=ExtendedBinarySensorDeviceClass.STABILIZED,
             name="Stabilized",
@@ -2285,18 +2278,22 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
         return True
 
+    # S400 models — share SERVICE_SCALE1 UUID for idle packets
+    _S400_MODELS = {"MJTZC01YM", "MJTZC03YM"}
+
     def _parse_scale_v1(self, service_info: BluetoothServiceInfo, data: bytes) -> bool:
         if len(data) != 10:
             return False
 
         uuid16 = (data[3] << 8) | data[2]
-
         identifier = short_address(service_info.address)
 
         self.device_id = uuid16
-        self.set_title(f"Mi Smart Scale ({identifier})")
-        self.set_device_name(f"Mi Smart Scale ({identifier})")
-        self.set_device_type("XMTZC01HM/XMTZC04HM")
+        # Don't overwrite device identity if already identified as S400
+        if self.device_type not in self._S400_MODELS:
+            self.set_title(f"Mi Smart Scale ({identifier})")
+            self.set_device_name(f"Mi Smart Scale ({identifier})")
+            self.set_device_type("XMTZC01HM/XMTZC04HM")
         self.set_device_manufacturer("Xiaomi")
         self.pending = False
         self.sleepy_device = True
@@ -2310,7 +2307,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         mass_stabilized = bool(int(control_byte & (1 << 5)))
         mass_removed = bool(int(control_byte & (1 << 7)))
 
-        # Reset stabilization state when scale is empty / user steps off
+        # Reset stabilized for all scales including S400
         if mass == 0:
             self.update_binary_sensor(
                 key=ExtendedBinarySensorDeviceClass.STABILIZED,
