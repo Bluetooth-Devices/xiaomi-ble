@@ -1520,8 +1520,6 @@ def test_Xiaomi_Scale2_non_stabilized():
     )
 
 
-
-
 def test_Xiaomi_Scale1_reset():
     """Test Xiaomi parser for Mi Smart Scale (MiScale V1) — person stepped off scale."""
     # control_byte=0x80 (mass_removed=True), mass=0
@@ -1646,6 +1644,7 @@ def test_Xiaomi_Scale2_reset():
             ),
         },
     )
+
 
 def test_Xiaomi_GCLS002():
     """Test Xiaomi parser for GCLS002 / HHCCJCY09."""

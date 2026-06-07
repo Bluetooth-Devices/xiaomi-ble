@@ -2336,7 +2336,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.update_predefined_sensor(
             SensorLibrary.MASS_NON_STABILIZED__MASS_KILOGRAMS, mass
         )
-        
+
         # Handling stabilization sensor based on weight status
         if mass_stabilized and not mass_removed and mass > 0:
             self.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, mass)
@@ -2411,13 +2411,13 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         self.update_predefined_sensor(
             SensorLibrary.MASS_NON_STABILIZED__MASS_KILOGRAMS, mass
         )
-        
+
         # Handling stabilization sensor based on weight status
         if mass_stabilized and not mass_removed and mass > 0:
             self.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, mass)
             if impedance_stabilized:
                 self.update_predefined_sensor(SensorLibrary.IMPEDANCE__OHM, impedance)
-            
+
             self.update_binary_sensor(
                 key=ExtendedBinarySensorDeviceClass.STABILIZED,
                 name="Stabilized",
