@@ -39,7 +39,7 @@ from .const import (
     ExtendedBinarySensorDeviceClass,
     ExtendedSensorDeviceClass,
 )
-from .devices import DEVICE_TYPES, SLEEPY_DEVICE_MODELS, S400_MODELS
+from .devices import DEVICE_TYPES, S400_MODELS, SLEEPY_DEVICE_MODELS
 from .events import EventDeviceKeys
 from .locks import BLE_LOCK_ACTION, BLE_LOCK_ERROR, BLE_LOCK_METHOD
 
@@ -2290,7 +2290,6 @@ class XiaomiBluetoothDeviceData(BluetoothData):
                 payload_start = next_start
 
         return True
-
 
     def _parse_scale_v1(self, service_info: BluetoothServiceInfo, data: bytes) -> bool:
         if len(data) != 10:
