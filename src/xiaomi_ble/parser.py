@@ -1802,8 +1802,6 @@ def obj6e16(
     heart_rate = (data >> 11) & 0x7F
     impedance = data >> 18
 
-    _LOGGER.debug("S400 obj6e16: profile=%s mass=%s heart_rate=%s impedance=%s", profile_id, mass, heart_rate, impedance)
-
     device.update_sensor(
         key=ExtendedSensorDeviceClass.PROFILE_ID,
         name="Profile ID",
@@ -2204,6 +2202,14 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         if frctrl_object_include == 0:
             # data does not contain Object
             _LOGGER.debug("Advertisement doesn't contain payload, adv: %s", data.hex())
+            # S400 idle packet — reset stabilized
+            if device_type in self._S400_MODELS:
+                self.update_binary_sensor(
+                    key=ExtendedBinarySensorDeviceClass.STABILIZED,
+                    name="Stabilized",
+                    device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+                    native_value=False,
+                )
             return False
 
         self.pending = False
@@ -2288,14 +2294,13 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             return False
 
         uuid16 = (data[3] << 8) | data[2]
+
         identifier = short_address(service_info.address)
 
         self.device_id = uuid16
-        # Don't overwrite device identity if already identified as S400
-        if self.device_type not in self._S400_MODELS:
-            self.set_title(f"Mi Smart Scale ({identifier})")
-            self.set_device_name(f"Mi Smart Scale ({identifier})")
-            self.set_device_type("XMTZC01HM/XMTZC04HM")
+        self.set_title(f"Mi Smart Scale ({identifier})")
+        self.set_device_name(f"Mi Smart Scale ({identifier})")
+        self.set_device_type("XMTZC01HM/XMTZC04HM")
         self.set_device_manufacturer("Xiaomi")
         self.pending = False
         self.sleepy_device = True
@@ -2309,7 +2314,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         mass_stabilized = bool(int(control_byte & (1 << 5)))
         mass_removed = bool(int(control_byte & (1 << 7)))
 
-        # Reset stabilized for all scales including S400
+        # Reset stabilization state when scale is empty / user steps off
         if mass == 0:
             self.update_binary_sensor(
                 key=ExtendedBinarySensorDeviceClass.STABILIZED,
