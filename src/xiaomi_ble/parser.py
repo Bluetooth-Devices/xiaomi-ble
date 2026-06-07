@@ -2136,11 +2136,16 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             device = DEVICE_TYPES[device_id]
         except KeyError:
             _LOGGER.info(
-                "BLE ADV from UNKNOWN Xiaomi device: MAC: %s, ADV: %s",
-                source_mac,
+                "BLE ADV from UNKNOWN Xiaomi device: MAC: %s, product_id: %s, ADV: %s",
+                to_mac(source_mac),
+                hex(device_id),
                 data.hex(),
             )
-            _LOGGER.debug("Unknown Xiaomi device found. Data: %s", data.hex())
+            _LOGGER.debug(
+                "Unknown Xiaomi device found. product_id: %s, Data: %s",
+                hex(device_id),
+                data.hex(),
+            )
             return False
 
         device_type = device.model
