@@ -349,6 +349,27 @@ def test_bindkey_verified_can_be_unset_legacy():
     assert not device.bindkey_verified
 
 
+def test_Xiaomi_unknown_device_logs_product_id(caplog):
+    """An UNKNOWN Xiaomi device logs its decoded product_id and a readable MAC.
+
+    This is the single datum maintainers need to add support for a new device,
+    so it must appear in the INFO log rather than only being buried in the raw
+    advertisement bytes.
+    """
+    # A valid MiBeacon V2 frame (the LYWSDCGQ advert) with the product_id bytes
+    # (data[2:4], little-endian) replaced by 0xFFFF, which is not registered.
+    data_string = b"P \xff\xff\xa3\xbf.;4-X\r\x10\x04\xb4\x00\x95\x02\n\x10\x01;"
+    advertisement = bytes_to_service_info(data_string, address="58:2D:34:3B:2E:BF")
+
+    device = XiaomiBluetoothDeviceData()
+    with caplog.at_level(logging.INFO):
+        assert not device.supported(advertisement)
+
+    assert "product_id: 0xffff" in caplog.text
+    # MAC is rendered human-readable, not as a raw bytes repr.
+    assert "58:2D:34:3B:2E:BF" in caplog.text
+
+
 def test_Xiaomi_LYWSDCGQ(caplog):
     """Test Xiaomi parser for LYWSDCGQ."""
     data_string = b"P \xaa\x01\xa3\xbf.;4-X\r\x10\x04\xb4\x00\x95\x02\n\x10\x01;"
