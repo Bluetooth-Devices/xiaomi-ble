@@ -1240,6 +1240,17 @@ def test_Xiaomi_Scale1():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=True
+            ),
+        },
     )
 
 
@@ -1291,6 +1302,17 @@ def test_Xiaomi_Scale1_mass_removed():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=False
+            ),
+        },
     )
 
 
@@ -1340,6 +1362,17 @@ def test_Xiaomi_Scale1_non_stabilized():
             ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=False
             ),
         },
     )
@@ -1411,6 +1444,17 @@ def test_Xiaomi_Scale2():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=True
+            ),
+        },
     )
 
 
@@ -1460,6 +1504,17 @@ def test_Xiaomi_Scale2_non_stabilized():
             ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=False
             ),
         },
     )

@@ -1802,6 +1802,9 @@ def obj6e16(
     heart_rate = (data >> 11) & 0x7F
     impedance = data >> 18
 
+    if not hasattr(device, "_s400_stabilized_lock"):
+        device._s400_stabilized_lock = False
+
     device.update_sensor(
         key=ExtendedSensorDeviceClass.PROFILE_ID,
         name="Profile ID",
@@ -1810,8 +1813,9 @@ def obj6e16(
         native_value=profile_id,
     )
 
+    # Reset stabilization state when scale is empty / user steps off
     if mass == 0 and heart_rate == 0 and impedance == 0:
-        # Person stepped off the scale → reset
+        device._s400_stabilized_lock = False
         device.update_binary_sensor(
             key=ExtendedBinarySensorDeviceClass.STABILIZED,
             name="Stabilized",
@@ -1840,6 +1844,7 @@ def obj6e16(
             native_unit_of_measurement=Units.OHM,
             native_value=impedance / 10,
         )
+        device._s400_stabilized_lock = True
         device.update_binary_sensor(
             key=ExtendedBinarySensorDeviceClass.STABILIZED,
             name="Stabilized",
@@ -1848,21 +1853,23 @@ def obj6e16(
         )
     elif impedance != 0:
         # Packet with weight → low frequency 50 kHz → impedance_low
-        device.update_sensor(
-            key=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
-            name="Impedance Low",
-            device_class=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
-            native_unit_of_measurement=Units.OHM,
-            native_value=impedance / 10,
-        )
-        device.update_binary_sensor(
-            key=ExtendedBinarySensorDeviceClass.STABILIZED,
-            name="Stabilized",
-            device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
-            native_value=False,
-        )
+        if not device._s400_stabilized_lock:
+            device.update_sensor(
+                key=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
+                name="Impedance Low",
+                device_class=ExtendedSensorDeviceClass.IMPEDANCE_LOW,
+                native_unit_of_measurement=Units.OHM,
+                native_value=impedance / 10,
+            )
+            device.update_binary_sensor(
+                key=ExtendedBinarySensorDeviceClass.STABILIZED,
+                name="Stabilized",
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+                native_value=False,
+            )
     else:
         # Packet with weight only → with socks → stabilized
+        device._s400_stabilized_lock = True
         device.update_binary_sensor(
             key=ExtendedBinarySensorDeviceClass.STABILIZED,
             name="Stabilized",
