@@ -1802,6 +1802,8 @@ def obj6e16(
     heart_rate = (data >> 11) & 0x7F
     impedance = data >> 18
 
+    _LOGGER.debug("S400 obj6e16: profile=%s mass=%s heart_rate=%s impedance=%s", profile_id, mass, heart_rate, impedance)
+
     device.update_sensor(
         key=ExtendedSensorDeviceClass.PROFILE_ID,
         name="Profile ID",
