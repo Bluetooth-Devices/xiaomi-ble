@@ -1260,6 +1260,8 @@ def obj4a0c(
 ) -> dict[str, Any]:
     """Single press"""
     if device_type == "XMWS01XS":
+        if not xobj:
+            return {}
         press = xobj[0]
         if press == 0:
             # left button
@@ -1290,6 +1292,8 @@ def obj4a0d(
 ) -> dict[str, Any]:
     """Double press"""
     if device_type == "XMWS01XS":
+        if not xobj:
+            return {}
         press = xobj[0]
         if press == 0:
             # left button
@@ -1320,6 +1324,8 @@ def obj4a0e(
 ) -> dict[str, Any]:
     """Long press"""
     if device_type == "XMWS01XS":
+        if not xobj:
+            return {}
         press = xobj[0]
         if press == 0:
             # left button
@@ -1476,6 +1482,8 @@ def obj4e0c(
 ) -> dict[str, Any]:
     """Button press"""
     if device_type == "XMWXKG01YL":
+        if not xobj:
+            return {}
         press = xobj[0]
         if press == 1:
             # left button
@@ -1504,6 +1512,8 @@ def obj4e0c(
                 event_properties=None,
             )
     elif device_type == "K9BB-1BTN":
+        if not xobj:
+            return {}
         press = xobj[0]
         if press == 1:
             device.fire_event(
@@ -1537,6 +1547,8 @@ def obj4e0d(
 ) -> dict[str, Any]:
     """Double Press"""
     if device_type == "XMWXKG01YL":
+        if not xobj:
+            return {}
         press = xobj[0]
         if press == 1:
             # left button
@@ -1578,6 +1590,8 @@ def obj4e0e(
 ) -> dict[str, Any]:
     """Long Press"""
     if device_type == "XMWXKG01YL":
+        if not xobj:
+            return {}
         press = xobj[0]
         if press == 1:
             # left button
@@ -1685,6 +1699,8 @@ def obj560c(
     if device_type == "KS2BB":
         button_key = EventDeviceKeys.BUTTON
     else:
+        if not xobj:
+            return {}
         button = xobj[0]
         button_name = QUAD_BUTTON_TO_NAME.get(button)
         button_key = (
@@ -1705,6 +1721,8 @@ def obj560d(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Double button press"""
+    if not xobj:
+        return {}
     if device_type not in ["KS1", "KS1BP"]:
         return {}
     button = xobj[0]
@@ -1721,6 +1739,8 @@ def obj560e(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Long button press"""
+    if not xobj:
+        return {}
     if device_type not in ["KS1", "KS1BP"]:
         return {}
     button = xobj[0]
