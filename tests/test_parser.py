@@ -1584,7 +1584,10 @@ def test_Xiaomi_Scale1_reset():
 
 
 def test_Xiaomi_Scale2_reset():
-    """Test Xiaomi parser for Mi Body Composition Scale (MiScale V2) — person stepped off scale."""
+    """Test Xiaomi parser for Mi Body Composition Scale (MiScale V2).
+
+    Person stepped off scale.
+    """
     # control_bytes: mass_removed=True, mass_stabilized=False, mass=0
     data_string = b"\x02\x82\xb2\x07\x05\x04\x0f\x02\x01\x00\x00\x00\x00"
 
