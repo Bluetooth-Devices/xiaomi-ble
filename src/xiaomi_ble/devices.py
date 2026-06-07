@@ -390,3 +390,9 @@ SLEEPY_DEVICE_MODELS = {
     "M2456B1",
     "M2457B1",
 }
+
+
+S400_MODELS = {
+    "MJTZC01YM",
+    "MJTZC03YM",
+}
