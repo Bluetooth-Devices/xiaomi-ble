@@ -39,7 +39,7 @@ from .const import (
     ExtendedBinarySensorDeviceClass,
     ExtendedSensorDeviceClass,
 )
-from .devices import DEVICE_TYPES, SLEEPY_DEVICE_MODELS
+from .devices import DEVICE_TYPES, SLEEPY_DEVICE_MODELS, S400_MODELS
 from .events import EventDeviceKeys
 from .locks import BLE_LOCK_ACTION, BLE_LOCK_ERROR, BLE_LOCK_METHOD
 
@@ -2203,7 +2203,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
             # data does not contain Object
             _LOGGER.debug("Advertisement doesn't contain payload, adv: %s", data.hex())
             # S400 idle packet — reset stabilized
-            if device_type in self._S400_MODELS:
+            if device_type in S400_MODELS:
                 self.update_binary_sensor(
                     key=ExtendedBinarySensorDeviceClass.STABILIZED,
                     name="Stabilized",
@@ -2286,8 +2286,6 @@ class XiaomiBluetoothDeviceData(BluetoothData):
 
         return True
 
-    # S400 models — share SERVICE_SCALE1 UUID for idle packets
-    _S400_MODELS = {"MJTZC01YM", "MJTZC03YM"}
 
     def _parse_scale_v1(self, service_info: BluetoothServiceInfo, data: bytes) -> bool:
         if len(data) != 10:
