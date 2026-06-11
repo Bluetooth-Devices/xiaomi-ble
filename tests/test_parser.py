@@ -47,6 +47,7 @@ KEY_BINARY_TOOTHBRUSH = DeviceKey(key="toothbrush", device_id=None)
 KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
 KEY_COUNTER = DeviceKey(key="counter", device_id=None)
 KEY_EVENT_BUTTON = DeviceKey(key="button", device_id=None)
+KEY_EVENT_BUTTON_LEFT = DeviceKey(key="button_left", device_id=None)
 KEY_EVENT_CUBE = DeviceKey(key="cube", device_id=None)
 KEY_EVENT_DIMMER = DeviceKey(key="dimmer", device_id=None)
 KEY_EVENT_FINGERPRINT = DeviceKey(key="fingerprint", device_id=None)
@@ -4324,6 +4325,115 @@ def test_Xiaomi_ES3_occupancy_off():
     )
 
 
+def test_Xiaomi_KS1_double_press():
+    """Test Xiaomi parser for KS1 quadruple-button double press (left button)."""
+    bindkey = "8bdff7d0f70fa7f5c68f42157b5fd65b"
+    data_string = bytes.fromhex("5859613ab4e6fea138c1a45905b5b90900006b8211cd")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A1:FE:E6")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Switch (quadruple button) FEE6 (KS1)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Switch (quadruple button) FEE6",
+                manufacturer="Xiaomi",
+                model="KS1",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+        events={
+            KEY_EVENT_BUTTON_LEFT: Event(
+                device_key=KEY_EVENT_BUTTON_LEFT,
+                name="Button Left",
+                event_type="double_press",
+                event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_KS1_long_press():
+    """Test Xiaomi parser for KS1 quadruple-button long press (left button)."""
+    bindkey = "8bdff7d0f70fa7f5c68f42157b5fd65b"
+    data_string = bytes.fromhex("5859613ab4e6fea138c1a45a05b5b9090000b43ff116")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A1:FE:E6")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Switch (quadruple button) FEE6 (KS1)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Switch (quadruple button) FEE6",
+                manufacturer="Xiaomi",
+                model="KS1",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+        events={
+            KEY_EVENT_BUTTON_LEFT: Event(
+                device_key=KEY_EVENT_BUTTON_LEFT,
+                name="Button Left",
+                event_type="long_press",
+                event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_button_object_ignored_for_non_button_device():
+    """A non-button device carrying a stray button object fires no event.
+
+    Exercises the device-type guard in obj560d/obj560e: any device that is not
+    KS1/KS1BP/KS2BB must ignore a 0x560d/0x560e object rather than emit a button
+    event. Here a LYWSDCGQ advert carries both obj560d and obj560e payloads; no
+    event results.
+    """
+    bindkey = "8bdff7d0f70fa7f5c68f42157b5fd65b"
+    data_string = bytes.fromhex("5859aa01b4e6fea138c1a4ff47a4daba202c2f090000e761ffec")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A1:FE:E6")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    update = device.update(advertisement)
+    assert update.events == {}
+
+
 def test_Xiaomi_KS2_button_press():
     """Test Xiaomi parser for Linptech KS2 button press."""
     bindkey = "8bdff7d0f70fa7f5c68f42157b5fd65b"
@@ -4365,6 +4475,96 @@ def test_Xiaomi_KS2_button_press():
                 device_key=KEY_EVENT_BUTTON,
                 name="Button",
                 event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_KS2_double_press():
+    """Test Xiaomi parser for Linptech KS2 double button press."""
+    bindkey = "8bdff7d0f70fa7f5c68f42157b5fd65b"
+    data_string = bytes.fromhex("58590b52b4e6fea138c1a4318fa8090000ff75594b")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A1:FE:E6")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Temperature/Humidity Sensor with Button FEE6 (KS2BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temperature/Humidity Sensor with Button FEE6",
+                manufacturer="Linptech",
+                model="KS2BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type="double_press",
+                event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_KS2_long_press():
+    """Test Xiaomi parser for Linptech KS2 long button press."""
+    bindkey = "8bdff7d0f70fa7f5c68f42157b5fd65b"
+    data_string = bytes.fromhex("58590b52b4e6fea138c1a4328fa8090000856f02bf")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A1:FE:E6")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Temperature/Humidity Sensor with Button FEE6 (KS2BB)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Temperature/Humidity Sensor with Button FEE6",
+                manufacturer="Linptech",
+                model="KS2BB",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type="long_press",
                 event_properties=None,
             ),
         },
