@@ -1,7 +1,8 @@
 """The tests for the Xiaomi ble parser."""
 
 import logging
-from unittest.mock import patch
+import struct
+from unittest.mock import Mock, patch
 
 import pytest
 from home_assistant_bluetooth import BluetoothServiceInfo
@@ -25,6 +26,7 @@ from xiaomi_ble.parser import (
     ExtendedBinarySensorDeviceClass,
     ExtendedSensorDeviceClass,
     XiaomiBluetoothDeviceData,
+    obj4a08,
 )
 
 KEY_BATTERY = DeviceKey(key="battery", device_id=None)
@@ -5421,3 +5423,18 @@ def test_Xiaomi_PS1BB_battery():
             ),
         },
     )
+
+
+def test_obj4a08_illuminance_is_little_endian():
+    """obj4a08 must decode the lux float as little-endian, host-independent.
+
+    The advert encodes illuminance as a little-endian IEEE-754 float. A native
+    `struct.unpack("f", ...)` byte-reverses the value on big-endian hosts,
+    yielding garbage lux readings. This locks in little-endian decoding so the
+    regression cannot reappear regardless of the host's byte order.
+    """
+    device = Mock()
+    # 228.0 lux packed little-endian (distinct from its big-endian layout).
+    obj4a08(struct.pack("<f", 228.0), device, "HS1BB(MI)")
+    (_, value), _ = device.update_predefined_sensor.call_args
+    assert value == 228.0
