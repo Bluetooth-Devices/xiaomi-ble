@@ -2070,7 +2070,60 @@ def test_Xiaomi_MUE4094RT():
 
 
 def test_Xiaomi_CGPR1():
-    """Test Xiaomi parser for CGPR1."""
+    """Test Xiaomi parser for CGPR1 (motion + illuminance in lux)."""
+    # Unencrypted MiBeacon V4: product_id 0x0A83, obj000f carrying 100 lux.
+    # CGPR1 takes the device-specific obj000f branch that reports the raw
+    # illuminance value as lux (distinct from the MJYD02YL/RTCGQ02LM
+    # light *binary* sensor path).
+    data_string = b"P@\x83\n\x01\x83\x00\n8\xc1\xa4\x0f\x00\x03d\x00\x00"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:0A:00:83")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Motion/Light Sensor 0083 (CGPR1)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Motion/Light Sensor 0083",
+                manufacturer="Xiaomi",
+                model="CGPR1",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions={
+            KEY_ILLUMINANCE: SensorDescription(
+                device_key=KEY_ILLUMINANCE,
+                device_class=DeviceClass.ILLUMINANCE,
+                native_unit_of_measurement=Units.LIGHT_LUX,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_ILLUMINANCE: SensorValue(
+                name="Illuminance", device_key=KEY_ILLUMINANCE, native_value=100
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
+            ),
+        },
+    )
 
 
 def test_Xiaomi_MMC_T201_1():
