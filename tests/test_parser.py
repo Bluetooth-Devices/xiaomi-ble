@@ -2669,15 +2669,132 @@ def test_Xiaomi_YLYK01YL():
 
 
 def test_Xiaomi_YLYK01YL_FANCL():
-    """Test Xiaomi parser for YLYK01YL-FANCL."""
+    """Test Xiaomi parser for YLYK01YL-FANCL (fan remote, product_id 0x068E)."""
+    # MiBeacon V3 button object (obj0010), button_type=0 press -> "fan" command.
+    data_string = bytes.fromhex("50308e063f7450e94124f8011003000000")
+    advertisement = bytes_to_service_info(data_string, address="F8:24:41:E9:50:74")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Fan Remote Control 5074 (YLYK01YL-FANCL)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Fan Remote Control 5074",
+                manufacturer="Xiaomi",
+                model="YLYK01YL-FANCL",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            DeviceKey(key="button_fan", device_id=None): Event(
+                device_key=DeviceKey(key="button_fan", device_id=None),
+                name="Button Fan",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
 
 
 def test_Xiaomi_YLYK01YL_VENFAN():
-    """Test Xiaomi parser for YLYK01YL-VENFAN."""
+    """Test Xiaomi parser for YLYK01YL-VENFAN (product_id 0x04E6)."""
+    # MiBeacon V3 button object (obj0010), button_type=0 press -> "swing" command.
+    data_string = bytes.fromhex("5030e6043f7450e94124f8011003000000")
+    advertisement = bytes_to_service_info(data_string, address="F8:24:41:E9:50:74")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Ventilator Fan Remote Control 5074 (YLYK01YL-VENFAN)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Ventilator Fan Remote Control 5074",
+                manufacturer="Xiaomi",
+                model="YLYK01YL-VENFAN",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            DeviceKey(key="button_swing", device_id=None): Event(
+                device_key=DeviceKey(key="button_swing", device_id=None),
+                name="Button Swing",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
 
 
 def test_Xiaomi_YLYB01YL_BHFRC():
-    """Test Xiaomi parser for YLYB01YL-BHFRC."""
+    """Test Xiaomi parser for YLYB01YL-BHFRC (product_id 0x03BF)."""
+    # MiBeacon V3 button object (obj0010), button_type=0 press -> "stop" command.
+    data_string = bytes.fromhex("5030bf033f7450e94124f8011003000000")
+    advertisement = bytes_to_service_info(data_string, address="F8:24:41:E9:50:74")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Bathroom Heater Remote 5074 (YLYB01YL-BHFRC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Bathroom Heater Remote 5074",
+                manufacturer="Xiaomi",
+                model="YLYB01YL-BHFRC",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            DeviceKey(key="button_stop", device_id=None): Event(
+                device_key=DeviceKey(key="button_stop", device_id=None),
+                name="Button Stop",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
 
 
 def test_Xiaomi_YLKG07YL_press():
