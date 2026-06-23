@@ -2337,6 +2337,70 @@ def test_Xiaomi_ZNMS16LM_fingerprint():
     )
 
 
+def test_Xiaomi_ZNMS16LM_fingerprint_low_quality():
+    """Test ZNMS16LM low-quality fingerprint result (match_byte 0x03)."""
+    data_string = (
+        b"PD\x9e\x06B\x91\x8a\xebD\x1f\xd7" b"\x06\x00\x05\x00\x00\x00\x00\x03"
+    )
+    advertisement = bytes_to_service_info(data_string, address="D7:1F:44:EB:8A:91")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Door Lock 8A91 (ZNMS16LM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door Lock 8A91",
+                manufacturer="Xiaomi",
+                model="ZNMS16LM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+            KEY_KEY_ID: SensorDescription(
+                device_key=KEY_KEY_ID,
+                device_class=ExtendedSensorDeviceClass.KEY_ID,
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+            KEY_KEY_ID: SensorValue(
+                name="Key id", device_key=KEY_KEY_ID, native_value="administrator"
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_FINGERPRINT: BinarySensorDescription(
+                device_key=KEY_BINARY_FINGERPRINT,
+                device_class=ExtendedBinarySensorDeviceClass.FINGERPRINT,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_FINGERPRINT: BinarySensorValue(
+                device_key=KEY_BINARY_FINGERPRINT,
+                name="Fingerprint",
+                native_value=False,
+            ),
+        },
+        events={
+            KEY_EVENT_FINGERPRINT: Event(
+                device_key=KEY_EVENT_FINGERPRINT,
+                name="Fingerprint",
+                event_type="low_quality_too_light_fuzzy",
+                event_properties=None,
+            ),
+        },
+    )
+
+
 def test_Xiaomi_ZNMS16LM_lock():
     """Test Xiaomi parser for ZNMS16LM."""
     data_string = b"PD\x9e\x06C\x91\x8a\xebD\x1f\xd7\x0b\x00\t" b" \x02\x00\x01\x80|D/a"

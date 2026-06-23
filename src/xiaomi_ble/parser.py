@@ -136,7 +136,7 @@ def obj0006(
             result = "match_failed"
         elif match_byte == 0x02:
             result = "timeout"
-        elif match_byte == 0x033:
+        elif match_byte == 0x03:
             result = "low_quality_too_light_fuzzy"
         elif match_byte == 0x04:
             result = "insufficient_area"
