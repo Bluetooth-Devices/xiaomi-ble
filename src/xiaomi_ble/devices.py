@@ -382,6 +382,7 @@ SLEEPY_DEVICE_MODELS = {
     "PS1BB",
     "JTYJGD03MI",
     "MCCGQ02HL",
+    "MS1BB(MI)",
     "RTCGQ02LM",
     "MMC-W505",
     "RS1BB(MI)",
