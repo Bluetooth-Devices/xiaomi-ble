@@ -1408,7 +1408,7 @@ def obj4a1a(
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, True)
         device.update_binary_sensor(
             key=ExtendedBinarySensorDeviceClass.DOOR_LEFT_OPEN,
-            native_value=False,
+            native_value=True,
             device_class=ExtendedBinarySensorDeviceClass.DOOR_LEFT_OPEN,
             name="Door left open",
         )
