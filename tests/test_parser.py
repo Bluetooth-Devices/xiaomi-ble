@@ -569,8 +569,67 @@ def test_Xiaomi_CGDK3():
     )
 
 
+def _assert_temp_humidity_v3(data_string, address, name, model):
+    """Assert an unencrypted MiBeacon V3 obj100d temp/humidity decode.
+
+    Shared by the alarm-clock / temp-humidity variants (LYWSD02, CGC1, CGD1,
+    MHO-C303, MHO-C401) that all reuse the same obj100d combined decoder.
+    """
+    advertisement = bytes_to_service_info(data_string, address=address)
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title=f"{name} ({model})",
+        devices={
+            None: SensorDeviceInfo(
+                name=name,
+                manufacturer="Xiaomi",
+                model=model,
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V3)",
+            )
+        },
+        entity_descriptions={
+            KEY_TEMPERATURE: SensorDescription(
+                device_key=KEY_TEMPERATURE,
+                device_class=DeviceClass.TEMPERATURE,
+                native_unit_of_measurement="°C",
+            ),
+            KEY_HUMIDITY: SensorDescription(
+                device_key=KEY_HUMIDITY,
+                device_class=DeviceClass.HUMIDITY,
+                native_unit_of_measurement="%",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_TEMPERATURE: SensorValue(
+                name="Temperature", device_key=KEY_TEMPERATURE, native_value=27.2
+            ),
+            KEY_HUMIDITY: SensorValue(
+                name="Humidity", device_key=KEY_HUMIDITY, native_value=49.0
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
 def test_Xiaomi_LYWSD02():
     """Test Xiaomi parser for LYWSD02."""
+    _assert_temp_humidity_v3(
+        b"P0[\x04\x03L\x94\xb48\xc1\xa4\r\x10\x04\x10\x01\xea\x01",
+        address="A4:C1:38:B4:94:4C",
+        name="Temperature/Humidity Sensor 944C",
+        model="LYWSD02",
+    )
 
 
 def test_Xiaomi_LYWSD03MMC():
@@ -884,10 +943,22 @@ def test_Xiaomi_XMMF01JQD():
 
 def test_Xiaomi_CGC1():
     """Test Xiaomi parser for CGC1."""
+    _assert_temp_humidity_v3(
+        b"P0<\x0c\x03L\x94\xb48\xc1\xa4\r\x10\x04\x10\x01\xea\x01",
+        address="A4:C1:38:B4:94:4C",
+        name="Alarm Clock 944C",
+        model="CGC1",
+    )
 
 
 def test_Xiaomi_CGD1():
     """Test Xiaomi parser for CGD1."""
+    _assert_temp_humidity_v3(
+        b"P0v\x05\x03L\x94\xb48\xc1\xa4\r\x10\x04\x10\x01\xea\x01",
+        address="A4:C1:38:B4:94:4C",
+        name="3-in-1 Alarm Clock 944C",
+        model="CGD1",
+    )
 
 
 def test_Xiaomi_CGP1W():
@@ -896,10 +967,22 @@ def test_Xiaomi_CGP1W():
 
 def test_Xiaomi_MHO_C303():
     """Test Xiaomi parser for MHO-C303."""
+    _assert_temp_humidity_v3(
+        b"P0\xd3\x06\x03L\x94\xb48\xc1\xa4\r\x10\x04\x10\x01\xea\x01",
+        address="A4:C1:38:B4:94:4C",
+        name="Alarm Clock 944C",
+        model="MHO-C303",
+    )
 
 
 def test_Xiaomi_MHO_C401():
     """Test Xiaomi parser for MHO-C401."""
+    _assert_temp_humidity_v3(
+        b"P0\x87\x03\x03L\x94\xb48\xc1\xa4\r\x10\x04\x10\x01\xea\x01",
+        address="A4:C1:38:B4:94:4C",
+        name="Temperature/Humidity Sensor 944C",
+        model="MHO-C401",
+    )
 
 
 def test_Xiaomi_JQJCY01YM1():
