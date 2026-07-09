@@ -1789,7 +1789,48 @@ def test_Xiaomi_V_SK152():
 
 
 def test_Xiaomi_SJWS01LM():
-    """Test Xiaomi parser for SJWS01LM."""
+    """Test Xiaomi parser for SJWS01LM (flood detector button press)."""
+    # Unencrypted MiBeacon V4: product_id 0x0863, obj1001 button (press).
+    # SJWS01LM takes the shared press-only branch (obj1001) and fires a
+    # generic BUTTON event.
+    data_string = b"P@c\x08\x01\x01c\x088\xc1\xa4\x01\x10\x03\x00\x00\x00"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:08:63:01")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Flood Detector 6301 (SJWS01LM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Flood Detector 6301",
+                manufacturer="Xiaomi",
+                model="SJWS01LM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
 
 
 def test_Xiaomi_MJWSD06MMC_temperature():
@@ -2024,7 +2065,59 @@ def test_Xiaomi_ESM787_temperature_humidity():
 
 
 def test_Xiaomi_MJYD02YL():
-    """Test Xiaomi parser for MJYD02YL."""
+    """Test Xiaomi parser for MJYD02YL (motion + light binary sensor)."""
+    # Unencrypted MiBeacon V4: product_id 0x07F6, obj000f carrying 100.
+    # MJYD02YL takes the device-specific obj000f branch: motion=True plus a
+    # light *binary* sensor (True when the raw value >= 100), distinct from the
+    # CGPR1 lux path.
+    data_string = b"P@\xf6\x07\x01\x01\xf6\x078\xc1\xa4\x0f\x00\x03d\x00\x00"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:07:F6:01")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Nightlight F601 (MJYD02YL)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Nightlight F601",
+                manufacturer="Xiaomi",
+                model="MJYD02YL",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_MOTION: BinarySensorDescription(
+                device_key=KEY_BINARY_MOTION,
+                device_class=BinarySensorDeviceClass.MOTION,
+            ),
+            KEY_BINARY_LIGHT: BinarySensorDescription(
+                device_key=KEY_BINARY_LIGHT,
+                device_class=BinarySensorDeviceClass.LIGHT,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_MOTION: BinarySensorValue(
+                device_key=KEY_BINARY_MOTION, name="Motion", native_value=True
+            ),
+            KEY_BINARY_LIGHT: BinarySensorValue(
+                device_key=KEY_BINARY_LIGHT, name="Light", native_value=True
+            ),
+        },
+    )
 
 
 def test_Xiaomi_MUE4094RT():
@@ -2666,7 +2759,47 @@ def test_Xiaomi_Lockin_SV40_door():
 
 
 def test_Xiaomi_YLAI003():
-    """Test Xiaomi parser for YLAI003."""
+    """Test Xiaomi parser for YLAI003 (wireless switch press)."""
+    # Unencrypted MiBeacon V4: product_id 0x07BF, obj1001 button (press).
+    # YLAI003 supports press/double_press/long_press; press_type 0 -> press.
+    data_string = b"P@\xbf\x07\x01\x01\xbf\x078\xc1\xa4\x01\x10\x03\x00\x00\x00"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:07:BF:01")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Wireless Switch BF01 (YLAI003)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Wireless Switch BF01",
+                manufacturer="Xiaomi",
+                model="YLAI003",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
 
 
 def test_Xiaomi_YLYK01YL():
@@ -2821,7 +2954,126 @@ def test_Xiaomi_YLKG07YL_rotate():
 
 
 def test_Xiaomi_K9B():
-    """Test Xiaomi parser for K9B."""
+    """Test Xiaomi parser for K9B 1/2/3-button switches (obj1001)."""
+    # Unencrypted MiBeacon V4, obj1001 button. The K9B branches map the raw
+    # press_type to press/double_press/long_press and fan the event out to the
+    # left/middle/right buttons the pressed button_type touches.
+    signal = {
+        KEY_SIGNAL_STRENGTH: SensorDescription(
+            device_key=KEY_SIGNAL_STRENGTH,
+            device_class=DeviceClass.SIGNAL_STRENGTH,
+            native_unit_of_measurement="dBm",
+        ),
+    }
+    signal_val = {
+        KEY_SIGNAL_STRENGTH: SensorValue(
+            name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+        ),
+    }
+    key_button_middle = DeviceKey(key="button_middle", device_id=None)
+    key_button_right = DeviceKey(key="button_right", device_id=None)
+
+    # K9B-1BTN (0x1568): single button, press.
+    data_string = b"P@h\x15\x01\x01h\x158\xc1\xa4\x01\x10\x03\x00\x00\x00"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:15:68:01")
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert device.update(advertisement) == SensorUpdate(
+        title="Switch (single button) 6801 (K9B-1BTN)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Switch (single button) 6801",
+                manufacturer="Xiaomi",
+                model="K9B-1BTN",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions=signal,
+        entity_values=signal_val,
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
+
+    # K9B-2BTN (0x1569): button_type 2 presses both left and right.
+    data_string = b"P@i\x15\x01\x01i\x158\xc1\xa4\x01\x10\x03\x02\x00\x00"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:15:69:01")
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert device.update(advertisement) == SensorUpdate(
+        title="Switch (double button) 6901 (K9B-2BTN)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Switch (double button) 6901",
+                manufacturer="Xiaomi",
+                model="K9B-2BTN",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions=signal,
+        entity_values=signal_val,
+        events={
+            KEY_EVENT_BUTTON_LEFT: Event(
+                device_key=KEY_EVENT_BUTTON_LEFT,
+                name="Button Left",
+                event_type="press",
+                event_properties=None,
+            ),
+            key_button_right: Event(
+                device_key=key_button_right,
+                name="Button Right",
+                event_type="press",
+                event_properties=None,
+            ),
+        },
+    )
+
+    # K9B-3BTN (0x0DFD): button_type 6 presses all three; press_type 1 = long_press.
+    data_string = b"P@\xfd\r\x01\x01\xfd\r8\xc1\xa4\x01\x10\x03\x06\x00\x01"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:0D:FD:01")
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert device.update(advertisement) == SensorUpdate(
+        title="Switch (triple button) FD01 (K9B-3BTN)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Switch (triple button) FD01",
+                manufacturer="Xiaomi",
+                model="K9B-3BTN",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions=signal,
+        entity_values=signal_val,
+        events={
+            KEY_EVENT_BUTTON_LEFT: Event(
+                device_key=KEY_EVENT_BUTTON_LEFT,
+                name="Button Left",
+                event_type="long_press",
+                event_properties=None,
+            ),
+            key_button_middle: Event(
+                device_key=key_button_middle,
+                name="Button Middle",
+                event_type="long_press",
+                event_properties=None,
+            ),
+            key_button_right: Event(
+                device_key=key_button_right,
+                name="Button Right",
+                event_type="long_press",
+                event_properties=None,
+            ),
+        },
+    )
 
 
 def test_Xiaomi_HS1BB_MI_obj4803():
