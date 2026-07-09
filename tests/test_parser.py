@@ -1777,7 +1777,49 @@ def test_Xiaomi_MCCGQ02HL():
 
 
 def test_Xiaomi_CGH1():
-    """Test Xiaomi parser for CGH1."""
+    """Test Xiaomi parser for CGH1 (door/window sensor via obj1019)."""
+    # Unencrypted MiBeacon V4: product_id 0x03D6, obj1019 = 0x00 (opened).
+    data_string = b"P@\xd6\x03\x01\xd6\x03\n8\xc1\xa4\x19\x10\x01\x00"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:0A:03:D6")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Door/Window Sensor 03D6 (CGH1)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door/Window Sensor 03D6",
+                manufacturer="Xiaomi",
+                model="CGH1",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_OPENING: BinarySensorDescription(
+                device_key=KEY_BINARY_OPENING,
+                device_class=BinarySensorDeviceClass.OPENING,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OPENING: BinarySensorValue(
+                device_key=KEY_BINARY_OPENING, name="Opening", native_value=True
+            ),
+        },
+    )
 
 
 def test_Xiaomi_YM_K1501():
@@ -3488,7 +3530,79 @@ def test_Xiaomi_HS1BB_illuminanca_and_motion():
 
 
 def test_Xiaomi_DSL_C08():
-    """Test Xiaomi parser for DSL-C08."""
+    """Test Xiaomi parser for DSL-C08 (lift handle outside -> obj0008)."""
+    # Unencrypted MiBeacon V4: product_id 0x0380, obj0008 = 0x00.
+    # DSL-C08 takes the device-specific branch: armed sensor, lock binary
+    # sensor, a lock_outside_the_door event and a "manual" lock-method sensor.
+    KEY_BINARY_ARMED = DeviceKey(
+        key=ExtendedBinarySensorDeviceClass.ARMED, device_id=None
+    )
+    KEY_EVENT_LOCK = DeviceKey(key="lock", device_id=None)
+    data_string = b"P@\x80\x03\x01\x80\x03\n8\xc1\xa4\x08\x00\x01\x00"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:0A:03:80")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Door Lock 0380 (DSL-C08)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door Lock 0380",
+                manufacturer="Xiaomi",
+                model="DSL-C08",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions={
+            KEY_LOCK_METHOD: SensorDescription(
+                device_key=KEY_LOCK_METHOD,
+                device_class=ExtendedSensorDeviceClass.LOCK_METHOD,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_LOCK_METHOD: SensorValue(
+                name="Lock method",
+                device_key=KEY_LOCK_METHOD,
+                native_value="manual",
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_ARMED: BinarySensorDescription(
+                device_key=KEY_BINARY_ARMED,
+                device_class=ExtendedBinarySensorDeviceClass.ARMED,
+            ),
+            KEY_BINARY_LOCK: BinarySensorDescription(
+                device_key=KEY_BINARY_LOCK,
+                device_class=BinarySensorDeviceClass.LOCK,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_ARMED: BinarySensorValue(
+                device_key=KEY_BINARY_ARMED, name="Armed", native_value=True
+            ),
+            KEY_BINARY_LOCK: BinarySensorValue(
+                device_key=KEY_BINARY_LOCK, name="Lock", native_value=True
+            ),
+        },
+        events={
+            KEY_EVENT_LOCK: Event(
+                device_key=KEY_EVENT_LOCK,
+                name="Lock",
+                event_type="lock_outside_the_door",
+                event_properties=None,
+            ),
+        },
+    )
 
 
 def test_Xiaomi_RTCGQ02LM_light_and_motion():
