@@ -3586,6 +3586,59 @@ def test_Xiaomi_MS1BB_MI_obj4a12():
     )
 
 
+def test_Xiaomi_MS1BB_MI_obj4a1a():
+    """Test Xiaomi parser for Linptech MS1BB(MI) with obj4a1a."""
+    data_string = b"PY\x89\x18\x01g\xe5f8\xc1\xa4\x1a\x4a\x01\x01"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:66:E5:67")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert device.update(advertisement) == SensorUpdate(
+        title="Door/Window Sensor E567 (MS1BB(MI))",
+        devices={
+            None: SensorDeviceInfo(
+                name="Door/Window Sensor E567",
+                manufacturer="Xiaomi",
+                model="MS1BB(MI)",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_OPENING: BinarySensorDescription(
+                device_key=KEY_BINARY_OPENING,
+                device_class=BinarySensorDeviceClass.OPENING,
+            ),
+            KEY_BINARY_DOOR_LEFT_OPEN: BinarySensorDescription(
+                device_key=KEY_BINARY_DOOR_LEFT_OPEN,
+                device_class=ExtendedBinarySensorDeviceClass.DOOR_LEFT_OPEN,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OPENING: BinarySensorValue(
+                device_key=KEY_BINARY_OPENING, name="Opening", native_value=True
+            ),
+            KEY_BINARY_DOOR_LEFT_OPEN: BinarySensorValue(
+                device_key=KEY_BINARY_DOOR_LEFT_OPEN,
+                name="Door left open",
+                native_value=True,
+            ),
+        },
+    )
+
+
 def test_Xiaomi_MS1BB_MI_obj4a13():
     """Test Xiaomi parser for Linptech MS1BB(MI) with obj4a13."""
     data_string = b"XY\x89\x18\x91g\xe5f8\xc1\xa4\xd6\x12\rm&\x00\x00o\xbc\x0c\xb4"
