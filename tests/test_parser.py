@@ -25,6 +25,15 @@ from xiaomi_ble.parser import (
     ExtendedBinarySensorDeviceClass,
     ExtendedSensorDeviceClass,
     XiaomiBluetoothDeviceData,
+    obj4a0c,
+    obj4a0d,
+    obj4a0e,
+    obj4e0c,
+    obj4e0d,
+    obj4e0e,
+    obj560c,
+    obj560d,
+    obj560e,
 )
 
 KEY_BATTERY = DeviceKey(key="battery", device_id=None)
@@ -6308,3 +6317,37 @@ def test_Xiaomi_PS1BB_battery():
             ),
         },
     )
+
+
+@pytest.mark.parametrize(
+    ("handler", "device_type"),
+    [
+        # XMWS01XS path (obj4a0c/d/e) indexes xobj[0]
+        (obj4a0c, "XMWS01XS"),
+        (obj4a0d, "XMWS01XS"),
+        (obj4a0e, "XMWS01XS"),
+        # XMWXKG01YL path (obj4e0c/d/e) indexes xobj[0]
+        (obj4e0c, "XMWXKG01YL"),
+        (obj4e0d, "XMWXKG01YL"),
+        (obj4e0e, "XMWXKG01YL"),
+        # KS1/KS1BP quad-button path (obj560c/d/e) indexes xobj[0]
+        (obj560c, "KS1"),
+        (obj560d, "KS1"),
+        (obj560e, "KS1"),
+    ],
+)
+def test_device_type_object_zero_length_is_ignored(handler, device_type):
+    """A device-type object with a zero-length payload must not crash.
+
+    The parser dispatch guard forwards objects whose typecode is in
+    OBJECTS_DEVICE_TYPE even when their length byte is 0 (empty payload).
+    These handlers used to index ``xobj[0]`` unconditionally, raising
+    IndexError and aborting the whole packet parse. They must now treat
+    the empty payload as a corrupt/ignored frame: return ``{}`` and fire
+    no event.
+    """
+    device = XiaomiBluetoothDeviceData()
+    with patch.object(device, "fire_event") as mock_fire:
+        result = handler(b"", device, device_type)
+    assert result == {}
+    mock_fire.assert_not_called()
