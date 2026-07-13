@@ -2879,6 +2879,29 @@ def test_Xiaomi_ZNMS16LM_lock():
     )
 
 
+def test_Xiaomi_ZNMS16LM_lock_bluetooth_key():
+    """A high Bluetooth key_id must not be misread as a method-encoded key.
+
+    key_id 0x10000000 (268435456) lies above the old (typo'd) 0x7FFFFFF
+    boundary but below the real int32 max 0x7FFFFFFF, so it must decode as a
+    Bluetooth key rather than spilling into the 0x8000xxxx fingerprint bucket.
+    """
+    # Same advert as test_Xiaomi_ZNMS16LM_lock, key_id bytes set to
+    # 00 00 00 10 (little-endian 0x10000000).
+    data_string = b"PD\x9e\x06C\x91\x8a\xebD\x1f\xd7\x0b\x00\t" b" \x00\x00\x00\x10|D/a"
+    advertisement = bytes_to_service_info(data_string, address="D7:1F:44:EB:8A:91")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+
+    result = device.update(advertisement)
+    assert result.entity_values[KEY_KEY_ID] == SensorValue(
+        name="Key id",
+        device_key=KEY_KEY_ID,
+        native_value="Bluetooth key 268435456",
+    )
+
+
 def test_Xiaomi_Lockin_SV40_lock():
     """Test Xiaomi parser for Locking SV40."""
     bindkey = "54d84797cb77f9538b224b305c877d1e"
