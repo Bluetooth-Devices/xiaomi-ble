@@ -45,12 +45,15 @@ KEY_BINARY_DEVICE_FORCIBLY_REMOVED = DeviceKey(
 KEY_BINARY_PRY_THE_DOOR = DeviceKey(key="pry_the_door", device_id=None)
 KEY_BINARY_TOOTHBRUSH = DeviceKey(key="toothbrush", device_id=None)
 KEY_CONDUCTIVITY = DeviceKey(key="conductivity", device_id=None)
+KEY_CONSUMABLE = DeviceKey(key=ExtendedSensorDeviceClass.CONSUMABLE, device_id=None)
 KEY_COUNTER = DeviceKey(key="counter", device_id=None)
 KEY_EVENT_BUTTON = DeviceKey(key="button", device_id=None)
 KEY_EVENT_BUTTON_LEFT = DeviceKey(key="button_left", device_id=None)
 KEY_EVENT_CUBE = DeviceKey(key="cube", device_id=None)
 KEY_EVENT_DIMMER = DeviceKey(key="dimmer", device_id=None)
 KEY_EVENT_FINGERPRINT = DeviceKey(key="fingerprint", device_id=None)
+KEY_FORMALDEHYDE = DeviceKey(key="formaldehyde", device_id=None)
+UNIT_FORMALDEHYDE = Units.CONCENTRATION_MILLIGRAMS_PER_CUBIC_METER
 KEY_EVENT_MOTION = DeviceKey(key="motion", device_id=None)
 KEY_HUMIDITY = DeviceKey(key="humidity", device_id=None)
 KEY_ILLUMINANCE = DeviceKey(key="illuminance", device_id=None)
@@ -903,7 +906,47 @@ def test_Xiaomi_MHO_C401():
 
 
 def test_Xiaomi_JQJCY01YM1():
-    """Test Xiaomi parser for JQJCY01YM."""
+    """Test Xiaomi parser for JQJCY01YM (formaldehyde sensor)."""
+    # Synthesized unencrypted MiBeacon V4 (frctrl 0x4050) for product_id 0x02DF
+    # carrying obj1010 formaldehyde raw=125 -> 1.25 mg/m³.
+    data_string = bytes.fromhex("5040df0201df02008d7cc41010027d00")
+    advertisement = bytes_to_service_info(data_string, address="C4:7C:8D:00:02:DF")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Formaldehyde Sensor 02DF (JQJCY01YM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Formaldehyde Sensor 02DF",
+                manufacturer="Xiaomi",
+                model="JQJCY01YM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions={
+            KEY_FORMALDEHYDE: SensorDescription(
+                device_key=KEY_FORMALDEHYDE,
+                device_class=DeviceClass.FORMALDEHYDE,
+                native_unit_of_measurement=UNIT_FORMALDEHYDE,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_FORMALDEHYDE: SensorValue(
+                name="Formaldehyde", device_key=KEY_FORMALDEHYDE, native_value=1.25
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
 
 
 def test_Xiaomi_JTYJGD03MI_smoke():
@@ -1714,11 +1757,100 @@ def test_Xiaomi_GCLS002():
 
 
 def test_Xiaomi_HHCCPOT002():
-    """Test Xiaomi parser for HHCCPOT002."""
+    """Test Xiaomi parser for HHCCPOT002 (moisture + conductivity)."""
+    # Synthesized unencrypted MiBeacon V2 (frctrl 0x2071, capability byte 0x0D)
+    # for product_id 0x015D carrying obj1008 moisture=64% and obj1009
+    # conductivity=599 µS/cm.
+    data_string = bytes.fromhex("71205d01015d01008d7cc40d081001400910025702")
+    advertisement = bytes_to_service_info(data_string, address="C4:7C:8D:00:01:5D")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Smart Flower Pot 015D (HHCCPOT002)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Smart Flower Pot 015D",
+                manufacturer="Xiaomi",
+                model="HHCCPOT002",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V2)",
+            )
+        },
+        entity_descriptions={
+            KEY_CONDUCTIVITY: SensorDescription(
+                device_key=KEY_CONDUCTIVITY,
+                device_class=DeviceClass.CONDUCTIVITY,
+                native_unit_of_measurement=Units.CONDUCTIVITY,
+            ),
+            KEY_MOISTURE: SensorDescription(
+                device_key=KEY_MOISTURE,
+                device_class=DeviceClass.MOISTURE,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_CONDUCTIVITY: SensorValue(
+                name="Conductivity", device_key=KEY_CONDUCTIVITY, native_value=599
+            ),
+            KEY_MOISTURE: SensorValue(
+                name="Moisture", device_key=KEY_MOISTURE, native_value=64
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
 
 
 def test_Xiaomi_WX08ZM():
-    """Test Xiaomi parser for WX08ZM."""
+    """Test Xiaomi parser for WX08ZM (mosquito repellent consumable)."""
+    # Synthesized unencrypted MiBeacon V4 (frctrl 0x4050) for product_id 0x040A
+    # carrying obj1013 consumable (tablet) = 90%.
+    data_string = bytes.fromhex("50400a04010a04008d7cc41310015a")
+    advertisement = bytes_to_service_info(data_string, address="C4:7C:8D:00:04:0A")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert not device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Mosquito Repellent 040A (WX08ZM)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Mosquito Repellent 040A",
+                manufacturer="Xiaomi",
+                model="WX08ZM",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V4)",
+            )
+        },
+        entity_descriptions={
+            KEY_CONSUMABLE: SensorDescription(
+                device_key=KEY_CONSUMABLE,
+                device_class=ExtendedSensorDeviceClass.CONSUMABLE,
+                native_unit_of_measurement=Units.PERCENTAGE,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_CONSUMABLE: SensorValue(
+                name="Consumable", device_key=KEY_CONSUMABLE, native_value=90
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
 
 
 def test_Xiaomi_MCCGQ02HL():
