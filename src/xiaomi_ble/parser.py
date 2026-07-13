@@ -136,7 +136,7 @@ def obj0006(
             result = "match_failed"
         elif match_byte == 0x02:
             result = "timeout"
-        elif match_byte == 0x033:
+        elif match_byte == 0x03:
             result = "low_quality_too_light_fuzzy"
         elif match_byte == 0x04:
             result = "insufficient_area"
@@ -1249,7 +1249,7 @@ def obj4a08(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Motion detected with Illuminance in lux"""
-    illum = FLOAT_STRUCT(xobj)[0]
+    (illum,) = struct.unpack("<f", xobj)
     device.update_predefined_binary_sensor(BinarySensorDeviceClass.MOTION, True)
     device.update_predefined_sensor(SensorLibrary.LIGHT__LIGHT_LUX, illum)
     return {}
@@ -1408,7 +1408,7 @@ def obj4a1a(
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.OPENING, True)
         device.update_binary_sensor(
             key=ExtendedBinarySensorDeviceClass.DOOR_LEFT_OPEN,
-            native_value=False,
+            native_value=True,
             device_class=ExtendedBinarySensorDeviceClass.DOOR_LEFT_OPEN,
             name="Door left open",
         )
@@ -1705,7 +1705,14 @@ def obj560d(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Double button press"""
-    if device_type not in ["KS1", "KS1BP"]:
+    if device_type not in ["KS1", "KS1BP", "KS2BB"]:
+        return {}
+    if device_type == "KS2BB":
+        device.fire_event(
+            key=EventDeviceKeys.BUTTON,
+            event_type="double_press",
+            event_properties=None,
+        )
         return {}
     button = xobj[0]
     if button_name := QUAD_BUTTON_TO_NAME[button]:
@@ -1721,7 +1728,14 @@ def obj560e(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Long button press"""
-    if device_type not in ["KS1", "KS1BP"]:
+    if device_type not in ["KS1", "KS1BP", "KS2BB"]:
+        return {}
+    if device_type == "KS2BB":
+        device.fire_event(
+            key=EventDeviceKeys.BUTTON,
+            event_type="long_press",
+            event_properties=None,
+        )
         return {}
     button = xobj[0]
     if button_name := QUAD_BUTTON_TO_NAME[button]:
