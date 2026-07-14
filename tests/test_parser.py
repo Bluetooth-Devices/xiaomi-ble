@@ -3773,6 +3773,122 @@ def test_Xiaomi_XMWXKG01YL():
     )
 
 
+def _assert_xmwxkg01yl_events(data_hex: str, events: dict) -> None:
+    """Assert XMWXKG01YL (double button) fires the expected button events.
+
+    The advertisements are synthesized from the real ``test_Xiaomi_XMWXKG01YL``
+    payload (obj4e0c right press) by re-encrypting a modified plaintext with the
+    same bindkey/MAC, exercising the left/both fan-out and the double_press
+    (obj4e0d) and long_press (obj4e0e) object handlers.
+    """
+    bindkey = "b93eb3787eabda352edd94b667f5d5a9"
+    advertisement = bytes_to_service_info(
+        bytes.fromhex(data_hex), address="DC:ED:83:87:12:73"
+    )
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Switch (double button) 1273 (XMWXKG01YL)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Switch (double button) 1273",
+                manufacturer="Xiaomi",
+                model="XMWXKG01YL",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events=events,
+    )
+
+
+def _btn_event(side: str, event_type: str) -> tuple[DeviceKey, Event]:
+    key = DeviceKey(key=f"button_{side}", device_id=None)
+    return key, Event(
+        device_key=key,
+        name=f"Button {side.capitalize()}",
+        event_type=event_type,
+        event_properties=None,
+    )
+
+
+def test_Xiaomi_XMWXKG01YL_press_left():
+    """Test XMWXKG01YL left button single press (obj4e0c)."""
+    _assert_xmwxkg01yl_events(
+        "585949190a73128783eddcd2087dbd010000236b5770",
+        dict([_btn_event("left", "press")]),
+    )
+
+
+def test_Xiaomi_XMWXKG01YL_press_both():
+    """Test XMWXKG01YL both buttons single press (obj4e0c)."""
+    _assert_xmwxkg01yl_events(
+        "585949190a73128783eddc2979abe902000023a2c169",
+        dict([_btn_event("left", "press"), _btn_event("right", "press")]),
+    )
+
+
+def test_Xiaomi_XMWXKG01YL_double_left():
+    """Test XMWXKG01YL left button double press (obj4e0d)."""
+    _assert_xmwxkg01yl_events(
+        "585949190a73128783eddc498da7ef030000eff0fa82",
+        dict([_btn_event("left", "double_press")]),
+    )
+
+
+def test_Xiaomi_XMWXKG01YL_double_right():
+    """Test XMWXKG01YL right button double press (obj4e0d)."""
+    _assert_xmwxkg01yl_events(
+        "585949190a73128783eddc7b46384b0400003e9a5be4",
+        dict([_btn_event("right", "double_press")]),
+    )
+
+
+def test_Xiaomi_XMWXKG01YL_double_both():
+    """Test XMWXKG01YL both buttons double press (obj4e0d)."""
+    _assert_xmwxkg01yl_events(
+        "585949190a73128783eddcc514a4ec050000b09cecda",
+        dict([_btn_event("left", "double_press"), _btn_event("right", "double_press")]),
+    )
+
+
+def test_Xiaomi_XMWXKG01YL_long_left():
+    """Test XMWXKG01YL left button long press (obj4e0e)."""
+    _assert_xmwxkg01yl_events(
+        "585949190a73128783eddc203262ea060000a37535ac",
+        dict([_btn_event("left", "long_press")]),
+    )
+
+
+def test_Xiaomi_XMWXKG01YL_long_right():
+    """Test XMWXKG01YL right button long press (obj4e0e)."""
+    _assert_xmwxkg01yl_events(
+        "585949190a73128783eddc6cbfb981070000ae9ff8c8",
+        dict([_btn_event("right", "long_press")]),
+    )
+
+
+def test_Xiaomi_XMWXKG01YL_long_both():
+    """Test XMWXKG01YL both buttons long press (obj4e0e)."""
+    _assert_xmwxkg01yl_events(
+        "585949190a73128783eddc3b07b319080000126a6cdc",
+        dict([_btn_event("left", "long_press"), _btn_event("right", "long_press")]),
+    )
+
+
 def test_Xiaomi_XMZNMS08LM_door():
     """Test Xiaomi parser for XMZNMS08LM."""
     bindkey = "2c3795afa33019a8afdc17ba99e6f217"
