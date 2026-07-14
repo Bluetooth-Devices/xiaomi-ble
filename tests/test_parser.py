@@ -1528,6 +1528,152 @@ def test_Xiaomi_Scale1_non_stabilized():
     )
 
 
+def test_Xiaomi_Scale1_pounds():
+    """Test Xiaomi parser for Mi Smart Scale (MiScale V1) reporting in pounds"""
+    # control_byte 0x21 = pounds (bit 0) + stabilized (bit 5); mass field 0x439e = 17310
+    data_string = b"\x21\x9e\x43\xe5\x07\x04\x0b\x10\x13\x01"
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.update(
+        BluetoothServiceInfo(
+            name="MISCA",
+            address="50:FB:19:1B:B5:DC",
+            rssi=-60,
+            manufacturer_data={},
+            service_data={SERVICE_SCALE1: data_string},
+            service_uuids=[SERVICE_SCALE1],
+            source="",
+        )
+    ) == SensorUpdate(
+        title="Mi Smart Scale (B5DC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Mi Smart Scale (B5DC)",
+                manufacturer="Xiaomi",
+                model="XMTZC01HM/XMTZC04HM",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_MASS_NON_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_NON_STABILIZED,
+                device_class=DeviceClass.MASS_NON_STABILIZED,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_MASS: SensorDescription(
+                device_key=KEY_MASS,
+                device_class=DeviceClass.MASS,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_MASS_NON_STABILIZED: SensorValue(
+                name="Mass Non Stabilized",
+                device_key=KEY_MASS_NON_STABILIZED,
+                native_value=17310 * 0.0045359237,
+            ),
+            KEY_MASS: SensorValue(
+                name="Mass",
+                device_key=KEY_MASS,
+                native_value=17310 * 0.0045359237,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=True
+            ),
+        },
+    )
+
+
+def test_Xiaomi_Scale1_catty():
+    """Test Xiaomi parser for Mi Smart Scale (MiScale V1) reporting in catty"""
+    # control_byte 0x30 = catty (bit 4) + stabilized (bit 5); mass field 0x43f8 = 17400
+    data_string = b"\x30\xf8\x43\xe5\x07\x04\x0b\x10\x13\x01"
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.update(
+        BluetoothServiceInfo(
+            name="MISCA",
+            address="50:FB:19:1B:B5:DC",
+            rssi=-60,
+            manufacturer_data={},
+            service_data={SERVICE_SCALE1: data_string},
+            service_uuids=[SERVICE_SCALE1],
+            source="",
+        )
+    ) == SensorUpdate(
+        title="Mi Smart Scale (B5DC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Mi Smart Scale (B5DC)",
+                manufacturer="Xiaomi",
+                model="XMTZC01HM/XMTZC04HM",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_MASS_NON_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_NON_STABILIZED,
+                device_class=DeviceClass.MASS_NON_STABILIZED,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_MASS: SensorDescription(
+                device_key=KEY_MASS,
+                device_class=DeviceClass.MASS,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_MASS_NON_STABILIZED: SensorValue(
+                name="Mass Non Stabilized",
+                device_key=KEY_MASS_NON_STABILIZED,
+                native_value=87.0,
+            ),
+            KEY_MASS: SensorValue(
+                name="Mass",
+                device_key=KEY_MASS,
+                native_value=87.0,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=True
+            ),
+        },
+    )
+
+
 def test_Xiaomi_Scale2():
     """Test Xiaomi parser for Mi Body Composition Scale (MiScale V2)"""
     data_string = b"\x02&\xb2\x07\x05\x04\x0f\x02\x01\xac\x01\x86B"
@@ -1665,6 +1811,170 @@ def test_Xiaomi_Scale2_non_stabilized():
         binary_entity_values={
             KEY_STABILIZED: BinarySensorValue(
                 name="Stabilized", device_key=KEY_STABILIZED, native_value=False
+            ),
+        },
+    )
+
+
+def test_Xiaomi_Scale2_pounds():
+    """Test Xiaomi parser for Mi Body Composition Scale (MiScale V2) in pounds"""
+    # byte0 0x03 = pounds (bit 0); byte1 0x26 = stabilized + impedance stabilized;
+    # mass field 0x4286 = 17030, impedance 0x01ac = 428
+    data_string = b"\x03\x26\xb2\x07\x05\x04\x0f\x02\x01\xac\x01\x86\x42"
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.update(
+        BluetoothServiceInfo(
+            name="MIBFS",
+            address="50:FB:19:1B:B5:DC",
+            rssi=-60,
+            manufacturer_data={},
+            service_data={SERVICE_SCALE2: data_string},
+            service_uuids=[SERVICE_SCALE2],
+            source="",
+        )
+    ) == SensorUpdate(
+        title="Mi Body Composition Scale (B5DC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Mi Body Composition Scale (B5DC)",
+                manufacturer="Xiaomi",
+                model="XMTZC02HM/XMTZC05HM/NUN4049CN",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_MASS_NON_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_NON_STABILIZED,
+                device_class=DeviceClass.MASS_NON_STABILIZED,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_MASS: SensorDescription(
+                device_key=KEY_MASS,
+                device_class=DeviceClass.MASS,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_IMPEDANCE: SensorDescription(
+                device_key=KEY_IMPEDANCE,
+                device_class=DeviceClass.IMPEDANCE,
+                native_unit_of_measurement=Units.OHM,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_MASS_NON_STABILIZED: SensorValue(
+                name="Mass Non Stabilized",
+                device_key=KEY_MASS_NON_STABILIZED,
+                native_value=17030 * 0.0045359237,
+            ),
+            KEY_MASS: SensorValue(
+                name="Mass",
+                device_key=KEY_MASS,
+                native_value=17030 * 0.0045359237,
+            ),
+            KEY_IMPEDANCE: SensorValue(
+                name="Impedance", device_key=KEY_IMPEDANCE, native_value=428
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=True
+            ),
+        },
+    )
+
+
+def test_Xiaomi_Scale2_catty():
+    """Test Xiaomi parser for Mi Body Composition Scale (MiScale V2) in catty"""
+    # byte0 0x02; byte1 0x62 = catty (bit 6) + stabilized + impedance stabilized;
+    # mass field 0x43f8 = 17400, impedance 0x01ac = 428
+    data_string = b"\x02\x62\xb2\x07\x05\x04\x0f\x02\x01\xac\x01\xf8\x43"
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.update(
+        BluetoothServiceInfo(
+            name="MIBFS",
+            address="50:FB:19:1B:B5:DC",
+            rssi=-60,
+            manufacturer_data={},
+            service_data={SERVICE_SCALE2: data_string},
+            service_uuids=[SERVICE_SCALE2],
+            source="",
+        )
+    ) == SensorUpdate(
+        title="Mi Body Composition Scale (B5DC)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Mi Body Composition Scale (B5DC)",
+                manufacturer="Xiaomi",
+                model="XMTZC02HM/XMTZC05HM/NUN4049CN",
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_MASS_NON_STABILIZED: SensorDescription(
+                device_key=KEY_MASS_NON_STABILIZED,
+                device_class=DeviceClass.MASS_NON_STABILIZED,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_MASS: SensorDescription(
+                device_key=KEY_MASS,
+                device_class=DeviceClass.MASS,
+                native_unit_of_measurement=Units.MASS_KILOGRAMS,
+            ),
+            KEY_IMPEDANCE: SensorDescription(
+                device_key=KEY_IMPEDANCE,
+                device_class=DeviceClass.IMPEDANCE,
+                native_unit_of_measurement=Units.OHM,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            KEY_MASS_NON_STABILIZED: SensorValue(
+                name="Mass Non Stabilized",
+                device_key=KEY_MASS_NON_STABILIZED,
+                native_value=87.0,
+            ),
+            KEY_MASS: SensorValue(
+                name="Mass",
+                device_key=KEY_MASS,
+                native_value=87.0,
+            ),
+            KEY_IMPEDANCE: SensorValue(
+                name="Impedance", device_key=KEY_IMPEDANCE, native_value=428
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=True
             ),
         },
     )
