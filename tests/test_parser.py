@@ -2039,12 +2039,65 @@ def test_Xiaomi_CGH1():
     )
 
 
+def _assert_kettle_discovery(product_id: int, model: str) -> None:
+    """Assert a registered Smart Kettle is identified from a discovery beacon.
+
+    The Mi smart kettles broadcast no measurement objects over MiBeacon, so the
+    parser can only identify them, not report sensor values. This synthesizes an
+    unencrypted MiBeacon V4 discovery beacon (object_include=0) — frctrl 0x4010
+    (version 4, mac_include set) + product_id LE + one packet byte + the MAC in
+    reverse — and checks that registering ``product_id`` is enough to make the
+    device supported and discoverable.
+    """
+    payload = (
+        struct.pack("<H", 0x4010)
+        + struct.pack("<H", product_id)
+        + b"\x01"
+        + bytes.fromhex("332211ccbbaa")
+    )
+    advertisement = bytes_to_service_info(payload, address="AA:BB:CC:11:22:33")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert device.update(advertisement) == SensorUpdate(
+        title=f"Smart Kettle 2233 ({model})",
+        devices={
+            None: SensorDeviceInfo(
+                name="Smart Kettle 2233",
+                manufacturer="Xiaomi",
+                model=model,
+                hw_version=None,
+                sw_version=None,
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
 def test_Xiaomi_YM_K1501():
     """Test Xiaomi parser for YM-K1501."""
+    _assert_kettle_discovery(0x0083, "YM-K1501")
+
+
+def test_Xiaomi_YM_K1501EU():
+    """Test Xiaomi parser for YM-K1501EU."""
+    _assert_kettle_discovery(0x0113, "YM-K1501EU")
 
 
 def test_Xiaomi_V_SK152():
     """Test Xiaomi parser for V-SK152."""
+    _assert_kettle_discovery(0x045C, "V-SK152")
 
 
 def test_Xiaomi_SJWS01LM():
