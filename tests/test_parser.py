@@ -6325,3 +6325,70 @@ def test_obj4a08_illuminance_is_little_endian():
     obj4a08(struct.pack("<f", 228.0), device, "HS1BB(MI)")
     (_, value), _ = device.update_predefined_sensor.call_args
     assert value == 228.0
+
+
+def _assert_k9bb_1btn_event(data_string: bytes, event_type: str) -> None:
+    """Assert a K9BB-1BTN advert decodes to a single button event of the given type.
+
+    K9BB-1BTN (0x1C10) packs press/long_press/double_press into obj4e0c via the
+    press byte (1/8/15), unlike the two-button XMWXKG01YL which uses obj4e0c/d/e.
+    """
+    bindkey = "7202a2d4201bbf82ea5bb3705657c32a"
+    advertisement = bytes_to_service_info(data_string, address="18:C2:3C:24:37:05")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Switch (single button) 3705 (K9BB-1BTN)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Switch (single button) 3705",
+                manufacturer="Xiaomi",
+                model="K9BB-1BTN",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type=event_type,
+                event_properties=None,
+            ),
+        },
+    )
+
+
+def test_Xiaomi_K9BB_1BTN_press():
+    """Test Xiaomi parser for K9BB-1BTN single press (obj4e0c press byte 1)."""
+    _assert_k9bb_1btn_event(
+        bytes.fromhex("5859101c350537243cc218307188e7020000e451dce9"), "press"
+    )
+
+
+def test_Xiaomi_K9BB_1BTN_long_press():
+    """Test Xiaomi parser for K9BB-1BTN long press (obj4e0c press byte 8)."""
+    _assert_k9bb_1btn_event(
+        bytes.fromhex("5859101c350537243cc2183aaf340e030000ad839b0b"), "long_press"
+    )
+
+
+def test_Xiaomi_K9BB_1BTN_double_press():
+    """Test Xiaomi parser for K9BB-1BTN double press (obj4e0c press byte 15)."""
+    _assert_k9bb_1btn_event(
+        bytes.fromhex("5859101c350537243cc218747156700400004f1a7bda"), "double_press"
+    )
