@@ -2,9 +2,12 @@
 
 import logging
 import struct
+from collections.abc import Callable
+from typing import Any
 from unittest.mock import Mock, patch
 
 import pytest
+from cryptography.hazmat.primitives.ciphers.aead import AESCCM
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import (
     BinarySensorDescription,
@@ -27,6 +30,9 @@ from xiaomi_ble.parser import (
     ExtendedSensorDeviceClass,
     XiaomiBluetoothDeviceData,
     obj4a08,
+    obj4a68,
+    obj487b,
+    obj4806,
 )
 
 KEY_BATTERY = DeviceKey(key="battery", device_id=None)
@@ -65,6 +71,8 @@ KEY_LOCK_METHOD = DeviceKey(key="lock_method", device_id=None)
 KEY_MASS_NON_STABILIZED = DeviceKey(key="mass_non_stabilized", device_id=None)
 KEY_MASS = DeviceKey(key="mass", device_id=None)
 KEY_MOISTURE = DeviceKey(key="moisture", device_id=None)
+KEY_BOTTOM_SUBMERSION = DeviceKey(key="bottom_submersion", device_id=None)
+KEY_TOP_SPLASH = DeviceKey(key="top_splash", device_id=None)
 KEY_POWER = DeviceKey(key="power", device_id=None)
 KEY_SCORE = DeviceKey(key="score", device_id=None)
 KEY_SIGNAL_STRENGTH = DeviceKey(key="signal_strength", device_id=None)
@@ -114,6 +122,30 @@ def bytes_to_service_info(
         service_uuids=["0000fe95-0000-1000-8000-00805f9b34fb"],
         source="",
     )
+
+
+def sjws02lm_encrypted_service_info(
+    objects: bytes,
+    *,
+    counter: int,
+) -> BluetoothServiceInfo:
+    """Build a synthetic encrypted SJWS02LM MiBeacon v5 advertisement."""
+    address = "12:34:56:78:9A:BC"
+    mac = bytes.fromhex(address.replace(":", ""))
+    bindkey = bytes.fromhex("00112233445566778899aabbccddeeff")
+    frame_control = 0x5958
+    product_id = 0x6375
+    header = (
+        frame_control.to_bytes(2, "little")
+        + product_id.to_bytes(2, "little")
+        + bytes([counter])
+        + mac[::-1]
+    )
+    extended_counter = bytes([counter, 0, 0])
+    nonce = mac[::-1] + header[2:5] + extended_counter
+    encrypted = AESCCM(bindkey, tag_length=4).encrypt(nonce, objects, b"\x11")
+    payload = header + encrypted[:-4] + extended_counter + encrypted[-4:]
+    return bytes_to_service_info(payload, address=address)
 
 
 def test_blank_advertisements_then_encrypted():
@@ -3728,6 +3760,79 @@ def test_Xiaomi_RS1BB_MI_obj4806():
             ),
         },
     )
+
+
+@pytest.mark.parametrize(
+    ("object_type", "object_value", "entity_key", "expected_state"),
+    [
+        (0x4806, 1, KEY_BOTTOM_SUBMERSION, True),
+        (0x4806, 0, KEY_BOTTOM_SUBMERSION, False),
+        (0x487B, 1, KEY_TOP_SPLASH, True),
+        (0x487B, 0, KEY_TOP_SPLASH, False),
+        (0x4A68, 0, KEY_BOTTOM_SUBMERSION, True),
+        (0x4A68, 1, KEY_BOTTOM_SUBMERSION, False),
+        (0x4A68, 2, KEY_TOP_SPLASH, True),
+        (0x4A68, 3, KEY_TOP_SPLASH, False),
+    ],
+)
+def test_Xiaomi_SJWS02LM_water_state(
+    object_type: int,
+    object_value: int,
+    entity_key: DeviceKey,
+    expected_state: bool,
+) -> None:
+    """Test both persistent states and transition events from SJWS02LM."""
+    objects = object_type.to_bytes(2, "little") + bytes([1, object_value])
+    advertisement = sjws02lm_encrypted_service_info(objects, counter=object_value + 1)
+    bindkey = bytes.fromhex("00112233445566778899aabbccddeeff")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bindkey)
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    update = device.update(advertisement)
+
+    assert device.sleepy_device
+    assert update.devices[None].model == "SJWS02LM"
+    assert (
+        update.binary_entity_descriptions[entity_key].device_class
+        == BinarySensorDeviceClass.MOISTURE
+    )
+    assert update.binary_entity_values[entity_key].native_value is expected_state
+
+
+def test_Xiaomi_SJWS02LM_battery_percentage() -> None:
+    """Test that object 0x4C03 is the direct battery percentage."""
+    objects = (0x4C03).to_bytes(2, "little") + bytes([1, 50])
+    advertisement = sjws02lm_encrypted_service_info(objects, counter=9)
+    bindkey = bytes.fromhex("00112233445566778899aabbccddeeff")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bindkey)
+    assert device.supported(advertisement)
+    update = device.update(advertisement)
+
+    assert update.entity_values[KEY_BATTERY].native_value == 50
+
+
+@pytest.mark.parametrize(
+    ("parser", "payload", "device_type"),
+    [
+        (obj4806, b"", "SJWS02LM"),
+        (obj487b, b"", "SJWS02LM"),
+        (obj487b, b"\x01", "OTHER_MODEL"),
+        (obj4a68, b"", "SJWS02LM"),
+        (obj4a68, b"\x00", "OTHER_MODEL"),
+        (obj4a68, b"\x04", "SJWS02LM"),
+    ],
+)
+def test_Xiaomi_SJWS02LM_ignores_invalid_or_unrelated_objects(
+    parser: Callable[[bytes, XiaomiBluetoothDeviceData, str], dict[str, Any]],
+    payload: bytes,
+    device_type: str,
+) -> None:
+    """Do not create states from malformed data or another Xiaomi model."""
+    device = Mock()
+    assert parser(payload, device, device_type) == {}
+    device.update_predefined_binary_sensor.assert_not_called()
 
 
 def test_Xiaomi_XMWXKG01YL():

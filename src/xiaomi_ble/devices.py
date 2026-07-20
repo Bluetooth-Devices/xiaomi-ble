@@ -208,6 +208,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Flood Detector",
         model="SJWS01LM",
     ),
+    0x6375: DeviceEntry(
+        name="Water Leak Sensor 2",
+        model="SJWS02LM",
+    ),
     0x045C: DeviceEntry(
         name="Smart Kettle",
         model="V-SK152",
@@ -386,6 +390,7 @@ SLEEPY_DEVICE_MODELS = {
     "RTCGQ02LM",
     "MMC-W505",
     "RS1BB(MI)",
+    "SJWS02LM",
     "XMOSB01XS",
     "MJTZC01YM",
     "MJTZC03YM",
