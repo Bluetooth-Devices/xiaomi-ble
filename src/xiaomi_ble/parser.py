@@ -1097,9 +1097,33 @@ def obj4806(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Moisture"""
+    if len(xobj) != 1:
+        return {}
+    if device_type == "SJWS02LM":
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.MOISTURE,
+            xobj[0] > 0,
+            key="bottom_submersion",
+            name="Bottom submersion",
+        )
+        return {}
     device.update_predefined_binary_sensor(
         BinarySensorDeviceClass.MOISTURE, xobj[0] > 0
     )
+    return {}
+
+
+def obj487b(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Top splash sensor state for Xiaomi Water Leak Sensor 2."""
+    if len(xobj) == 1 and device_type == "SJWS02LM":
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.MOISTURE,
+            xobj[0] > 0,
+            key="top_splash",
+            name="Top splash",
+        )
     return {}
 
 
@@ -1411,6 +1435,36 @@ def obj4a1a(
             native_value=True,
             device_class=ExtendedBinarySensorDeviceClass.DOOR_LEFT_OPEN,
             name="Door left open",
+        )
+    return {}
+
+
+def obj4a68(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Water alarm/clear event for Xiaomi Water Leak Sensor 2.
+
+    The device does not always include its persistent 0x4806/0x487B state in
+    the same advertisement, so these transition events also reconcile the two
+    binary sensor values.
+    """
+    if len(xobj) != 1 or device_type != "SJWS02LM":
+        return {}
+
+    event_type = xobj[0]
+    if event_type in (0, 1):
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.MOISTURE,
+            event_type == 0,
+            key="bottom_submersion",
+            name="Bottom submersion",
+        )
+    elif event_type in (2, 3):
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.MOISTURE,
+            event_type == 2,
+            key="top_splash",
+            name="Top splash",
         )
     return {}
 
@@ -1934,6 +1988,7 @@ xiaomi_dataobject_dict = {
     0x484E: obj484e,
     0x4851: obj4851,
     0x4852: obj4852,
+    0x487B: obj487b,
     0x4A01: obj4a01,
     0x4A08: obj4a08,
     0x4A0C: obj4a0c,
@@ -1943,6 +1998,7 @@ xiaomi_dataobject_dict = {
     0x4A12: obj4a12,
     0x4A13: obj4a13,
     0x4A1A: obj4a1a,
+    0x4A68: obj4a68,
     0x4C01: obj4c01,
     0x4C02: obj4c02,
     0x4C03: obj4c03,
