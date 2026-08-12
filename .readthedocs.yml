@@ -8,11 +8,13 @@ version: 2
 sphinx:
   configuration: docs/source/conf.py
 
-# Set the version of Python and other tools you might need
+# Set the version of Python and other tools you might need.
+# The package requires Python >=3.11 (see pyproject.toml), so the docs build
+# must use a compatible interpreter or `pip install .` fails outright.
 build:
-  os: ubuntu-20.04
+  os: ubuntu-22.04
   tools:
-    python: "3.9"
+    python: "3.12"
 
 # Optionally declare the Python requirements required to build your docs
 python:
