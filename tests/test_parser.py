@@ -241,6 +241,60 @@ def test_blank_advertisements_then_unencrypted_last_service_info():
     assert device.last_service_info == advertisement
 
 
+@pytest.mark.parametrize(
+    ("product_id", "expected_supported"), [(18628, True), (18390, False)]
+)
+def test_e30_product_identification(product_id, expected_supported):
+    """Recognize only the catalogued E30 PID using synthetic identity-only frames."""
+    address = "AA:BB:CC:DD:EE:01"
+    mac = bytes.fromhex(address.replace(":", ""))
+    payload = struct.pack("<HHB", 0x5510, product_id, 0xA7) + mac[::-1]
+    advertisement = bytes_to_service_info(payload, address=address)
+    device = XiaomiBluetoothDeviceData()
+
+    assert device.supported(advertisement) is expected_supported
+    update = device.update(advertisement)
+
+    assert device.pending is True
+    assert device.encryption_scheme == EncryptionScheme.NONE
+    assert not device.bindkey_verified
+    assert not device.sleepy_device
+    assert device.last_service_info is None
+    assert not device.poll_needed(advertisement, None)
+
+    if expected_supported:
+        assert device.device_id == product_id
+        assert device.device_type == "loock.lock.h01lyk"
+        assert update == SensorUpdate(
+            title="Door Lock EE01 (loock.lock.h01lyk)",
+            devices={
+                None: SensorDeviceInfo(
+                    name="Door Lock EE01",
+                    manufacturer="Xiaomi",
+                    model="loock.lock.h01lyk",
+                    sw_version=None,
+                    hw_version=None,
+                )
+            },
+            entity_descriptions={
+                KEY_SIGNAL_STRENGTH: SensorDescription(
+                    device_key=KEY_SIGNAL_STRENGTH,
+                    device_class=DeviceClass.SIGNAL_STRENGTH,
+                    native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+                )
+            },
+            entity_values={
+                KEY_SIGNAL_STRENGTH: SensorValue(
+                    name="Signal Strength",
+                    device_key=KEY_SIGNAL_STRENGTH,
+                    native_value=-60,
+                )
+            },
+        )
+    else:
+        assert update == SensorUpdate(title=None, devices={})
+
+
 def test_encryption_needs_v2():
     """Test that we can detect what kind of encryption key a device needs."""
     data_string = b"X0\xb6\x03\xd2\x8b\x98\xc5A$\xf8\xc3I\x14vu~\x00\x00\x00\x99"
