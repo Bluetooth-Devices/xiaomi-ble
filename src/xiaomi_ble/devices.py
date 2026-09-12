@@ -256,6 +256,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Door Lock",
         model="XMZNMS08LM",
     ),
+    0x48C4: DeviceEntry(
+        name="Door Lock",
+        model="loock.lock.h01lyk",
+    ),
     0x07BF: DeviceEntry(
         name="Wireless Switch",
         model="YLAI003",
