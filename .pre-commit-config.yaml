@@ -48,6 +48,8 @@ repos:
     rev: v2.4.3
     hooks:
       - id: codespell
+        # "loock" is the vendor name of the Mi Smart Safe Box (loock.safe.v1)
+        args: ["--ignore-words-list=loock"]
   - repo: https://github.com/PyCQA/flake8
     rev: 7.3.0
     hooks:

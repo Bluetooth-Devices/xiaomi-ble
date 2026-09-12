@@ -961,6 +961,23 @@ def obj100e(
     return {}
 
 
+def obj100f(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Door state"""
+    # Not part of the public MiBeacon object definition, so it is gated on the
+    # device type. Observed on the Mi Smart Safe Box (loock.safe.v1), which
+    # broadcasts this one byte door state alongside the regular door events
+    # (obj0007): 0x01 while the door is open, 0x00 once it is closed again.
+    # It is sent far more often than obj0007, which is what makes the state
+    # usable after a restart.
+    if device_type == "loock.safe.v1" and len(xobj) == 1:
+        device.update_predefined_binary_sensor(
+            BinarySensorDeviceClass.DOOR, xobj[0] == 0x01
+        )
+    return {}
+
+
 def obj101b(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -1970,6 +1987,7 @@ xiaomi_dataobject_dict = {
     0x100A: obj100a,
     0x100D: obj100d,
     0x100E: obj100e,
+    0x100F: obj100f,
     0x101B: obj101b,
     0x2000: obj2000,
     0x3003: obj3003,
