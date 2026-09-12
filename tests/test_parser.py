@@ -1970,6 +1970,53 @@ def test_Xiaomi_WX08ZM():
     )
 
 
+def test_Xiaomi_loock_safe_v1():
+    """Test Xiaomi parser for the Mi Smart Safe Box (loock.safe.v1)."""
+    # MiBeacon V5 encrypted, product_id 0x09B0, obj100f = 0x01 (door open).
+    data_string = b"XU\xb0\t:\xcc\xbb\xaa\x9c\xc5p+e\rv\x98\x03\x00\xac\xfa\xda\xb9"
+    advertisement = bytes_to_service_info(data_string, address="70:C5:9C:AA:BB:CC")
+    bindkey = "00112233445566778899aabbccddeeff"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Safe Box BBCC (loock.safe.v1)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Safe Box BBCC",
+                manufacturer="Xiaomi",
+                model="loock.safe.v1",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_DOOR: BinarySensorDescription(
+                device_key=KEY_BINARY_DOOR,
+                device_class=BinarySensorDeviceClass.DOOR,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_DOOR: BinarySensorValue(
+                device_key=KEY_BINARY_DOOR, name="Door", native_value=True
+            ),
+        },
+    )
+
+
 def test_Xiaomi_MCCGQ02HL():
     """Test Xiaomi parser for MCCGQ02HL."""
     data_string = b"XX\x8b\t\xa3\xae!\x81\xec\xaa\xe4\x0e,U<\x04\x00\x00\xd2\x8aP\x0c"
