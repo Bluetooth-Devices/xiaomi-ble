@@ -148,6 +148,30 @@ def sjws02lm_encrypted_service_info(
     return bytes_to_service_info(payload, address=address)
 
 
+def fwkge2_encrypted_service_info(
+    objects: bytes,
+    *,
+    counter: int,
+) -> BluetoothServiceInfo:
+    """Build a synthetic encrypted AFWXKG220000 MiBeacon v5 advertisement."""
+    address = "12:34:56:78:9A:BC"
+    mac = bytes.fromhex(address.replace(":", ""))
+    bindkey = bytes.fromhex("00112233445566778899aabbccddeeff")
+    frame_control = 0x5958
+    product_id = 0x78A3
+    header = (
+        frame_control.to_bytes(2, "little")
+        + product_id.to_bytes(2, "little")
+        + bytes([counter])
+        + mac[::-1]
+    )
+    extended_counter = bytes([counter, 0, 0])
+    nonce = mac[::-1] + header[2:5] + extended_counter
+    encrypted = AESCCM(bindkey, tag_length=4).encrypt(nonce, objects, b"\x11")
+    payload = header + encrypted[:-4] + extended_counter + encrypted[-4:]
+    return bytes_to_service_info(payload, address=address)
+
+
 def test_blank_advertisements_then_encrypted():
     """Test that we can reject empty payloads."""
     device = XiaomiBluetoothDeviceData()
@@ -5323,10 +5347,9 @@ def test_Xiaomi_KS1_long_press():
 def test_Xiaomi_button_object_ignored_for_non_button_device():
     """A non-button device carrying a stray button object fires no event.
 
-    Exercises the device-type guard in obj560d/obj560e: any device that is not
-    KS1/KS1BP/KS2BB must ignore a 0x560d/0x560e object rather than emit a button
-    event. Here a LYWSDCGQ advert carries both obj560d and obj560e payloads; no
-    event results.
+    Exercises the device-type guard in obj560d/obj560e: devices outside the
+    supported button models must ignore a 0x560d/0x560e object rather than emit
+    a button event. Here a LYWSDCGQ advert carries both objects; no event results.
     """
     bindkey = "8bdff7d0f70fa7f5c68f42157b5fd65b"
     data_string = bytes.fromhex("5859aa01b4e6fea138c1a4ff47a4daba202c2f090000e761ffec")
@@ -5337,6 +5360,60 @@ def test_Xiaomi_button_object_ignored_for_non_button_device():
     assert device.bindkey_verified
     update = device.update(advertisement)
     assert update.events == {}
+
+
+@pytest.mark.parametrize(
+    ("objects", "counter", "event_type"),
+    [
+        (bytes.fromhex("0c560101"), 1, "press"),
+        (bytes.fromhex("0d560101"), 2, "double_press"),
+        (bytes.fromhex("0e560101"), 3, "long_press"),
+    ],
+)
+def test_Xiaomi_AFWXKG220000_button_events(
+    objects: bytes, counter: int, event_type: str
+):
+    """Test Xiaomi parser for LineHope AFWXKG220000 button events."""
+    bindkey = "00112233445566778899aabbccddeeff"
+    advertisement = fwkge2_encrypted_service_info(objects, counter=counter)
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.update(advertisement) == SensorUpdate(
+        title="Wireless Switch 9ABC (AFWXKG220000)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Wireless Switch 9ABC",
+                manufacturer="LineHope",
+                model="AFWXKG220000",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={},
+        binary_entity_values={},
+        events={
+            KEY_EVENT_BUTTON: Event(
+                device_key=KEY_EVENT_BUTTON,
+                name="Button",
+                event_type=event_type,
+                event_properties=None,
+            ),
+        },
+    )
 
 
 def test_Xiaomi_KS2_button_press():
