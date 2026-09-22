@@ -5372,7 +5372,7 @@ def test_Xiaomi_button_object_ignored_for_non_button_device():
 )
 def test_Xiaomi_AFWXKG220000_button_events(
     objects: bytes, counter: int, event_type: str
-):
+) -> None:
     """Test Xiaomi parser for LineHope AFWXKG220000 button events."""
     bindkey = "00112233445566778899aabbccddeeff"
     advertisement = fwkge2_encrypted_service_info(objects, counter=counter)
