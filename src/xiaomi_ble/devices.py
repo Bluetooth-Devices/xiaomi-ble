@@ -264,6 +264,11 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Wireless Switch",
         model="PTX_YK1_QMIMB",
     ),
+    0x78A3: DeviceEntry(
+        name="Wireless Switch",
+        model="AFWXKG220000",
+        manufacturer="LineHope",
+    ),
     0x0153: DeviceEntry(
         name="Remote Control",
         model="YLYK01YL",
