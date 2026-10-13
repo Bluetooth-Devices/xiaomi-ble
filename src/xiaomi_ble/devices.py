@@ -411,3 +411,8 @@ S400_MODELS = {
     "MJTZC01YM",
     "MJTZC03YM",
 }
+
+# Scales whose idle (no-object) advertisements reset the stabilized sensor
+SCALE_MODELS_WITH_STABILIZED = S400_MODELS | {
+    "MJTZC02YM",  # Smart Scale S200
+}
