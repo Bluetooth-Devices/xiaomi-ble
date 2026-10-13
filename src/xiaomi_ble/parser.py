@@ -1836,6 +1836,13 @@ def obj4e16(
     weight_kg = data / 100.0
     device.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, weight_kg)
     device.update_sensor(
+        key=ExtendedSensorDeviceClass.LAST_MEASUREMENT_TIMESTAMP,
+        name="Last measurement timestamp",
+        device_class=ExtendedSensorDeviceClass.LAST_MEASUREMENT_TIMESTAMP,
+        native_unit_of_measurement=None,
+        native_value=timestamp,
+    )
+    device.update_sensor(
         key=ExtendedSensorDeviceClass.PROFILE_ID,
         name="Profile ID",
         device_class=ExtendedSensorDeviceClass.PROFILE_ID,
