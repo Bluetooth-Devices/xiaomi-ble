@@ -1116,7 +1116,7 @@ def obj4806(
     """Moisture"""
     if len(xobj) != 1:
         return {}
-    if device_type == "SJWS02LM":
+    if device_type in ("SJWS02LM", "zhiee.flood.sj01",):
         device.update_predefined_binary_sensor(
             BinarySensorDeviceClass.MOISTURE,
             xobj[0] > 0,
