@@ -3808,7 +3808,7 @@ def test_Xiaomi_RS1BB_MI_obj4806():
             ),
         },
     )
-    
+
 
 @pytest.mark.parametrize(
     ("object_type", "object_value", "entity_key", "expected_state"),
@@ -3825,7 +3825,9 @@ def test_zhiee_flood_sj01_water_state(
 ) -> None:
     """Test both persistent states and transition events from SJWS02LM."""
     objects = object_type.to_bytes(2, "little") + bytes([1, object_value])
-    advertisement = sjws02lm_encrypted_service_info(objects, counter=object_value + 1, product_id=0x7712)
+    advertisement = sjws02lm_encrypted_service_info(
+        objects, counter=object_value + 1, product_id=0x7712
+    )
     bindkey = bytes.fromhex("00112233445566778899aabbccddeeff")
 
     device = XiaomiBluetoothDeviceData(bindkey=bindkey)
@@ -3840,8 +3842,6 @@ def test_zhiee_flood_sj01_water_state(
         == BinarySensorDeviceClass.MOISTURE
     )
     assert update.binary_entity_values[entity_key].native_value is expected_state
-
-
 
 
 @pytest.mark.parametrize(
