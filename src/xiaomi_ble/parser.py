@@ -1707,7 +1707,7 @@ def obj5412(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Customized Property"""
-    """ES5BB customized-property-2 same as occupancy-status"""
+    """ES3 customized-property-2 same as occupancy-status"""
     if device_type not in ["ES3"]:
         return {}
     device.update_binary_sensor(
