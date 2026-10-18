@@ -5439,6 +5439,7 @@ def test_Xiaomi_ES3_occupancy_off():
         },
     )
 
+
 def test_Xiaomi_ES3_occupancy_close_range():
     """Test Xiaomi parser for Linptech ES3 Occupancy close range."""
     data_string = bytes.fromhex("5859fb50358a88a438c1a4a81736ed09000002f39e1b")
