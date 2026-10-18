@@ -2048,6 +2048,7 @@ xiaomi_dataobject_dict = {
     0x4E0D: obj4e0d,
     0x4E0E: obj4e0e,
     0x5003: obj5003,
+    0x5412: obj5412,
     0x5413: obj5413,
     0x5414: obj5414,
     0x5422: obj5422,
