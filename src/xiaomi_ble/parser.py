@@ -360,7 +360,7 @@ def obj000b(
                 key_type = "unknown operator"
             elif key_id == 0xDEADBEEF:
                 key_type = "invalid operator"
-            elif key_id <= 0x7FFFFFF:
+            elif key_id <= 0x7FFFFFFF:
                 # Bluetooth (up to 2147483647)
                 key_type = f"Bluetooth key {key_id}"
             else:
