@@ -618,7 +618,7 @@ def obj1001(
             event_type=button_press_type,
             event_properties=None,
         )
-    elif device_type == "YLYK01YL-FANRC":
+    elif device_type == "YLYK01YL-FANCL":
         # Buttons: fan, light, wind_speed, wind_mode, brightness, color_temperature
         # Press types: press and long_press
         device.fire_event(
