@@ -1703,6 +1703,22 @@ def obj5003(
     return {}
 
 
+def obj5412(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Customized Property"""
+    """ES5BB customized-property-2 same as occupancy-status"""
+    if device_type not in ["ES3"]:
+        return {}
+    device.update_binary_sensor(
+        key=BinarySensorDeviceClass.OCCUPANCY + "_close_range",
+        native_value=xobj[0] > 0,
+        device_class=BinarySensorDeviceClass.OCCUPANCY,
+        name="Occupancy close range",
+    )
+    return {}
+
+
 def obj5413(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
