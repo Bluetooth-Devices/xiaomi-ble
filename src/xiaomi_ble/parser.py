@@ -1244,7 +1244,14 @@ def obj484e(
             BinarySensorDeviceClass.OCCUPANCY, xobj[0] == 1
         )
     else:
-        """Translate to: occupancy: bool: 0 - Clear, 1 - Detected"""
+        """
+        Translate to: occupancy: bool: 0 - Clear, 1 - Detected
+
+        For Linptech ES3, the value also indicates the distance used to detect
+        occupancy. The value of xobj[0] is an 8-bit bitmask, where the lowest
+        bit represents a distance of 0–0.75 m, and each subsequent bit represents
+        the next 0.75 m interval. The maximum detection distance is 6 m.
+        """
         device.update_predefined_binary_sensor(
             BinarySensorDeviceClass.OCCUPANCY, xobj[0] > 0
         )
