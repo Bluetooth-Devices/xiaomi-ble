@@ -5059,6 +5059,17 @@ def test_Xiaomi_Scale_S400_MJTZC01YM_reset():
     )
 
 
+def test_Xiaomi_Scale_S400_MJTZC01YM_product_id_4fc2():
+    """Test Xiaomi parser for an S400 MJTZC01YM unit with product ID 0x4FC2."""
+    data_string = b"\x10Y\xc2O\x04V4\x128\xc1\xa4"
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:12:34:56")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert device.device_id == 0x4FC2
+    assert device.device_type == "MJTZC01YM"
+
+
 def test_Xiaomi_XMWS01XS_double_press():
     """Test Xiaomi parser for XMWS01XS Switch (double button)."""
     data_string = b"XYhYQ\x11n _\xb9\x08\xd9\x1b\xd5\x85\x02\x00\x00\x07\xcc\xa8I"
