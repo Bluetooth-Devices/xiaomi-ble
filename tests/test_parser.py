@@ -128,13 +128,14 @@ def sjws02lm_encrypted_service_info(
     objects: bytes,
     *,
     counter: int,
+    product_id: int = 0x6375,
 ) -> BluetoothServiceInfo:
     """Build a synthetic encrypted SJWS02LM MiBeacon v5 advertisement."""
     address = "12:34:56:78:9A:BC"
     mac = bytes.fromhex(address.replace(":", ""))
     bindkey = bytes.fromhex("00112233445566778899aabbccddeeff")
     frame_control = 0x5958
-    product_id = 0x6375
+    product_id = product_id
     header = (
         frame_control.to_bytes(2, "little")
         + product_id.to_bytes(2, "little")
@@ -3831,6 +3832,40 @@ def test_Xiaomi_RS1BB_MI_obj4806():
             ),
         },
     )
+
+
+@pytest.mark.parametrize(
+    ("object_type", "object_value", "entity_key", "expected_state"),
+    [
+        (0x4806, 1, KEY_BOTTOM_SUBMERSION, True),
+        (0x4806, 0, KEY_BOTTOM_SUBMERSION, False),
+    ],
+)
+def test_zhiee_flood_sj01_water_state(
+    object_type: int,
+    object_value: int,
+    entity_key: DeviceKey,
+    expected_state: bool,
+) -> None:
+    """Test both persistent states and transition events from SJWS02LM."""
+    objects = object_type.to_bytes(2, "little") + bytes([1, object_value])
+    advertisement = sjws02lm_encrypted_service_info(
+        objects, counter=object_value + 1, product_id=0x7712
+    )
+    bindkey = bytes.fromhex("00112233445566778899aabbccddeeff")
+
+    device = XiaomiBluetoothDeviceData(bindkey=bindkey)
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    update = device.update(advertisement)
+
+    assert device.sleepy_device
+    assert update.devices[None].model == "zhiee.flood.sj01"
+    assert (
+        update.binary_entity_descriptions[entity_key].device_class
+        == BinarySensorDeviceClass.MOISTURE
+    )
+    assert update.binary_entity_values[entity_key].native_value is expected_state
 
 
 @pytest.mark.parametrize(

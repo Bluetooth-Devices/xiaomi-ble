@@ -139,6 +139,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Temperature/Humidity Sensor",
         model="MBS17",
     ),
+    0x7712: DeviceEntry(
+        name="Water Leak Sensor",
+        model="zhiee.flood.sj01",
+    ),
     0x78DB: DeviceEntry(
         name="Temperature/Humidity Sensor",
         model="ESM787",
@@ -409,6 +413,7 @@ SLEEPY_DEVICE_MODELS = {
     "XMPIRO2GSXS",
     "M2456B1",
     "M2457B1",
+    "zhiee.flood.sj01",
 }
 
 
