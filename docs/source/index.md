@@ -6,6 +6,7 @@
 
 installation
 usage
+api
 ```
 
 ```{toctree}
