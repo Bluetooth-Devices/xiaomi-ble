@@ -4871,9 +4871,25 @@ def test_Xiaomi_Scale_S200_MJTZC02YM():
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
-        binary_entity_descriptions={},
-        binary_entity_values={},
+        binary_entity_descriptions={
+            KEY_STABILIZED: BinarySensorDescription(
+                device_key=KEY_STABILIZED,
+                device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+            ),
+        },
+        binary_entity_values={
+            KEY_STABILIZED: BinarySensorValue(
+                name="Stabilized", device_key=KEY_STABILIZED, native_value=True
+            ),
+        },
     )
+
+    # Idle advertisement (no object) sent after the measurement resets stabilized
+    idle = bytes_to_service_info(
+        b"\x10Y\x04L\x01\x29\xd7\x27\x6f\x7b\xd0", address="D0:7B:6F:27:D7:29"
+    )
+    update = device.update(idle)
+    assert update.binary_entity_values[KEY_STABILIZED].native_value is False
 
 
 def test_Xiaomi_Scale_S400_MJTZC01YM():
