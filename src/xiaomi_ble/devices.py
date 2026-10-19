@@ -421,7 +421,8 @@ SLEEPY_DEVICE_MODELS = {
 }
 
 
-S400_MODELS = {
-    "MJTZC01YM",
-    "MJTZC03YM",
+SCALE_MODELS_WITH_STABILIZED = {
+    "MJTZC01YM",  # Smart Scale S400
+    "MJTZC02YM",  # Smart Scale S200
+    "MJTZC03YM",  # Smart Scale S400
 }

@@ -39,7 +39,11 @@ from .const import (
     ExtendedBinarySensorDeviceClass,
     ExtendedSensorDeviceClass,
 )
-from .devices import DEVICE_TYPES, S400_MODELS, SLEEPY_DEVICE_MODELS
+from .devices import (
+    DEVICE_TYPES,
+    SCALE_MODELS_WITH_STABILIZED,
+    SLEEPY_DEVICE_MODELS,
+)
 from .events import EventDeviceKeys
 from .locks import BLE_LOCK_ACTION, BLE_LOCK_ERROR, BLE_LOCK_METHOD
 
@@ -1861,6 +1865,14 @@ def obj4e16(
 
     weight_kg = data / 100.0
     device.update_predefined_sensor(SensorLibrary.MASS__MASS_KILOGRAMS, weight_kg)
+    # The S200 only broadcasts this object once the weight is final.
+    # It is reset to False by the following idle (no-object) advertisement.
+    device.update_binary_sensor(
+        key=ExtendedBinarySensorDeviceClass.STABILIZED,
+        name="Stabilized",
+        device_class=ExtendedBinarySensorDeviceClass.STABILIZED,
+        native_value=True,
+    )
     device.update_sensor(
         key=ExtendedSensorDeviceClass.PROFILE_ID,
         name="Profile ID",
@@ -2322,8 +2334,8 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         if frctrl_object_include == 0:
             # data does not contain Object
             _LOGGER.debug("Advertisement doesn't contain payload, adv: %s", data.hex())
-            # S400 idle packet — reset stabilized
-            if device_type in S400_MODELS:
+            # Scale idle packet (S200/S400) — reset stabilized
+            if device_type in SCALE_MODELS_WITH_STABILIZED:
                 self.update_binary_sensor(
                     key=ExtendedBinarySensorDeviceClass.STABILIZED,
                     name="Stabilized",
