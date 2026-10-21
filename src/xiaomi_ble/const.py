@@ -75,6 +75,9 @@ class ExtendedBinarySensorDeviceClass(BaseDeviceClass):
 class ExtendedSensorDeviceClass(BaseDeviceClass):
     """Device class for additional sensors (compared to sensor-state-data)."""
 
+    # Device-reported time of the last scale measurement (Unix seconds).
+    LAST_MEASUREMENT_TIMESTAMP = "last_measurement_timestamp"
+
     # Charging State
     CHARGING_STATE = "charging_state"
 
