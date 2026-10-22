@@ -5501,6 +5501,55 @@ def test_Xiaomi_ES3_occupancy_off():
     )
 
 
+def test_Xiaomi_ES3_occupancy_close_range():
+    """Test Xiaomi parser for Linptech ES3 Occupancy close range."""
+    data_string = bytes.fromhex("5859fb50358a88a438c1a4a81736ed09000002f39e1b")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:A4:88:8A")
+    bindkey = "fb352ea2139ab095877a9e2ae600c912"
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="Human Presence Sensor 888A (ES3)",
+        devices={
+            None: SensorDeviceInfo(
+                name="Human Presence Sensor 888A",
+                manufacturer="Linptech",
+                model="ES3",
+                hw_version=None,
+                sw_version="Xiaomi (MiBeacon V5 encrypted)",
+            )
+        },
+        entity_descriptions={
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement="dBm",
+            ),
+        },
+        entity_values={
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+        binary_entity_descriptions={
+            KEY_BINARY_OCCUPANCY_CLOSE_RANGE: BinarySensorDescription(
+                device_key=KEY_BINARY_OCCUPANCY_CLOSE_RANGE,
+                device_class=BinarySensorDeviceClass.OCCUPANCY,
+            ),
+        },
+        binary_entity_values={
+            KEY_BINARY_OCCUPANCY_CLOSE_RANGE: BinarySensorValue(
+                device_key=KEY_BINARY_OCCUPANCY_CLOSE_RANGE,
+                name="Occupancy close range",
+                native_value=True,
+            ),
+        },
+    )
+
+
 def test_Xiaomi_KS1_double_press():
     """Test Xiaomi parser for KS1 quadruple-button double press (left button)."""
     bindkey = "8bdff7d0f70fa7f5c68f42157b5fd65b"

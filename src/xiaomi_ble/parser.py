@@ -1248,7 +1248,14 @@ def obj484e(
             BinarySensorDeviceClass.OCCUPANCY, xobj[0] == 1
         )
     else:
-        """Translate to: occupancy: bool: 0 - Clear, 1 - Detected"""
+        """
+        Translate to: occupancy: bool: 0 - Clear, 1 - Detected
+
+        For Linptech ES3, the value also indicates the distance used to detect
+        occupancy. The value of xobj[0] is an 8-bit bitmask, where the lowest
+        bit represents a distance of 0–0.75 m, and each subsequent bit represents
+        the next 0.75 m interval. The maximum detection distance is 6 m.
+        """
         device.update_predefined_binary_sensor(
             BinarySensorDeviceClass.OCCUPANCY, xobj[0] > 0
         )
@@ -1707,6 +1714,22 @@ def obj5003(
     return {}
 
 
+def obj5412(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """Customized Property"""
+    """ES3 customized-property-2 same as occupancy-status"""
+    if device_type not in ["ES3"]:
+        return {}
+    device.update_binary_sensor(
+        key=BinarySensorDeviceClass.OCCUPANCY + "_close_range",
+        native_value=xobj[0] > 0,
+        device_class=BinarySensorDeviceClass.OCCUPANCY,
+        name="Occupancy close range",
+    )
+    return {}
+
+
 def obj5413(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -2044,6 +2067,7 @@ xiaomi_dataobject_dict = {
     0x4E0D: obj4e0d,
     0x4E0E: obj4e0e,
     0x5003: obj5003,
+    0x5412: obj5412,
     0x5413: obj5413,
     0x5414: obj5414,
     0x5422: obj5422,
