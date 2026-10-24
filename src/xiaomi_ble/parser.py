@@ -1901,6 +1901,9 @@ def obj6e16(
     mass = data & 0x7FF
     heart_rate = (data >> 11) & 0x7F
     impedance = data >> 18
+    if mass == 0x7FF:
+        # S400 Pro (MJTZC03YM) marks "no weight" with all mass bits set
+        mass = 0
 
     device.update_sensor(
         key=ExtendedSensorDeviceClass.PROFILE_ID,
