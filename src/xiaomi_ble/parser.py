@@ -1851,6 +1851,13 @@ def obj4e16(
         native_value=True,
     )
     device.update_sensor(
+        key=ExtendedSensorDeviceClass.LAST_MEASUREMENT_TIMESTAMP,
+        name="Last measurement timestamp",
+        device_class=ExtendedSensorDeviceClass.LAST_MEASUREMENT_TIMESTAMP,
+        native_unit_of_measurement=None,
+        native_value=timestamp,
+    )
+    device.update_sensor(
         key=ExtendedSensorDeviceClass.PROFILE_ID,
         name="Profile ID",
         device_class=ExtendedSensorDeviceClass.PROFILE_ID,

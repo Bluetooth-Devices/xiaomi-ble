@@ -82,6 +82,9 @@ KEY_IMPEDANCE_LOW = DeviceKey(key="impedance_low", device_id=None)
 KEY_IMPEDANCE_HIGH = DeviceKey(key="impedance_high", device_id=None)
 KEY_HEART_RATE = DeviceKey(key="heart_rate", device_id=None)
 KEY_PROFILE_ID = DeviceKey(key="profile_id", device_id=None)
+KEY_LAST_MEASUREMENT_TIMESTAMP = DeviceKey(
+    key="last_measurement_timestamp", device_id=None
+)
 KEY_STABILIZED = DeviceKey(key="stabilized", device_id=None)
 KEY_TIMESTAMP = DeviceKey(key="timestamp", device_id=None)
 KEY_VOLTAGE = DeviceKey(key="voltage", device_id=None)
@@ -4885,6 +4888,11 @@ def test_Xiaomi_Scale_S200_MJTZC02YM():
             )
         },
         entity_descriptions={
+            KEY_LAST_MEASUREMENT_TIMESTAMP: SensorDescription(
+                device_key=KEY_LAST_MEASUREMENT_TIMESTAMP,
+                device_class=ExtendedSensorDeviceClass.LAST_MEASUREMENT_TIMESTAMP,
+                native_unit_of_measurement=None,
+            ),
             KEY_MASS: SensorDescription(
                 device_key=KEY_MASS,
                 device_class=DeviceClass.MASS,
@@ -4902,6 +4910,11 @@ def test_Xiaomi_Scale_S200_MJTZC02YM():
             ),
         },
         entity_values={
+            KEY_LAST_MEASUREMENT_TIMESTAMP: SensorValue(
+                name="Last measurement timestamp",
+                device_key=KEY_LAST_MEASUREMENT_TIMESTAMP,
+                native_value=1762728842,
+            ),
             KEY_MASS: SensorValue(
                 name="Mass",
                 device_key=KEY_MASS,
