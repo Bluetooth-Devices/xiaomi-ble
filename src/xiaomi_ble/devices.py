@@ -349,6 +349,10 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         name="Body Composition Scale",
         model="MJTZC03YM",
     ),
+    0x78BD: DeviceEntry(
+        name="Body Composition Scale",
+        model="MJTZC03YM",
+    ),
     0x4FC2: DeviceEntry(
         name="Body Composition Scale",
         model="MJTZC01YM",
