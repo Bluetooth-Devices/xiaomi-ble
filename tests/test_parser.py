@@ -2055,7 +2055,9 @@ def test_Xiaomi_loock_safe_v1():
 @pytest.mark.parametrize(
     ("door_state", "expected"), [(0x00, True), (0x01, False), (0xFF, None)]
 )
-def test_Xiaomi_loock_safe_v1_door_state(door_state: int, expected: bool | None):
+def test_Xiaomi_loock_safe_v1_door_state(
+    door_state: int, expected: bool | None
+) -> None:
     """Door state (obj100f): 0x00 open, 0x01 closed, 0xFF abnormal."""
     advertisement = sjws02lm_encrypted_service_info(
         bytes([0x0F, 0x10, 0x01, door_state]), counter=1, product_id=0x09B0
@@ -2073,7 +2075,7 @@ def test_Xiaomi_loock_safe_v1_door_state(door_state: int, expected: bool | None)
         "07000501a908f06a",  # obj0007 door event: closed
     ],
 )
-def test_Xiaomi_loock_safe_v1_relocks_on_door_close(door_closed: str):
+def test_Xiaomi_loock_safe_v1_relocks_on_door_close(door_closed: str) -> None:
     """The safe sends no lock action, so a closed door means locked again."""
     device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(SAFE_BOX_BINDKEY))
     unlock = sjws02lm_encrypted_service_info(
@@ -2088,7 +2090,7 @@ def test_Xiaomi_loock_safe_v1_relocks_on_door_close(door_closed: str):
     assert lock.native_value is False
 
 
-def test_Xiaomi_loock_safe_v1_battery_has_no_voltage():
+def test_Xiaomi_loock_safe_v1_battery_has_no_voltage() -> None:
     """The safe reports battery percentage only, no CR2032 voltage estimate."""
     advertisement = sjws02lm_encrypted_service_info(
         bytes([0x0A, 0x10, 0x01, 0x19]), counter=1, product_id=0x09B0
@@ -2100,7 +2102,7 @@ def test_Xiaomi_loock_safe_v1_battery_has_no_voltage():
     assert KEY_VOLTAGE not in values
 
 
-def test_Xiaomi_loock_safe_v1_unlock_with_fingerprint():
+def test_Xiaomi_loock_safe_v1_unlock_with_fingerprint() -> None:
     """Lock event sets the key id, the fingerprint event that follows keeps it."""
     device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(SAFE_BOX_BINDKEY))
     # obj000b: unlock outside the door with biometrics, key id 0x80010001
