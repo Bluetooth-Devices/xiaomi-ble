@@ -124,6 +124,9 @@ def bytes_to_service_info(
     )
 
 
+SAFE_BOX_BINDKEY = "00112233445566778899aabbccddeeff"
+
+
 def sjws02lm_encrypted_service_info(
     objects: bytes,
     *,
@@ -1997,7 +2000,7 @@ def test_Xiaomi_WX08ZM():
 
 def test_Xiaomi_loock_safe_v1():
     """Test Xiaomi parser for the Mi Smart Safe Box (loock.safe.v1)."""
-    # MiBeacon V5 encrypted, product_id 0x09B0, obj100f = 0x01 (door open).
+    # MiBeacon V5 encrypted, product_id 0x09B0, obj100f = 0x01 (door closed).
     data_string = b"XU\xb0\t:\xcc\xbb\xaa\x9c\xc5p+e\rv\x98\x03\x00\xac\xfa\xda\xb9"
     advertisement = bytes_to_service_info(data_string, address="70:C5:9C:AA:BB:CC")
     bindkey = "00112233445566778899aabbccddeeff"
@@ -2033,13 +2036,86 @@ def test_Xiaomi_loock_safe_v1():
                 device_key=KEY_BINARY_DOOR,
                 device_class=BinarySensorDeviceClass.DOOR,
             ),
+            KEY_BINARY_LOCK: BinarySensorDescription(
+                device_key=KEY_BINARY_LOCK,
+                device_class=BinarySensorDeviceClass.LOCK,
+            ),
         },
         binary_entity_values={
             KEY_BINARY_DOOR: BinarySensorValue(
-                device_key=KEY_BINARY_DOOR, name="Door", native_value=True
+                device_key=KEY_BINARY_DOOR, name="Door", native_value=False
+            ),
+            KEY_BINARY_LOCK: BinarySensorValue(
+                device_key=KEY_BINARY_LOCK, name="Lock", native_value=False
             ),
         },
     )
+
+
+@pytest.mark.parametrize(
+    ("door_state", "expected"), [(0x00, True), (0x01, False), (0xFF, None)]
+)
+def test_Xiaomi_loock_safe_v1_door_state(door_state: int, expected: bool | None):
+    """Door state (obj100f): 0x00 open, 0x01 closed, 0xFF abnormal."""
+    advertisement = sjws02lm_encrypted_service_info(
+        bytes([0x0F, 0x10, 0x01, door_state]), counter=1, product_id=0x09B0
+    )
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(SAFE_BOX_BINDKEY))
+    assert device.supported(advertisement)
+    door = device.update(advertisement).binary_entity_values.get(KEY_BINARY_DOOR)
+    assert (door.native_value if door else None) == expected
+
+
+@pytest.mark.parametrize(
+    "door_closed",
+    [
+        "0f100101",  # obj100f door state: closed
+        "07000501a908f06a",  # obj0007 door event: closed
+    ],
+)
+def test_Xiaomi_loock_safe_v1_relocks_on_door_close(door_closed: str):
+    """The safe sends no lock action, so a closed door means locked again."""
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(SAFE_BOX_BINDKEY))
+    unlock = sjws02lm_encrypted_service_info(
+        bytes.fromhex("0b0009200100018000000000"), counter=1, product_id=0x09B0
+    )
+    close = sjws02lm_encrypted_service_info(
+        bytes.fromhex(door_closed), counter=2, product_id=0x09B0
+    )
+    assert device.supported(unlock)
+    assert device.update(unlock).binary_entity_values[KEY_BINARY_LOCK].native_value
+    lock = device.update(close).binary_entity_values[KEY_BINARY_LOCK]
+    assert lock.native_value is False
+
+
+def test_Xiaomi_loock_safe_v1_battery_has_no_voltage():
+    """The safe reports battery percentage only, no CR2032 voltage estimate."""
+    advertisement = sjws02lm_encrypted_service_info(
+        bytes([0x0A, 0x10, 0x01, 0x19]), counter=1, product_id=0x09B0
+    )
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(SAFE_BOX_BINDKEY))
+    assert device.supported(advertisement)
+    values = device.update(advertisement).entity_values
+    assert values[KEY_BATTERY].native_value == 25
+    assert KEY_VOLTAGE not in values
+
+
+def test_Xiaomi_loock_safe_v1_unlock_with_fingerprint():
+    """Lock event sets the key id, the fingerprint event that follows keeps it."""
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(SAFE_BOX_BINDKEY))
+    # obj000b: unlock outside the door with biometrics, key id 0x80010001
+    lock = sjws02lm_encrypted_service_info(
+        bytes.fromhex("0b0009200100018000000000"), counter=1, product_id=0x09B0
+    )
+    # obj0006 as sent by the safe for fingerprint 1, match successful
+    fingerprint = sjws02lm_encrypted_service_info(
+        bytes.fromhex("0600050100462000"), counter=2, product_id=0x09B0
+    )
+    assert device.supported(lock)
+    device.update(lock)
+    update = device.update(fingerprint)
+    assert update.entity_values[KEY_KEY_ID].native_value == "Fingerprint key id 1"
+    assert update.binary_entity_values[KEY_BINARY_FINGERPRINT].native_value is True
 
 
 def test_Xiaomi_MCCGQ02HL():
