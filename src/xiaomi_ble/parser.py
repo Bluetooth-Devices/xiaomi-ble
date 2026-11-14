@@ -160,14 +160,17 @@ def obj0006(
             device_class=ExtendedBinarySensorDeviceClass.FINGERPRINT,
             name="Fingerprint",
         )
-        # Update key_id sensor
-        device.update_sensor(
-            key=ExtendedSensorDeviceClass.KEY_ID,
-            name="Key id",
-            device_class=ExtendedSensorDeviceClass.KEY_ID,
-            native_value=key_type,
-            native_unit_of_measurement=None,
-        )
+        # Update key_id sensor. The safe box does not follow the spec for the
+        # key id here (e.g. 0100462000 for fingerprint 1), and the lock event
+        # (obj000b) that comes with it already sets the correct key id.
+        if device_type != "loock.safe.v1":
+            device.update_sensor(
+                key=ExtendedSensorDeviceClass.KEY_ID,
+                name="Key id",
+                device_class=ExtendedSensorDeviceClass.KEY_ID,
+                native_value=key_type,
+                native_unit_of_measurement=None,
+            )
         # Fire Fingerprint action event
         if result:
             device.fire_event(
@@ -213,6 +216,9 @@ def obj0007(
             device_class=ExtendedBinarySensorDeviceClass.PRY_THE_DOOR,
             name="Pry the door",
         )
+        if device_type == "loock.safe.v1":
+            # The safe never reports a lock action, it relocks when the door closes
+            device.update_predefined_binary_sensor(BinarySensorDeviceClass.LOCK, False)
     elif door_byte == 0x02:
         # timeout, not closed
         device.update_predefined_binary_sensor(BinarySensorDeviceClass.DOOR, True)
@@ -919,6 +925,10 @@ def obj100a(
 ) -> dict[str, Any]:
     """Battery"""
     batt = xobj[0]
+    if device_type == "loock.safe.v1":
+        # Not a coin cell, so the CR2032 voltage estimate below would be wrong
+        device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
+        return {}
     if device_type in ["LYWSDCGQ", "CGDK3"]:
         # Those devices have a single AAA 1.5V battery
         volt = 0.8 + (1.6 - 0.8) * (batt / 100)
@@ -968,17 +978,18 @@ def obj100e(
 def obj100f(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
-    """Door state"""
-    # Not part of the public MiBeacon object definition, so it is gated on the
-    # device type. Observed on the Mi Smart Safe Box (loock.safe.v1), which
-    # broadcasts this one byte door state alongside the regular door events
-    # (obj0007): 0x01 while the door is open, 0x00 once it is closed again.
-    # It is sent far more often than obj0007, which is what makes the state
-    # usable after a restart.
-    if device_type == "loock.safe.v1" and len(xobj) == 1:
+    """Door common attribute"""
+    # https://iot.mi.com/new/doc/accesses/direct-access/embedded-development/ble/object-definition#%E9%97%A8%E5%B1%9E%E6%80%A7
+    # 0x00 = door open, 0x01 = door closed, 0xFF = abnormal (ignored).
+    # Only enabled for the Mi Smart Safe Box (loock.safe.v1) so far, which
+    # repeats it about once a minute, so the door state survives a restart.
+    if device_type == "loock.safe.v1" and len(xobj) == 1 and xobj[0] in (0x00, 0x01):
         device.update_predefined_binary_sensor(
-            BinarySensorDeviceClass.DOOR, xobj[0] == 0x01
+            BinarySensorDeviceClass.DOOR, xobj[0] == 0x00
         )
+        if xobj[0] == 0x01:
+            # The safe never reports a lock action, it relocks when the door closes
+            device.update_predefined_binary_sensor(BinarySensorDeviceClass.LOCK, False)
     return {}
 
 
