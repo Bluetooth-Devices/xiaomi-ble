@@ -35,6 +35,8 @@ from xiaomi_ble.parser import (
     obj4806,
 )
 
+KEY_MMC_T201_T1 = DeviceKey(key="mmc_t201_t1", device_id=None)
+KEY_MMC_T201_T2 = DeviceKey(key="mmc_t201_t2", device_id=None)
 KEY_BATTERY = DeviceKey(key="battery", device_id=None)
 KEY_BINARY_DOOR = DeviceKey(key="door", device_id=None)
 KEY_BINARY_FINGERPRINT = DeviceKey(key="fingerprint", device_id=None)
@@ -2726,6 +2728,16 @@ def test_Xiaomi_MMC_T201_1():
             )
         },
         entity_descriptions={
+            KEY_MMC_T201_T2: SensorDescription(
+                device_key=KEY_MMC_T201_T2,
+                device_class=DeviceClass.TEMPERATURE,
+                native_unit_of_measurement="°C",
+            ),
+            KEY_MMC_T201_T1: SensorDescription(
+                device_key=KEY_MMC_T201_T1,
+                device_class=DeviceClass.TEMPERATURE,
+                native_unit_of_measurement="°C",
+            ),
             KEY_TEMPERATURE: SensorDescription(
                 device_key=KEY_TEMPERATURE,
                 device_class=DeviceClass.TEMPERATURE,
@@ -2743,19 +2755,40 @@ def test_Xiaomi_MMC_T201_1():
             ),
         },
         entity_values={
+            KEY_MMC_T201_T2: SensorValue(
+                name="Temperature T2", device_key=KEY_MMC_T201_T2, native_value=34.27
+            ),
+            KEY_MMC_T201_T1: SensorValue(
+                name="Temperature T1", device_key=KEY_MMC_T201_T1, native_value=35.26
+            ),
             KEY_BATTERY: SensorValue(
                 name="Battery", device_key=KEY_BATTERY, native_value=81
             ),
             KEY_TEMPERATURE: SensorValue(
                 name="Temperature",
                 device_key=KEY_TEMPERATURE,
-                native_value=36.87199806168224,
+                native_value=pytest.approx(35.56),
             ),
             KEY_SIGNAL_STRENGTH: SensorValue(
                 name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
             ),
         },
     )
+
+
+@pytest.mark.parametrize("invalid", [0x7FF0, 0x7FF1, 0x7FF2])
+@pytest.mark.parametrize("first", [2346, 3526])
+def test_mmc_t201_reports_battery_without_invalid_body_temperature(invalid, first):
+    """An invalid T2 leaves T1 and battery available without a body estimate."""
+    payload = bytes.fromhex("7022db000101000000000209002005") + struct.pack(
+        "<hhB", first, invalid, 36
+    )
+    advertisement = bytes_to_service_info(payload, address="02:00:00:00:00:01")
+    result = XiaomiBluetoothDeviceData().update(advertisement)
+    assert result.entity_values[KEY_BATTERY].native_value == 36
+    assert KEY_TEMPERATURE not in result.entity_values
+    assert result.entity_values[KEY_MMC_T201_T1].native_value == first / 100
+    assert result.entity_values[KEY_MMC_T201_T2].native_value is None
 
 
 def test_Xiaomi_MMC_W505():
