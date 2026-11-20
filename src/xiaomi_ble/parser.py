@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import datetime
 import logging
-import math
 import struct
+from time import monotonic
 from typing import Any
 
 from bleak import BleakClient
@@ -23,6 +23,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESCCM
 from home_assistant_bluetooth import BluetoothServiceInfo
 from sensor_state_data import (
     BinarySensorDeviceClass,
+    DeviceClass,
     SensorLibrary,
     SensorUpdate,
     Units,
@@ -46,6 +47,7 @@ from .devices import (
 )
 from .events import EventDeviceKeys
 from .locks import BLE_LOCK_ACTION, BLE_LOCK_ERROR, BLE_LOCK_METHOD
+from .thermometer import MMCT201Temperature, decode_mmc_t201_temperature
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -1006,18 +1008,8 @@ def obj2000(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
     """Body temperature"""
-    if len(xobj) == 5:
-        temp1, temp2, bat = TTB_STRUCT(xobj)
-        # Body temperature is calculated from the two measured temperatures.
-        # Formula is based on approximation based on values in the app in
-        # the range 36.5 - 37.8.
-        body_temp = (
-            3.71934 * pow(10, -11) * math.exp(0.69314 * temp1 / 100)
-            - (1.02801 * pow(10, -8) * math.exp(0.53871 * temp2 / 100))
-            + 36.413
-        )
-        device.update_predefined_sensor(SensorLibrary.TEMPERATURE__CELSIUS, body_temp)
-        device.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, bat)
+    if len(xobj) == 5 and device_type == "MMC-T201-1":
+        device.update_mmc_t201_temperature(xobj)
     return {}
 
 
@@ -2091,6 +2083,8 @@ class XiaomiBluetoothDeviceData(BluetoothData):
     def __init__(self, bindkey: bytes | None = None) -> None:
         super().__init__()
         self.set_bindkey(bindkey)
+        self._mmc_t201 = MMCT201Temperature()
+        self._packet_id = 0
 
         # Data that we know how to parse but don't yet map to the SensorData model.
         self.unhandled: dict[str, Any] = {}
@@ -2121,6 +2115,31 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # If this is True, the device is not sending advertisements
         # in a regular interval
         self.sleepy_device = False
+
+    def update_mmc_t201_temperature(self, payload: bytes) -> None:
+        """Process an MMC-T201 temperature and battery packet."""
+        first_raw, second_raw, battery = TTB_STRUCT(payload)
+        first = decode_mmc_t201_temperature(first_raw)
+        second = decode_mmc_t201_temperature(second_raw)
+        for key, name, value in (
+            ("mmc_t201_t1", "Temperature T1", first),
+            ("mmc_t201_t2", "Temperature T2", second),
+        ):
+            self.update_sensor(
+                key=key,
+                name=name,
+                native_value=value,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+                device_class=DeviceClass.TEMPERATURE,
+            )
+        self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, battery)
+        temperature = self._mmc_t201.update(
+            first, second, (self._packet_id, payload), monotonic()
+        )
+        if temperature is not None:
+            self.update_predefined_sensor(
+                SensorLibrary.TEMPERATURE__CELSIUS, temperature
+            )
 
     def set_bindkey(self, bindkey: bytes | None) -> None:
         """Set the bindkey."""
@@ -2273,7 +2292,7 @@ class XiaomiBluetoothDeviceData(BluetoothData):
         # set to True if the device is not sending regular BLE advertisements
         self.sleepy_device = device_type in SLEEPY_DEVICE_MODELS
 
-        packet_id = data[4]
+        packet_id = self._packet_id = data[4]
 
         sinfo = "MiVer: " + str(frctrl_version)
         sinfo += ", DevID: " + hex(device_id) + " : " + device_type
