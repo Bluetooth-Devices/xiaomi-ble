@@ -1552,6 +1552,18 @@ def obj4c14(
     return {"mode": mode}
 
 
+def obj4c1d(
+    xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
+) -> dict[str, Any]:
+    """CO2"""
+    if len(xobj) == 2:
+        (co2,) = struct.unpack("<H", xobj)
+        device.update_predefined_sensor(
+            SensorLibrary.CO2__CONCENTRATION_PARTS_PER_MILLION, co2
+        )
+    return {}
+
+
 def obj4e01(
     xobj: bytes, device: XiaomiBluetoothDeviceData, device_type: str
 ) -> dict[str, Any]:
@@ -2051,6 +2063,7 @@ xiaomi_dataobject_dict = {
     0x4C03: obj4c03,
     0x4C08: obj4c08,
     0x4C14: obj4c14,
+    0x4C1D: obj4c1d,
     0x4E01: obj4e01,
     0x4E16: obj4e16,
     0x4E1C: obj4e1c,
