@@ -7099,7 +7099,7 @@ def test_Xiaomi_MHO_H413(
     device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
     assert device.supported(advertisement)
     assert device.bindkey_verified
-    assert device.sleepy_device is False
+    assert device.sleepy_device
     assert device.update(advertisement) == SensorUpdate(
         title="CO2 Monitor Lite 3456 (MHO-H413)",
         devices={None: MHO_H413_DEVICE},

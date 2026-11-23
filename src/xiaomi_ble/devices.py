@@ -427,6 +427,7 @@ SLEEPY_DEVICE_MODELS = {
     "M2456B1",
     "M2457B1",
     "zhiee.flood.sj01",
+    "MHO-H413",
 }
 
 
