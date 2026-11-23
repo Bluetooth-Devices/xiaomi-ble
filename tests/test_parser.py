@@ -7128,6 +7128,21 @@ def test_Xiaomi_MHO_H413(
     )
 
 
+def test_Xiaomi_MHO_H413_co2_wrong_length_ignored() -> None:
+    """A CO2 object that is not 2 bytes long is ignored."""
+    advertisement = mho_h413_encrypted_service_info(
+        b"\x1d\x4c\x03" + b"\xb7\x03\x00", counter=0x1E
+    )
+
+    device = XiaomiBluetoothDeviceData(
+        bindkey=bytes.fromhex("00112233445566778899aabbccddeeff")
+    )
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    update = device.update(advertisement)
+    assert DeviceKey(key="carbon_dioxide", device_id=None) not in update.entity_values
+
+
 def test_Xiaomi_MHO_H413_unencrypted_beacon() -> None:
     """The MHO-H413 also sends header-only beacons (MAC + capability)."""
     data_string = bytes.fromhex("3058df6b00563412" + "38c1a408")
