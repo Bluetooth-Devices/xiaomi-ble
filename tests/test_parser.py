@@ -176,6 +176,33 @@ def fwkge2_encrypted_service_info(
     return bytes_to_service_info(payload, address=address)
 
 
+def mho_h413_encrypted_service_info(
+    objects: bytes,
+    *,
+    counter: int,
+) -> BluetoothServiceInfo:
+    """Build a synthetic encrypted MHO-H413 MiBeacon v5 advertisement.
+
+    The real device sends frame control 0x5948 (encrypted, object included,
+    no MAC in the frame), one object per advertisement.
+    """
+    address = "A4:C1:38:12:34:56"
+    mac = bytes.fromhex(address.replace(":", ""))
+    bindkey = bytes.fromhex("00112233445566778899aabbccddeeff")
+    frame_control = 0x5948
+    product_id = 0x6BDF
+    header = (
+        frame_control.to_bytes(2, "little")
+        + product_id.to_bytes(2, "little")
+        + bytes([counter])
+    )
+    extended_counter = bytes([0, 0, 0])
+    nonce = mac[::-1] + header[2:5] + extended_counter
+    encrypted = AESCCM(bindkey, tag_length=4).encrypt(nonce, objects, b"\x11")
+    payload = header + encrypted[:-4] + extended_counter + encrypted[-4:]
+    return bytes_to_service_info(payload, address=address)
+
+
 def test_blank_advertisements_then_encrypted():
     """Test that we can reject empty payloads."""
     device = XiaomiBluetoothDeviceData()
@@ -7017,3 +7044,110 @@ def test_Xiaomi_K9BB_1BTN_double_press():
     _assert_k9bb_1btn_event(
         bytes.fromhex("5859101c350537243cc218747156700400004f1a7bda"), "double_press"
     )
+
+
+MHO_H413_DEVICE = SensorDeviceInfo(
+    name="CO2 Monitor Lite 3456",
+    manufacturer="ZenMeasure",
+    model="MHO-H413",
+    hw_version=None,
+    sw_version="Xiaomi (MiBeacon V5 encrypted)",
+)
+
+
+@pytest.mark.parametrize(
+    ("objects", "key", "device_class", "unit", "name", "value"),
+    [
+        (
+            b"\x01\x4c\x04" + struct.pack("<f", 22.8),
+            "temperature",
+            DeviceClass.TEMPERATURE,
+            Units.TEMP_CELSIUS,
+            "Temperature",
+            22.8,
+        ),
+        (
+            b"\x08\x4c\x04" + struct.pack("<f", 54.0),
+            "humidity",
+            DeviceClass.HUMIDITY,
+            Units.PERCENTAGE,
+            "Humidity",
+            54.0,
+        ),
+        (
+            b"\x1d\x4c\x02" + struct.pack("<H", 951),
+            "carbon_dioxide",
+            DeviceClass.CO2,
+            Units.CONCENTRATION_PARTS_PER_MILLION,
+            "Carbon Dioxide",
+            951,
+        ),
+    ],
+)
+def test_Xiaomi_MHO_H413(
+    objects: bytes,
+    key: str,
+    device_class: DeviceClass,
+    unit: Units,
+    name: str,
+    value: float,
+) -> None:
+    """Test Xiaomi parser for MHO-H413 (ZenMeasure CO2 Monitor Lite)."""
+    bindkey = "00112233445566778899aabbccddeeff"
+    advertisement = mho_h413_encrypted_service_info(objects, counter=0x1D)
+
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(bindkey))
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    assert device.sleepy_device
+    assert device.update(advertisement) == SensorUpdate(
+        title="CO2 Monitor Lite 3456 (MHO-H413)",
+        devices={None: MHO_H413_DEVICE},
+        entity_descriptions={
+            DeviceKey(key=key, device_id=None): SensorDescription(
+                device_key=DeviceKey(key=key, device_id=None),
+                device_class=device_class,
+                native_unit_of_measurement=unit,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorDescription(
+                device_key=KEY_SIGNAL_STRENGTH,
+                device_class=DeviceClass.SIGNAL_STRENGTH,
+                native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            ),
+        },
+        entity_values={
+            DeviceKey(key=key, device_id=None): SensorValue(
+                name=name,
+                device_key=DeviceKey(key=key, device_id=None),
+                native_value=value,
+            ),
+            KEY_SIGNAL_STRENGTH: SensorValue(
+                name="Signal Strength", device_key=KEY_SIGNAL_STRENGTH, native_value=-60
+            ),
+        },
+    )
+
+
+def test_Xiaomi_MHO_H413_co2_wrong_length_ignored() -> None:
+    """A CO2 object that is not 2 bytes long is ignored."""
+    advertisement = mho_h413_encrypted_service_info(
+        b"\x1d\x4c\x03" + b"\xb7\x03\x00", counter=0x1E
+    )
+
+    device = XiaomiBluetoothDeviceData(
+        bindkey=bytes.fromhex("00112233445566778899aabbccddeeff")
+    )
+    assert device.supported(advertisement)
+    assert device.bindkey_verified
+    update = device.update(advertisement)
+    assert DeviceKey(key="carbon_dioxide", device_id=None) not in update.entity_values
+
+
+def test_Xiaomi_MHO_H413_unencrypted_beacon() -> None:
+    """The MHO-H413 also sends header-only beacons (MAC + capability)."""
+    data_string = bytes.fromhex("3058df6b00563412" + "38c1a408")
+    advertisement = bytes_to_service_info(data_string, address="A4:C1:38:12:34:56")
+
+    device = XiaomiBluetoothDeviceData()
+    assert device.supported(advertisement)
+    assert device.device_type == "MHO-H413"

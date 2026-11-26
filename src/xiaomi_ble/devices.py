@@ -396,6 +396,11 @@ DEVICE_TYPES: dict[int, DeviceEntry] = {
         model="ES5BB",
         manufacturer="Linptech",
     ),
+    0x6BDF: DeviceEntry(
+        name="CO2 Monitor Lite",
+        model="MHO-H413",
+        manufacturer="ZenMeasure",
+    ),
 }
 
 
@@ -422,6 +427,7 @@ SLEEPY_DEVICE_MODELS = {
     "M2456B1",
     "M2457B1",
     "zhiee.flood.sj01",
+    "MHO-H413",
 }
 
 
