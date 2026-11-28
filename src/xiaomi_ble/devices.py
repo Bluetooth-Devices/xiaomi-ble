@@ -9,6 +9,11 @@ class DeviceEntry:
 
 
 DEVICE_TYPES: dict[int, DeviceEntry] = {
+    0x613D: DeviceEntry(
+        name="Temperature/Humidity Sensor",
+        model="qjiang.sensor_ht.002",
+        manufacturer="RSH",
+    ),
     0x0C3C: DeviceEntry(
         name="Alarm Clock",
         model="CGC1",
