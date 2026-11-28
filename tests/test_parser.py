@@ -7017,3 +7017,49 @@ def test_Xiaomi_K9BB_1BTN_double_press():
     _assert_k9bb_1btn_event(
         bytes.fromhex("5859101c350537243cc218747156700400004f1a7bda"), "double_press"
     )
+
+
+def qjiang_sensor_ht_002_encrypted_service_info(
+    objects: bytes,
+    *,
+    counter: int,
+) -> BluetoothServiceInfo:
+    """Build a synthetic encrypted sensor_ht.002 MiBeacon v5 advertisement."""
+    address = "12:34:56:78:9A:BC"
+    mac = bytes.fromhex(address.replace(":", ""))
+    bindkey = bytes.fromhex(SAFE_BOX_BINDKEY)
+    frame_control = 0x5948  # MiBeacon v5, encrypted, MAC not included in the frame
+    header = (
+        frame_control.to_bytes(2, "little")
+        + (0x613D).to_bytes(2, "little")
+        + bytes([counter])
+    )
+    extended_counter = bytes([counter, 0, 0])
+    nonce = mac[::-1] + header[2:5] + extended_counter
+    encrypted = AESCCM(bindkey, tag_length=4).encrypt(nonce, objects, b"\x11")
+    payload = header + encrypted[:-4] + extended_counter + encrypted[-4:]
+    return bytes_to_service_info(payload, address=address)
+
+
+def test_qjiang_sensor_ht_002_temperature():
+    """Test the RSH/qjiang sensor_ht.002 (0x613D) temperature object."""
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(SAFE_BOX_BINDKEY))
+    # obj4801: float32 temperature in degrees Celsius
+    advertisement = qjiang_sensor_ht_002_encrypted_service_info(
+        bytes.fromhex("014804") + struct.pack("<f", 27.4), counter=0x20
+    )
+    update = device.update(advertisement)
+    assert update.title == "Temperature/Humidity Sensor 9ABC (qjiang.sensor_ht.002)"
+    assert update.entity_values[KEY_TEMPERATURE].native_value == 27.4
+
+
+def test_qjiang_sensor_ht_002_humidity():
+    """Test the RSH/qjiang sensor_ht.002 (0x613D) humidity object."""
+    device = XiaomiBluetoothDeviceData(bindkey=bytes.fromhex(SAFE_BOX_BINDKEY))
+    # obj4802: uint8 relative humidity in percent
+    advertisement = qjiang_sensor_ht_002_encrypted_service_info(
+        bytes.fromhex("0248010f"), counter=0x21
+    )
+    update = device.update(advertisement)
+    assert update.title == "Temperature/Humidity Sensor 9ABC (qjiang.sensor_ht.002)"
+    assert update.entity_values[KEY_HUMIDITY].native_value == 15
